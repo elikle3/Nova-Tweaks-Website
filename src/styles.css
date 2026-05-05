@@ -385,7 +385,8 @@ button {
 .dashboard-stat,
 .dashboard-list,
 .image-placeholder,
-.placeholder-screen {
+.placeholder-screen,
+.screenshot-frame {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--surface-elevated);
@@ -649,7 +650,7 @@ button {
 
 .image-feature-card {
   display: flex;
-  min-height: 360px;
+  min-height: 420px;
   flex-direction: column;
   gap: 16px;
   padding: 16px;
@@ -720,6 +721,69 @@ button {
 
 .placeholder-lines i:nth-child(3) {
   width: 52%;
+}
+
+.screenshot-frame {
+  position: relative;
+  display: flex;
+  min-height: 220px;
+  overflow: hidden;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.screenshot-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 42%),
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 34%);
+}
+
+.screenshot-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.screenshot-frame img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 16px 18px rgba(0, 0, 0, 0.24));
+}
+
+.screenshot-frame-wide {
+  min-height: 232px;
+}
+
+.screenshot-frame-tall {
+  min-height: 292px;
+}
+
+.screenshot-frame-tall img {
+  max-height: 252px;
+}
+
+.screenshot-frame-compact {
+  min-height: 210px;
 }
 
 .split-copy {
@@ -1490,6 +1554,17 @@ button {
 
   .performance-chart {
     min-height: 240px;
+  }
+
+  .image-feature-card {
+    min-height: auto;
+  }
+
+  .screenshot-frame,
+  .screenshot-frame-wide,
+  .screenshot-frame-tall,
+  .screenshot-frame-compact {
+    min-height: 220px;
   }
 
   .marker-label {

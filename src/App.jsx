@@ -5,23 +5,20 @@ import {
   Check,
   ChevronDown,
   Clock3,
-  Cpu,
   DatabaseBackup,
   Download,
-  Gauge,
-  HardDrive,
+  FileText,
   Lock,
   LogOut,
   Menu,
-  Play,
+  MonitorCheck,
   Rocket,
   ShieldCheck,
   SlidersHorizontal,
   Star,
   Timer,
   User,
-  X,
-  Zap
+  X
 } from 'lucide-react';
 import { useInView } from './hooks/useInView';
 import {
@@ -36,6 +33,7 @@ import {
 
 const APP_LOGO_SRC = new URL('./assets/logo.ico', import.meta.url).href;
 const HERO_MOCKUP_SRC = new URL('./assets/website-mockup-transparent.png', import.meta.url).href;
+const TWEAKS_MOCKUP_SRC = new URL('./assets/tweaks-mockup-transparent.png', import.meta.url).href;
 
 const navItems = [
   ['Features', '#features'],
@@ -48,31 +46,95 @@ const navItems = [
 ];
 
 const features = [
-  ['One-Click Tweaks', 'Apply carefully grouped optimizations with clear context before changes are made.', Zap],
-  ['Game Mode', 'Shift system behavior toward cleaner sessions, lower background noise, and faster response.', Play],
-  ['Backup & Restore', 'Create restore points around meaningful changes and roll back when you need to.', DatabaseBackup],
-  ['Startup Optimization', 'Identify boot drag and trim unnecessary startup activity without losing control.', Rocket],
-  ['Advanced Controls', 'Fine tune power, latency, network, cleanup, and advanced Windows behavior.', SlidersHorizontal],
-  ['Stability First', 'Risk labels, confirmations, restore options, and transparent notes keep you in control.', ShieldCheck]
+  ['Verified Tweak States', 'Nova loads tweak definitions first, checks what is already active, and avoids misleading default disabled states.', BadgeCheck],
+  ['Backup & Config Saves', 'Manage restore points, backups, and Nova config saves before larger Windows changes.', DatabaseBackup],
+  ['Apps & Startup Control', 'Review installed apps and startup entries so background load stays visible and manageable.', Rocket],
+  ['Clean Script Handling', 'Readable script output, clear error states, and safer execution feedback keep every change understandable.', ShieldCheck],
+  ['Monitoring & Detection', 'Live monitoring and hardware detection show the system context behind your optimization decisions.', MonitorCheck],
+  ['150+ Tweak Catalog', 'Browse focused tweak categories with clear descriptions for latency, network, hardware, cleanup, power, and more.', SlidersHorizontal]
 ];
 
 const freeFeatureCards = [
-  ['System Tweaks', 'Tune Windows core settings with safe, everyday optimizations.'],
-  ['Startup Manager', 'Find and reduce startup load that slows down boot and first launch.'],
-  ['Backup & Restore', 'Create restore points and roll back changes from the free app.'],
-  ['Performance Monitor', 'Track system load and responsiveness before deeper optimization.'],
-  ['System Cleanup', 'Clear temporary files, caches, and avoidable clutter without risky claims.'],
-  ['Game Optimizations', 'Apply gaming-focused Windows settings for smoother sessions.'],
-  ['Power Plans', 'Use balanced performance profiles for desktops and laptops.']
+  {
+    title: 'Real Tweak Status Detection',
+    copy: 'Tweaks are loaded and checked before they are shown, so active changes are not presented as disabled by default.',
+    frame: 'wide',
+    label: 'Tweak cards',
+    image: TWEAKS_MOCKUP_SRC
+  },
+  {
+    title: 'Backup & Config Save Management',
+    copy: 'Keep restore paths and Nova configuration saves organized before changing sensitive Windows settings.',
+    frame: 'tall',
+    label: 'Backups',
+    image: HERO_MOCKUP_SRC
+  },
+  {
+    title: 'Apps & Startup App Management',
+    copy: 'Find installed apps, inspect startup entries, and reduce boot-time clutter from one focused workspace.',
+    frame: 'wide',
+    label: 'Apps',
+    image: TWEAKS_MOCKUP_SRC
+  },
+  {
+    title: 'System Monitoring & Detection',
+    copy: 'See live system signals and detected hardware context before deciding which optimizations fit your PC.',
+    frame: 'wide',
+    label: 'Monitoring',
+    image: HERO_MOCKUP_SRC
+  },
+  {
+    title: 'Design Settings',
+    copy: 'Customize the app experience with design settings that make Nova feel right for your setup.',
+    frame: 'compact',
+    label: 'Settings',
+    image: HERO_MOCKUP_SRC
+  },
+  {
+    title: 'Clear Descriptions Across 150+ Tweaks',
+    copy: 'Understand what each tweak is for with readable descriptions, categories, and practical status labels.',
+    frame: 'tall',
+    label: 'Details',
+    image: TWEAKS_MOCKUP_SRC
+  }
 ];
 
 const premiumFeatureCards = [
-  ['Free Features+', 'Everything included in Nova Free, expanded with stronger Pro-only workflows.'],
-  ['More Powerful Tweaks', 'Unlock more impactful optimization options for users who want deeper control.'],
-  ['Advanced Tweaks', 'Access advanced Windows, latency, power, and system tuning options.'],
-  ['Nova Game Mode', 'Prepare gaming sessions with focused background control and responsiveness-first workflows.'],
-  ['Priority Support', 'Get faster support for account, setup, and optimization questions.'],
-  ['Future Pro Features', 'Keep access to upcoming premium capabilities as NovaTweaks evolves.']
+  {
+    title: 'Free + Stronger Workflows',
+    copy: 'Everything in Nova Free, expanded with deeper optimization paths for users who want more control.',
+    frame: 'wide',
+    label: 'Premium',
+    image: TWEAKS_MOCKUP_SRC
+  },
+  {
+    title: 'More Powerful Tweaks',
+    copy: 'Unlock more impactful latency, power, network, and system tuning options while keeping transparency.',
+    frame: 'tall',
+    label: 'Power tweaks',
+    image: HERO_MOCKUP_SRC
+  },
+  {
+    title: 'Nova Game Mode',
+    copy: 'Prepare gaming sessions with focused background control and responsiveness-first presets.',
+    frame: 'wide',
+    label: 'Game Mode',
+    image: HERO_MOCKUP_SRC
+  },
+  {
+    title: 'Priority Support',
+    copy: 'Get faster help for account, setup, and optimization questions when you need a direct answer.',
+    frame: 'compact',
+    label: 'Support',
+    image: TWEAKS_MOCKUP_SRC
+  },
+  {
+    title: 'Future Premium Updates',
+    copy: 'Keep access to upcoming Premium features as Nova Tweaks evolves.',
+    frame: 'wide',
+    label: 'Updates',
+    image: HERO_MOCKUP_SRC
+  }
 ];
 
 const stats = [
@@ -92,11 +154,11 @@ const testimonials = [
 
 const faqs = [
   ['Is NovaTweaks safe to use?', 'NovaTweaks is designed around transparency, risk labels, confirmations, and restore options so you can understand changes before applying them.'],
-  ['Can I undo changes?', 'Yes. Backup and restore workflows are core to the product, especially for Pro users and advanced tweak profiles.'],
+  ['Can I undo changes?', 'Yes. Backup, restore, and config-save workflows are core to the product, especially before larger optimization passes.'],
   ['Does it work on Windows 10 and 11?', 'NovaTweaks is built for modern Windows systems and supports Windows 10 and Windows 11 workflows.'],
   ['Do I need admin rights?', 'Most system-level optimizations require administrator privileges because Windows protects those settings.'],
   ['Will it increase my FPS?', 'NovaTweaks focuses on cleaner system behavior, smoother frame pacing, lower input delay, and fewer background interruptions rather than unrealistic FPS promises.'],
-  ['What is included in Pro?', 'Pro includes advanced profiles, backup and restore, performance monitoring, priority support, and future Pro features.']
+  ['What is included in Premium?', 'Premium includes everything in Free plus more powerful tweaks, Nova Game Mode, priority support, and future Premium updates.']
 ];
 
 function Logo() {
@@ -168,8 +230,8 @@ function Hero() {
             <ButtonLink href="#features" variant="secondary">View Features</ButtonLink>
           </div>
           <div className="trust-row">
-            <span><b>25K+</b> active users</span>
-            <span><b>4.8/5</b> average rating</span>
+            <span><b>150+</b> tweak catalog</span>
+            <span><b>Real state</b> detection before display</span>
             <span><b>Win 10/11</b> supported</span>
           </div>
         </div>
@@ -182,9 +244,9 @@ function Hero() {
 function Benefits() {
   const items = [
     [Timer, 'Lower Latency', 'Reduce background friction before play.'],
-    [HardDrive, 'Cleaner System', 'Remove clutter with controlled cleanup.'],
-    [Clock3, 'Faster Startup', 'Trim unnecessary boot activity.'],
-    [DatabaseBackup, 'Smart Backups', 'Restore points around important changes.']
+    [Clock3, 'Verified States', 'Tweaks are checked before they are shown.'],
+    [FileText, 'Readable Details', 'Clear descriptions make each change understandable.'],
+    [DatabaseBackup, 'Backup Control', 'Manage restore points and config saves.']
   ];
   return (
     <section className="benefit-section">
@@ -203,7 +265,7 @@ function Features() {
       <div className="section-inner">
         <div className="section-heading reveal">
           <span className="eyebrow">Control with clarity</span>
-          <h2>Powerful Features. Maximum Performance.</h2>
+          <h2>Real Controls. Clear Status. Safer Tweaks.</h2>
         </div>
         <div className="feature-grid">
           {features.map(([title, copy, Icon], index) => (
@@ -226,9 +288,9 @@ function ControlCenter() {
         <div className="split-copy reveal">
           <span className="eyebrow">System command layer</span>
           <h2>A Control Center for Your System</h2>
-          <p>NovaTweaks brings performance, cleanup, backup, and advanced Windows controls into a focused workspace built for repeated use.</p>
+          <p>Nova Tweaks brings status-checked tweaks, app management, startup control, backups, monitoring, and readable script feedback into one focused workspace.</p>
           <ul className="check-list">
-            {['Real-time system overview', 'Smart optimization workflows', 'Detailed tweak controls', 'Secure backup management'].map((item) => <li key={item}><Check size={16} />{item}</li>)}
+            {['Real tweak-state detection', 'Backup and config-save management', 'Apps and startup app management', 'Clean error handling and script feedback'].map((item) => <li key={item}><Check size={16} />{item}</li>)}
           </ul>
           <ButtonLink href="#features" variant="secondary">Explore All Features</ButtonLink>
         </div>
@@ -238,7 +300,7 @@ function ControlCenter() {
             <div className="stack-grid"><div className="metric-ring"><span>92</span><small>System score</small></div><MiniChart /></div>
           </div>
           <div className="product-window stack-card">
-            <div className="window-top"><span>Backups</span><span className="window-status">3 saved</span></div>
+            <div className="window-top"><span>Backups & Config Saves</span><span className="window-status">3 saved</span></div>
             {['Before Gaming Profile', 'Startup Cleanup', 'Network Tune'].map((item) => <div className="backup-row" key={item}><DatabaseBackup size={15} /><span>{item}</span><b>Ready</b></div>)}
           </div>
         </div>
@@ -247,18 +309,14 @@ function ControlCenter() {
   );
 }
 
-function ImagePlaceholder({ label }) {
+function ScreenshotFrame({ card }) {
   return (
-    <div className="image-placeholder" aria-label={`${label} image placeholder`}>
-      <div className="placeholder-screen">
-        <div className="placeholder-top"><span /><span /><span /></div>
-        <div className="placeholder-lines">
-          <i />
-          <i />
-          <i />
-        </div>
+    <div className={`screenshot-frame screenshot-frame-${card.frame || 'wide'}`} aria-label={`${card.label || card.title} interface preview`}>
+      <div className="screenshot-top">
+        <div className="window-dots"><span /><span /><span /></div>
+        <span>{card.label || card.title}</span>
       </div>
-      <span>{label} image</span>
+      <img src={card.image || HERO_MOCKUP_SRC} alt={`${card.title} preview`} loading="lazy" />
     </div>
   );
 }
@@ -280,11 +338,11 @@ function FeatureShowcaseSection({ id, eyebrow, title, copy, cta, cards, premium 
           )}
         </div>
         <div className="image-feature-grid">
-          {cards.map(([titleText, cardCopy], index) => (
-            <article className="image-feature-card reveal" style={{ transitionDelay: `${index * 45}ms` }} key={titleText}>
-              <ImagePlaceholder label={titleText} />
-              <h3>{titleText}</h3>
-              <p>{cardCopy}</p>
+          {cards.map((card, index) => (
+            <article className="image-feature-card reveal" style={{ transitionDelay: `${index * 45}ms` }} key={card.title}>
+              <ScreenshotFrame card={card} />
+              <h3>{card.title}</h3>
+              <p>{card.copy}</p>
             </article>
           ))}
         </div>
@@ -298,8 +356,8 @@ function NovaFreeSection() {
     <FeatureShowcaseSection
       id="nova-free"
       eyebrow="Nova Free"
-      title="Optimize your PC for free."
-      copy="Start with the essentials: safer cleanup, startup control, gaming-focused defaults, power profiles, and visible restore paths without paying first."
+      title="A serious optimization workspace for free."
+      copy="Start with core tweak workflows, real status detection, backups and config saves, app and startup management, monitoring, design settings, and clear descriptions across 150+ tweaks."
       cta="Download Free"
       cards={freeFeatureCards}
     />
@@ -311,8 +369,8 @@ function NovaPremiumSection({ onUpgrade }) {
     <FeatureShowcaseSection
       id="nova-premium"
       eyebrow="Premium features"
-      title="Unlock your PC's full potential."
-      copy="Nova Premium is for users who want deeper control, stronger workflows, account-backed Pro access, and advanced optimization tools without losing transparency."
+      title="Unlock deeper control with Premium."
+      copy="Nova Premium includes everything in Free plus more powerful tweaks, Nova Game Mode, priority support, and future Premium updates."
       cta="Upgrade to Premium"
       cards={premiumFeatureCards}
       premium
@@ -488,15 +546,15 @@ function Pricing({ account, onRequireAuth, onUpgrade }) {
           <article className="price-card reveal">
             <h3>Free</h3>
             <div className="price">$0 <span>/ Forever</span></div>
-            {['Basic optimizations', 'Startup manager', 'System cleanup', 'Backup & restore', 'Performance monitor', 'Community support'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
+            {['Core tweaks with real status detection', 'Backup and config saves', 'Apps and startup app management', 'System monitoring and detection', 'Design settings', '150+ readable tweak descriptions'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
             <a className="btn btn-secondary full" href="#download">Download Free</a>
           </article>
           <article className="price-card price-pro reveal delay-1">
             <div className="popular">Most Popular</div>
-            <h3>Pro</h3>
-            <div className="price">Lifetime <span>/ Pro access</span></div>
-            {['Free features +', 'More Powerful Tweaks', 'Advanced Tweaks', 'Nova Game Mode', 'Priority Support', 'Future Pro features'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
-            <button className="btn btn-primary full" type="button" onClick={() => (account ? onUpgrade() : onRequireAuth())}><span>Get Pro Now</span><ArrowRight size={17} /></button>
+            <h3>Premium</h3>
+            <div className="price">Lifetime <span>/ Premium access</span></div>
+            {['Free +', 'More powerful tweaks', 'Nova Game Mode', 'Priority support', 'Future Premium updates'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
+            <button className="btn btn-primary full" type="button" onClick={() => (account ? onUpgrade() : onRequireAuth())}><span>Get Premium Now</span><ArrowRight size={17} /></button>
           </article>
         </div>
       </div>
@@ -575,7 +633,7 @@ function AuthModal({ open, onClose, onAuth }) {
         setView('login');
       }
     } catch (error) {
-      setStatus(formatAuthError(error.message));
+      setStatus(formatAuthError(error));
     } finally {
       setLoading(false);
     }
@@ -628,12 +686,12 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
           <div className="account-card">
             <div className="account-head"><div className="account-avatar"><User size={22} /></div><div><b>{account.username || 'Nova user'}</b><span>{account.email || 'Email unavailable'}</span></div></div>
             <div className="account-data">
-              <span>Plan status <b>{account.premium ? 'Pro' : 'Free'}</b></span>
-              <span>Product access <b>{account.premium ? 'Pro downloads enabled' : 'Free download enabled'}</b></span>
+              <span>Plan status <b>{account.premium ? 'Premium' : 'Free'}</b></span>
+              <span>Product access <b>{account.premium ? 'Premium downloads enabled' : 'Free download enabled'}</b></span>
               <span>Account ID <b>{account.id || 'Unavailable'}</b></span>
             </div>
             <div className="account-actions">
-              {!account.premium ? <button className="btn btn-primary" type="button" onClick={onUpgrade}>Get Pro</button> : null}
+              {!account.premium ? <button className="btn btn-primary" type="button" onClick={onUpgrade}>Get Premium</button> : null}
               <button className="btn btn-secondary" type="button" onClick={onLogout}><LogOut size={16} />Sign Out</button>
             </div>
           </div>
@@ -688,12 +746,17 @@ function Footer() {
 }
 
 function formatAuthError(code = '') {
-  const normalized = String(code).toLowerCase();
-  if (normalized.includes('invalid_credentials')) return 'Invalid username/email or password.';
+  const source = typeof code === 'object' && code
+    ? `${code.code || ''} ${code.message || ''}`
+    : String(code || '');
+  const normalized = source.toLowerCase();
+  if (normalized.includes('invalid_credentials') || normalized.includes('invalid_login')) return 'Invalid username/email or password.';
   if (normalized.includes('email_not_verified')) return 'Please verify your email before signing in.';
+  if (normalized.includes('token_missing')) return 'Login succeeded, but the backend did not return a usable session token.';
+  if (normalized.includes('api_network_error')) return 'Nova API is not reachable. Please make sure the local API server is running.';
   if (normalized.includes('weak_password')) return 'Password must include uppercase, lowercase, number, and special character.';
-  if (normalized.includes('user_already_exists')) return 'An account with that email or username already exists.';
-  return code || 'Something went wrong. Please try again.';
+  if (normalized.includes('user_already_exists') || normalized.includes('already_registered')) return 'An account with that email or username already exists.';
+  return source.trim() || 'Something went wrong. Please try again.';
 }
 
 function App() {
@@ -735,7 +798,7 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  const accountLabel = useMemo(() => account?.premium ? 'Pro' : account ? 'Free' : '', [account]);
+  const accountLabel = useMemo(() => account?.premium ? 'Premium' : account ? 'Free' : '', [account]);
 
   async function handleUpgrade() {
     if (!account) {
@@ -747,11 +810,11 @@ function App() {
       if (checkout.checkoutUrl) {
         window.location.href = checkout.checkoutUrl;
       } else if (checkout.status === 'already_premium') {
-        setNotice('Your account already has Pro access.');
+        setNotice('Your account already has Premium access.');
         await loadAccount();
       }
     } catch (error) {
-      setNotice(formatAuthError(error.message));
+      setNotice(formatAuthError(error));
     }
   }
 
