@@ -171,7 +171,8 @@ function normalizeUserPayload(payload) {
     username: user?.username || '',
     email: user?.email || '',
     premium: normalizeBoolean(user?.premium),
-    createdAt: user?.created_at || user?.createdAt || ''
+    createdAt: user?.created_at || user?.createdAt || '',
+    avatarUrl: user?.avatarUrl || user?.avatar_url || ''
   };
 }
 

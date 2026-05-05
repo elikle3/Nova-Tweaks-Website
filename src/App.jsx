@@ -1,15 +1,19 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   BadgeCheck,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   DatabaseBackup,
   Download,
   FileText,
+  Gem,
   Lock,
   LogOut,
+  Mail,
   Menu,
   MonitorCheck,
   Rocket,
@@ -34,6 +38,17 @@ import {
 const APP_LOGO_SRC = new URL('./assets/logo.ico', import.meta.url).href;
 const HERO_MOCKUP_SRC = new URL('./assets/website-mockup-transparent.png', import.meta.url).href;
 const TWEAKS_MOCKUP_SRC = new URL('./assets/tweaks-mockup-transparent.png', import.meta.url).href;
+const PICTURE_TWEAK_STATES_SRC = new URL('./assets/pictures/tweakstates.png', import.meta.url).href;
+const PICTURE_BACKUP_HISTORY_SRC = new URL('./assets/pictures/backuphistory.png', import.meta.url).href;
+const PICTURE_APPS_SRC = new URL('./assets/pictures/apps.png', import.meta.url).href;
+const PICTURE_PERFORMANCE_OVERVIEW_SRC = new URL('./assets/pictures/performance overview.png', import.meta.url).href;
+const PICTURE_SYSTEM_DETECTION_SRC = new URL('./assets/pictures/system detection.png', import.meta.url).href;
+const PICTURE_SETTINGS_SRC = new URL('./assets/pictures/settings.png', import.meta.url).href;
+const PICTURE_TWEAK_DESCRIPTION_SRCS = [
+  new URL('./assets/pictures/tweakdescription.png', import.meta.url).href,
+  new URL('./assets/pictures/tweakdescription2.png', import.meta.url).href,
+  new URL('./assets/pictures/tweakdescription3.png', import.meta.url).href
+];
 
 const navItems = [
   ['Features', '#features'],
@@ -59,43 +74,43 @@ const freeFeatureCards = [
     title: 'Real Tweak Status Detection',
     copy: 'Tweaks are loaded and checked before they are shown, so active changes are not presented as disabled by default.',
     frame: 'wide',
-    label: 'Tweak cards',
-    image: TWEAKS_MOCKUP_SRC
+    label: 'Tweak states',
+    image: PICTURE_TWEAK_STATES_SRC
   },
   {
     title: 'Backup & Config Save Management',
     copy: 'Keep restore paths and Nova configuration saves organized before changing sensitive Windows settings.',
     frame: 'tall',
-    label: 'Backups',
-    image: HERO_MOCKUP_SRC
+    label: 'Backup history',
+    image: PICTURE_BACKUP_HISTORY_SRC
   },
   {
     title: 'Apps & Startup App Management',
     copy: 'Find installed apps, inspect startup entries, and reduce boot-time clutter from one focused workspace.',
     frame: 'wide',
     label: 'Apps',
-    image: TWEAKS_MOCKUP_SRC
+    image: PICTURE_APPS_SRC
   },
   {
     title: 'System Monitoring & Detection',
     copy: 'See live system signals and detected hardware context before deciding which optimizations fit your PC.',
     frame: 'wide',
     label: 'Monitoring',
-    image: HERO_MOCKUP_SRC
+    images: [PICTURE_PERFORMANCE_OVERVIEW_SRC, PICTURE_SYSTEM_DETECTION_SRC]
   },
   {
     title: 'Design Settings',
     copy: 'Customize the app experience with design settings that make Nova feel right for your setup.',
     frame: 'compact',
     label: 'Settings',
-    image: HERO_MOCKUP_SRC
+    image: PICTURE_SETTINGS_SRC
   },
   {
     title: 'Clear Descriptions Across 150+ Tweaks',
     copy: 'Understand what each tweak is for with readable descriptions, categories, and practical status labels.',
     frame: 'tall',
-    label: 'Details',
-    image: TWEAKS_MOCKUP_SRC
+    label: 'Descriptions',
+    images: PICTURE_TWEAK_DESCRIPTION_SRCS
   }
 ];
 
@@ -104,36 +119,31 @@ const premiumFeatureCards = [
     title: 'Free + Stronger Workflows',
     copy: 'Everything in Nova Free, expanded with deeper optimization paths for users who want more control.',
     frame: 'wide',
-    label: 'Premium',
-    image: TWEAKS_MOCKUP_SRC
+    label: 'Premium'
   },
   {
     title: 'More Powerful Tweaks',
     copy: 'Unlock more impactful latency, power, network, and system tuning options while keeping transparency.',
     frame: 'tall',
-    label: 'Power tweaks',
-    image: HERO_MOCKUP_SRC
+    label: 'Power tweaks'
   },
   {
     title: 'Nova Game Mode',
     copy: 'Prepare gaming sessions with focused background control and responsiveness-first presets.',
     frame: 'wide',
-    label: 'Game Mode',
-    image: HERO_MOCKUP_SRC
+    label: 'Game Mode'
   },
   {
     title: 'Priority Support',
     copy: 'Get faster help for account, setup, and optimization questions when you need a direct answer.',
     frame: 'compact',
-    label: 'Support',
-    image: TWEAKS_MOCKUP_SRC
+    label: 'Support'
   },
   {
     title: 'Future Premium Updates',
     copy: 'Keep access to upcoming Premium features as Nova Tweaks evolves.',
     frame: 'wide',
-    label: 'Updates',
-    image: HERO_MOCKUP_SRC
+    label: 'Updates'
   }
 ];
 
@@ -179,7 +189,130 @@ function ButtonLink({ children, href = '#download', variant = 'primary', icon: I
   );
 }
 
-function Nav({ onSignIn, account }) {
+function getAccountName(account) {
+  return account?.username || 'Nova user';
+}
+
+function getAccountInitial(account) {
+  return getAccountName(account).trim().slice(0, 1).toUpperCase() || 'N';
+}
+
+function getAccountAvatarUrl(account) {
+  return typeof account?.avatarUrl === 'string' ? account.avatarUrl.trim() : '';
+}
+
+function AccountAvatar({ account, size = '' }) {
+  const avatarUrl = getAccountAvatarUrl(account);
+  const initial = getAccountInitial(account);
+  return (
+    <span className={`profile-avatar ${size ? `profile-avatar-${size}` : ''}`} aria-hidden="true">
+      {avatarUrl ? <img src={avatarUrl} alt="" /> : initial}
+    </span>
+  );
+}
+
+function PlanBadge({ premium, withIcon = false }) {
+  return (
+    <span className={`profile-plan-badge ${premium ? 'profile-plan-premium' : ''}`}>
+      {withIcon && premium ? <Gem size={12} /> : null}
+      {premium ? 'Premium' : 'Free'}
+    </span>
+  );
+}
+
+function ProfileMenu({ account, accountLoading, onSignIn, onOpenProfile, onUpgrade, onLogout }) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
+  const accountName = getAccountName(account);
+  const accountEmail = account?.email || 'Email unavailable';
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    function handlePointerDown(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
+
+  if (!account) {
+    return (
+      <button className="profile-trigger profile-trigger-guest" type="button" onClick={onSignIn} aria-label="Sign in to Nova account">
+        <User size={18} />
+      </button>
+    );
+  }
+
+  function runMenuAction(action) {
+    setOpen(false);
+    action?.();
+  }
+
+  return (
+    <div className="profile-menu" ref={menuRef}>
+      <button
+        className={`profile-trigger ${open ? 'profile-trigger-open' : ''}`}
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="Open profile menu"
+      >
+        <AccountAvatar account={account} />
+        <span className="profile-trigger-copy">
+          <span>{accountName}</span>
+        </span>
+        <ChevronDown className="profile-chevron" size={16} />
+      </button>
+
+      {open ? (
+        <div className="profile-dropdown" role="menu">
+          <div className="profile-dropdown-head">
+            <AccountAvatar account={account} size="large" />
+            <div className="profile-dropdown-identity">
+              <b>{accountName}</b>
+              <span>{accountEmail}</span>
+              <PlanBadge premium={account.premium} withIcon />
+            </div>
+          </div>
+
+          <div className="profile-dropdown-actions">
+            <button type="button" role="menuitem" onClick={() => runMenuAction(onOpenProfile)}>
+              <User size={16} />
+              <span>Profile</span>
+            </button>
+            {!account.premium ? (
+              <button type="button" role="menuitem" onClick={() => runMenuAction(onUpgrade)}>
+                <Gem size={16} />
+                <span>Upgrade to Premium</span>
+              </button>
+            ) : null}
+            <button type="button" role="menuitem" onClick={() => runMenuAction(onLogout)} disabled={accountLoading}>
+              <LogOut size={16} />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function Nav({ onSignIn, onOpenProfile, onUpgrade, onLogout, account, accountLoading }) {
   const [open, setOpen] = useState(false);
   return (
     <header className="nav-shell">
@@ -192,7 +325,7 @@ function Nav({ onSignIn, account }) {
           {navItems.map(([label, href]) => <a key={label} href={href} onClick={() => setOpen(false)}>{label}</a>)}
         </div>
         <div className="nav-actions">
-          <button className="text-action" type="button" onClick={onSignIn}>{account ? 'Account' : 'Sign In'}</button>
+          <ProfileMenu account={account} accountLoading={accountLoading} onSignIn={onSignIn} onOpenProfile={onOpenProfile} onUpgrade={onUpgrade} onLogout={onLogout} />
           <a className="btn btn-small btn-primary" href="#download"><Download size={16} />Download Now</a>
         </div>
       </nav>
@@ -310,13 +443,50 @@ function ControlCenter() {
 }
 
 function ScreenshotFrame({ card }) {
+  const images = card.images?.length ? card.images : (card.image ? [card.image] : []);
+  const [activeImage, setActiveImage] = useState(0);
+  const hasMultipleImages = images.length > 1;
+  const imageSrc = images[activeImage] || images[0] || '';
+
+  function showPrevious(event) {
+    event.stopPropagation();
+    setActiveImage((value) => (value === 0 ? images.length - 1 : value - 1));
+  }
+
+  function showNext(event) {
+    event.stopPropagation();
+    setActiveImage((value) => (value + 1) % images.length);
+  }
+
   return (
     <div className={`screenshot-frame screenshot-frame-${card.frame || 'wide'}`} aria-label={`${card.label || card.title} interface preview`}>
       <div className="screenshot-top">
         <div className="window-dots"><span /><span /><span /></div>
         <span>{card.label || card.title}</span>
       </div>
-      <img src={card.image || HERO_MOCKUP_SRC} alt={`${card.title} preview`} loading="lazy" />
+      {imageSrc ? (
+        <img src={imageSrc} alt={`${card.title} preview ${activeImage + 1}`} loading="lazy" />
+      ) : (
+        <div className="screenshot-placeholder" aria-hidden="true">
+          <div className="placeholder-screen">
+            <div className="placeholder-top"><span /><span /><span /></div>
+            <div className="placeholder-lines"><i /><i /><i /></div>
+          </div>
+        </div>
+      )}
+      {hasMultipleImages ? (
+        <>
+          <button className="screenshot-nav screenshot-nav-prev" type="button" onClick={showPrevious} aria-label={`Show previous ${card.title} screenshot`}>
+            <ChevronLeft size={17} />
+          </button>
+          <button className="screenshot-nav screenshot-nav-next" type="button" onClick={showNext} aria-label={`Show next ${card.title} screenshot`}>
+            <ChevronRight size={17} />
+          </button>
+          <div className="screenshot-dots" aria-hidden="true">
+            {images.map((image, index) => <span className={index === activeImage ? 'screenshot-dot-active' : ''} key={image} />)}
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }
@@ -673,6 +843,57 @@ function AuthModal({ open, onClose, onAuth }) {
   );
 }
 
+function ProfileModal({ open, account, onClose, onUpgrade, onLogout }) {
+  if (!open || !account) return null;
+
+  const accountName = getAccountName(account);
+
+  return (
+    <div className="modal-backdrop">
+      <div className="profile-modal" role="dialog" aria-modal="true" aria-label="Nova account profile">
+        <button className="modal-close" type="button" onClick={onClose} aria-label="Close"><X size={18} /></button>
+        <div className="profile-modal-hero">
+          <AccountAvatar account={account} size="modal" />
+          <div className="profile-modal-title">
+            <h2>{accountName}</h2>
+            <p>{account.email || 'Email unavailable'}</p>
+            <PlanBadge premium={account.premium} />
+          </div>
+        </div>
+
+        <div className="profile-modal-grid">
+          <div className="profile-fact">
+            <Mail size={17} />
+            <span>Email</span>
+            <b>{account.email || 'Unavailable'}</b>
+          </div>
+          <div className="profile-fact">
+            <ShieldCheck size={17} />
+            <span>Plan status</span>
+            <b>{account.premium ? 'Premium' : 'Free'}</b>
+          </div>
+          <div className="profile-fact">
+            <User size={17} />
+            <span>Account ID</span>
+            <b>{account.id || 'Unavailable'}</b>
+          </div>
+          <div className="profile-fact">
+            <BadgeCheck size={17} />
+            <span>Product access</span>
+            <b>{account.premium ? 'Premium enabled' : 'Free enabled'}</b>
+          </div>
+        </div>
+
+        <div className="profile-modal-actions">
+          {!account.premium ? <button className="btn btn-primary" type="button" onClick={onUpgrade}><Gem size={16} />Upgrade to Premium</button> : null}
+          <button className="btn btn-secondary" type="button" onClick={onLogout}><LogOut size={16} />Logout</button>
+          <button className="btn btn-secondary" type="button" onClick={onClose}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade }) {
   return (
     <section className="section account-section" id="account">
@@ -684,7 +905,7 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
         </div>
         {account ? (
           <div className="account-card">
-            <div className="account-head"><div className="account-avatar"><User size={22} /></div><div><b>{account.username || 'Nova user'}</b><span>{account.email || 'Email unavailable'}</span></div></div>
+            <div className="account-head"><AccountAvatar account={account} size="account" /><div><b>{account.username || 'Nova user'}</b><span>{account.email || 'Email unavailable'}</span></div></div>
             <div className="account-data">
               <span>Plan status <b>{account.premium ? 'Premium' : 'Free'}</b></span>
               <span>Product access <b>{account.premium ? 'Premium downloads enabled' : 'Free download enabled'}</b></span>
@@ -761,6 +982,7 @@ function formatAuthError(code = '') {
 
 function App() {
   const [authOpen, setAuthOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [account, setAccount] = useState(null);
   const [accountLoading, setAccountLoading] = useState(Boolean(getStoredToken()));
   const [notice, setNotice] = useState('');
@@ -798,8 +1020,6 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  const accountLabel = useMemo(() => account?.premium ? 'Premium' : account ? 'Free' : '', [account]);
-
   async function handleUpgrade() {
     if (!account) {
       setAuthOpen(true);
@@ -818,11 +1038,23 @@ function App() {
     }
   }
 
+  function handleLogout() {
+    clearToken();
+    setAccount(null);
+    setProfileOpen(false);
+  }
+
   return (
     <>
-      <Nav onSignIn={() => setAuthOpen(true)} account={account} />
+      <Nav
+        onSignIn={() => setAuthOpen(true)}
+        onOpenProfile={() => setProfileOpen(true)}
+        onUpgrade={handleUpgrade}
+        onLogout={handleLogout}
+        account={account}
+        accountLoading={accountLoading}
+      />
       {notice ? <button className="site-notice" type="button" onClick={() => setNotice('')}>{notice}<X size={15} /></button> : null}
-      {accountLabel ? <a className="account-pill" href="#account">{accountLabel} account</a> : null}
       <main>
         <Hero />
         <Benefits />
@@ -834,11 +1066,12 @@ function App() {
         <Pricing account={account} onRequireAuth={() => setAuthOpen(true)} onUpgrade={handleUpgrade} />
         <Testimonials />
         <FAQ />
-        <AccountSection account={account} accountLoading={accountLoading} onSignIn={() => setAuthOpen(true)} onLogout={() => { clearToken(); setAccount(null); }} onUpgrade={handleUpgrade} />
-        <FinalCTA onSignIn={() => setAuthOpen(true)} />
+        <AccountSection account={account} accountLoading={accountLoading} onSignIn={() => setAuthOpen(true)} onLogout={handleLogout} onUpgrade={handleUpgrade} />
+        <FinalCTA onSignIn={() => (account ? setProfileOpen(true) : setAuthOpen(true))} />
       </main>
       <Footer />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} onAuth={loadAccount} />
+      <ProfileModal open={profileOpen} account={account} onClose={() => setProfileOpen(false)} onUpgrade={handleUpgrade} onLogout={handleLogout} />
     </>
   );
 }
