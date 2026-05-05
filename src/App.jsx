@@ -17,7 +17,6 @@ import {
   Rocket,
   ShieldCheck,
   SlidersHorizontal,
-  Sparkles,
   Star,
   Timer,
   User,
@@ -34,6 +33,9 @@ import {
   login,
   register
 } from './lib/api';
+
+const APP_LOGO_SRC = new URL('./assets/logo.ico', import.meta.url).href;
+const HERO_MOCKUP_SRC = new URL('./assets/website-mockup-transparent.png', import.meta.url).href;
 
 const navItems = [
   ['Features', '#features'],
@@ -100,8 +102,8 @@ const faqs = [
 function Logo() {
   return (
     <a className="logo" href="#top" aria-label="NovaTweaks home">
-      <span className="logo-mark"><Sparkles size={18} /></span>
-      <span>NovaTweaks</span>
+      <span className="logo-mark"><img src={APP_LOGO_SRC} alt="" /></span>
+      <span>Nova Tweaks</span>
     </a>
   );
 }
@@ -148,31 +150,7 @@ function MiniChart() {
 
 function DashboardMockup() {
   return (
-    <div className="product-window hero-window">
-      <div className="window-top">
-        <div className="window-dots"><span /><span /><span /></div>
-        <span>NovaTweaks Control Center</span>
-        <span className="window-status">Live</span>
-      </div>
-      <div className="dashboard-grid">
-        <div className="dashboard-main">
-          <div className="panel-heading"><span>Performance Profile</span><b>Gaming</b></div>
-          <MiniChart />
-        </div>
-        {[
-          [Gauge, 'Latency', 'Stable'],
-          [Cpu, 'CPU Plan', 'Balanced+'],
-          [ShieldCheck, 'Restore', 'Ready']
-        ].map(([Icon, label, value]) => (
-          <div className="dashboard-stat" key={label}><Icon size={20} /><span>{label}</span><b>{value}</b></div>
-        ))}
-        <div className="dashboard-list">
-          {['Game services tuned', 'Startup reviewed', 'Backup checkpoint active'].map((item) => (
-            <div key={item}><Check size={14} />{item}</div>
-          ))}
-        </div>
-      </div>
-    </div>
+    <img className="hero-mockup-image" src={HERO_MOCKUP_SRC} alt="Nova Tweaks dashboard interface preview" />
   );
 }
 
@@ -183,7 +161,7 @@ function Hero() {
       <div className="section-inner hero-inner">
         <div className="hero-copy reveal">
           <div className="badge">Windows Optimization App for Gamers & Power Users</div>
-          <h1>Optimize Windows.<br />Dominate Every Match.</h1>
+          <h1>Optimize Windows.<br />Keep Control.</h1>
           <p>Tune latency, clean up background load, improve responsiveness, and keep every system change under your control with clear safety checks and restore workflows.</p>
           <div className="hero-actions">
             <ButtonLink href="#download" icon={Download}>Download Now</ButtonLink>
