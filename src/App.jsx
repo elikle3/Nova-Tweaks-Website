@@ -50,6 +50,11 @@ const PICTURE_TWEAK_DESCRIPTION_SRCS = [
   new URL('./assets/pictures/tweakdescription3.png', import.meta.url).href
 ];
 
+const DISCORD_URL = 'https://discord.gg/AkH2jJsF3M';
+const SUPPORT_EMAIL = 'support@nova-tweaks.com';
+const CONTACT_EMAIL = 'contact@nova-tweaks.com';
+const PREMIUM_PRICE_LABEL = '19,99€';
+
 const navItems = [
   ['Features', '#features'],
   ['Free', '#nova-free'],
@@ -715,14 +720,14 @@ function Pricing({ account, onRequireAuth, onUpgrade }) {
         <div className="pricing-grid">
           <article className="price-card reveal">
             <h3>Free</h3>
-            <div className="price">$0 <span>/ Forever</span></div>
+            <div className="price">0€ <span>/ Forever</span></div>
             {['Core tweaks with real status detection', 'Backup and config saves', 'Apps and startup app management', 'System monitoring and detection', 'Design settings', '150+ readable tweak descriptions'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
             <a className="btn btn-secondary full" href="#download">Download Free</a>
           </article>
           <article className="price-card price-pro reveal delay-1">
             <div className="popular">Most Popular</div>
             <h3>Premium</h3>
-            <div className="price">Lifetime <span>/ Premium access</span></div>
+            <div className="price">{PREMIUM_PRICE_LABEL} <span>/ Lifetime access</span></div>
             {['Free +', 'More powerful tweaks', 'Nova Game Mode', 'Priority support', 'Future Premium updates'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
             <button className="btn btn-primary full" type="button" onClick={() => (account ? onUpgrade() : onRequireAuth())}><span>Get Premium Now</span><ArrowRight size={17} /></button>
           </article>
@@ -929,7 +934,7 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
   );
 }
 
-function FinalCTA({ onSignIn }) {
+function FinalCTA({ onSignIn, onUpgrade }) {
   return (
     <section className="section final-cta" id="download">
       <div className="section-inner cta-panel reveal">
@@ -938,7 +943,8 @@ function FinalCTA({ onSignIn }) {
         <p>Download NovaTweaks, keep changes transparent, and make your Windows setup feel sharper for every session.</p>
         <div className="hero-actions">
           <a className="btn btn-primary" href="/downloads/NovaTweaks-Setup.exe"><Download size={17} />Download Now</a>
-          <a className="btn btn-secondary" href="https://discord.gg/novatweaks" target="_blank" rel="noreferrer">Join Discord</a>
+          <button className="btn btn-secondary" type="button" onClick={onUpgrade}><Gem size={17} />Upgrade to Premium</button>
+          <a className="btn btn-secondary" href={DISCORD_URL} target="_blank" rel="noreferrer">Join Discord</a>
           <button className="btn btn-secondary" type="button" onClick={onSignIn}>Open Account</button>
         </div>
       </div>
@@ -948,17 +954,42 @@ function FinalCTA({ onSignIn }) {
 
 function Footer() {
   const columns = [
-    ['Product', ['Features', 'Performance', 'Pricing', 'Download']],
-    ['Resources', ['Documentation', 'Support', 'Changelog', 'Status']],
-    ['Company', ['About', 'Contact', 'Privacy', 'Terms']],
-    ['Community', ['Discord', 'YouTube', 'GitHub', 'Feedback']]
+    ['Product', [
+      ['Features', '#features'],
+      ['Performance', '#performance'],
+      ['Pricing', '#pricing'],
+      ['Download', '#download']
+    ]],
+    ['Resources', [
+      ['Documentation', '#faq'],
+      ['Support', `mailto:${SUPPORT_EMAIL}`],
+      ['Changelog', '#top'],
+      ['Status', '#top']
+    ]],
+    ['Company', [
+      ['About', '#top'],
+      ['Contact', `mailto:${CONTACT_EMAIL}`],
+      ['Privacy', '#top'],
+      ['Terms', '#top']
+    ]],
+    ['Community', [
+      ['Discord', DISCORD_URL],
+      ['YouTube', '#top'],
+      ['GitHub', '#top'],
+      ['Feedback', `mailto:${CONTACT_EMAIL}`]
+    ]]
   ];
   return (
     <footer className="footer">
       <div className="section-inner footer-grid">
         <div><Logo /><p>Premium Windows optimization and control for gamers and power users.</p></div>
         {columns.map(([title, links]) => (
-          <div key={title}><h3>{title}</h3>{links.map((link) => <a key={link} href={link === 'Download' ? '#download' : '#top'}>{link}</a>)}</div>
+          <div key={title}>
+            <h3>{title}</h3>
+            {links.map(([label, href]) => (
+              <a key={label} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel={href.startsWith('http') ? 'noreferrer' : undefined}>{label}</a>
+            ))}
+          </div>
         ))}
       </div>
       <div className="footer-bottom">(c) 2026 NovaTweaks. All rights reserved.</div>
@@ -1067,7 +1098,7 @@ function App() {
         <Testimonials />
         <FAQ />
         <AccountSection account={account} accountLoading={accountLoading} onSignIn={() => setAuthOpen(true)} onLogout={handleLogout} onUpgrade={handleUpgrade} />
-        <FinalCTA onSignIn={() => (account ? setProfileOpen(true) : setAuthOpen(true))} />
+        <FinalCTA onSignIn={() => (account ? setProfileOpen(true) : setAuthOpen(true))} onUpgrade={handleUpgrade} />
       </main>
       <Footer />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} onAuth={loadAccount} />
