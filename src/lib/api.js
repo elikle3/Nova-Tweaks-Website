@@ -2,7 +2,9 @@ const DEFAULT_API_BASE_URL = 'https://api.nova-tweaks.com';
 const TOKEN_KEY = 'nova_website_token';
 
 export function getApiBaseUrl() {
-  return (import.meta.env.VITE_NOVA_API_URL || DEFAULT_API_BASE_URL).replace(/\/+$/, '');
+  const configuredUrl = import.meta.env.VITE_NOVA_API_URL;
+  const fallbackUrl = import.meta.env.DEV ? '/api' : DEFAULT_API_BASE_URL;
+  return (configuredUrl || fallbackUrl).replace(/\/+$/, '');
 }
 
 export function getStoredToken() {
@@ -294,5 +296,19 @@ export async function createPremiumCheckout() {
     checkoutUrl: data?.checkoutUrl || data?.checkout_url || payload?.checkoutUrl || payload?.checkout_url || '',
     checkoutSessionId: data?.checkoutSessionId || data?.checkout_session_id || payload?.checkoutSessionId || payload?.checkout_session_id || '',
     status: data?.status || payload?.status || ''
+  };
+}
+
+export async function getLatestUpdate() {
+  const payload = await request('/update');
+  const data = payload?.data && typeof payload.data === 'object' ? payload.data : payload;
+  return {
+    version: data?.version || data?.latestVersion || '',
+    downloadUrl: data?.downloadUrl || data?.download_url || '/downloads/NovaTweaks-Setup.exe',
+    sha256: data?.sha256 || data?.checksumSha256 || data?.checksum_sha256 || '',
+    releaseNotes: data?.releaseNotes || '',
+    minimumSupportedVersion: data?.minimumSupportedVersion || data?.minimum_supported_version || '',
+    updatedAt: data?.updatedAt || data?.updated_at || '',
+    notes: Array.isArray(data?.notes) ? data.notes : []
   };
 }

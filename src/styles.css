@@ -1473,6 +1473,57 @@ button {
   color: var(--accent);
 }
 
+.legal-section {
+  padding-top: 42px;
+}
+
+.legal-panel {
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  padding: 38px;
+}
+
+.legal-panel h2 {
+  margin: 8px 0 12px;
+}
+
+.legal-panel p {
+  color: var(--muted);
+}
+
+.legal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.legal-grid article {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--bg) 44%, transparent);
+  padding: 18px;
+}
+
+.legal-grid svg {
+  color: var(--accent);
+}
+
+.legal-grid h3 {
+  margin: 12px 0 8px;
+}
+
+.legal-grid a {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.legal-disclaimer {
+  margin-top: 18px;
+  font-size: 0.86rem;
+}
+
 .final-cta {
   padding-top: 48px;
 }
@@ -1489,6 +1540,61 @@ button {
 .cta-panel .hero-actions {
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.download-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 24px auto 0;
+}
+
+.download-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  color: var(--muted);
+  padding: 8px 12px;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.download-release-note,
+.download-fineprint {
+  max-width: 760px;
+  margin: 18px auto 0;
+  color: var(--muted);
+}
+
+.download-fineprint {
+  font-size: 0.82rem;
+  color: var(--faint);
+}
+
+.checksum-box {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  max-width: 760px;
+  margin: 18px auto 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 76%, transparent);
+  padding: 12px 14px;
+  color: var(--muted);
+  text-align: left;
+}
+
+.checksum-box code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-size: 0.8rem;
 }
 
 .footer {
@@ -1843,6 +1949,7 @@ button {
   .benefit-strip,
   .feature-grid,
   .testimonial-grid,
+  .legal-grid,
   .footer-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1885,6 +1992,7 @@ button {
   .feature-grid,
   .image-feature-grid,
   .testimonial-grid,
+  .legal-grid,
   .footer-grid,
   .stack-grid,
   .dashboard-grid {
@@ -1899,8 +2007,17 @@ button {
   }
 
   .cta-panel,
-  .account-panel {
+  .account-panel,
+  .legal-panel {
     padding: 24px;
+  }
+
+  .checksum-box {
+    grid-template-columns: auto 1fr;
+  }
+
+  .checksum-box code {
+    grid-column: 1 / -1;
   }
 
   .performance-chart {

@@ -10,6 +10,7 @@ import {
   DatabaseBackup,
   Download,
   FileText,
+  Hash,
   Gem,
   Lock,
   LogOut,
@@ -30,6 +31,7 @@ import {
   createPremiumCheckout,
   forgotPassword,
   getCurrentUser,
+  getLatestUpdate,
   getStoredToken,
   login,
   register
@@ -934,19 +936,91 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
   );
 }
 
+function LegalNotice() {
+  return (
+    <section className="section legal-section" id="legal">
+      <div className="section-inner legal-panel reveal">
+        <div>
+          <span className="eyebrow">Beta transparency</span>
+          <h2>Privacy, Terms, and Support Before Public Release</h2>
+          <p>Nova Tweaks stores account, license, device-binding, diagnostic, and local backup data only for product access, safety, support, and troubleshooting workflows.</p>
+        </div>
+        <div className="legal-grid">
+          <article>
+            <ShieldCheck size={20} />
+            <h3>Privacy baseline</h3>
+            <p>Diagnostics are redacted, local token storage uses the desktop secure store, and account export/delete workflows are part of the release checklist.</p>
+          </article>
+          <article>
+            <FileText size={20} />
+            <h3>Terms and safety</h3>
+            <p>System-level tweaks require administrator rights and can affect Windows behavior. Beta users should keep restore points and backups available.</p>
+          </article>
+          <article>
+            <Mail size={20} />
+            <h3>Support contact</h3>
+            <p>Support: <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a><br />Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+          </article>
+        </div>
+        <p className="legal-disclaimer">Public privacy policy, terms, imprint, and processor disclosures must be reviewed by counsel before a non-beta launch.</p>
+      </div>
+    </section>
+  );
+}
+
 function FinalCTA({ onSignIn, onUpgrade }) {
+  const [updateInfo, setUpdateInfo] = useState({
+    version: '1.0.0',
+    downloadUrl: '/downloads/NovaTweaks-Setup.exe',
+    sha256: '',
+    releaseNotes: 'Desktop beta for Windows 10 and Windows 11.',
+    minimumSupportedVersion: '1.0.0'
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    getLatestUpdate()
+      .then((nextInfo) => {
+        if (!cancelled) {
+          setUpdateInfo((current) => ({ ...current, ...nextInfo }));
+        }
+      })
+      .catch(() => {
+        // Keep static download metadata if the API is unreachable.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const downloadHref = updateInfo.downloadUrl || '/downloads/NovaTweaks-Setup.exe';
+
   return (
     <section className="section final-cta" id="download">
       <div className="section-inner cta-panel reveal">
         <BadgeCheck size={34} />
-        <h2>Ready to unlock your PC's full potential?</h2>
-        <p>Download NovaTweaks, keep changes transparent, and make your Windows setup feel sharper for every session.</p>
+        <h2>Nova Tweaks Desktop Beta</h2>
+        <p>Download the Windows beta, verify the checksum, and keep changes transparent with backups, risk confirmations, compatibility warnings, and diagnostics.</p>
+        <div className="download-meta" aria-label="Desktop beta download details">
+          <span><MonitorCheck size={15} />Windows 10 / 11 x64</span>
+          <span><FileText size={15} />Version {updateInfo.version || '1.0.0'}</span>
+          <span><ShieldCheck size={15} />Manual beta update</span>
+        </div>
+        {updateInfo.releaseNotes ? <p className="download-release-note">{updateInfo.releaseNotes}</p> : null}
+        {updateInfo.sha256 ? (
+          <div className="checksum-box">
+            <Hash size={16} />
+            <span>SHA256</span>
+            <code>{updateInfo.sha256}</code>
+          </div>
+        ) : null}
         <div className="hero-actions">
-          <a className="btn btn-primary" href="/downloads/NovaTweaks-Setup.exe"><Download size={17} />Download Now</a>
+          <a className="btn btn-primary" href={downloadHref}><Download size={17} />Download Beta</a>
           <button className="btn btn-secondary" type="button" onClick={onUpgrade}><Gem size={17} />Upgrade to Premium</button>
           <a className="btn btn-secondary" href={DISCORD_URL} target="_blank" rel="noreferrer">Join Discord</a>
           <button className="btn btn-secondary" type="button" onClick={onSignIn}>Open Account</button>
         </div>
+        <p className="download-fineprint">Beta builds are distributed from this website. Review release notes and checksum before installing.</p>
       </div>
     </section>
   );
@@ -969,8 +1043,8 @@ function Footer() {
     ['Company', [
       ['About', '#top'],
       ['Contact', `mailto:${CONTACT_EMAIL}`],
-      ['Privacy', '#top'],
-      ['Terms', '#top']
+      ['Privacy', '#legal'],
+      ['Terms', '#legal']
     ]],
     ['Community', [
       ['Discord', DISCORD_URL],
@@ -1098,6 +1172,7 @@ function App() {
         <Testimonials />
         <FAQ />
         <AccountSection account={account} accountLoading={accountLoading} onSignIn={() => setAuthOpen(true)} onLogout={handleLogout} onUpgrade={handleUpgrade} />
+        <LegalNotice />
         <FinalCTA onSignIn={() => (account ? setProfileOpen(true) : setAuthOpen(true))} onUpgrade={handleUpgrade} />
       </main>
       <Footer />
