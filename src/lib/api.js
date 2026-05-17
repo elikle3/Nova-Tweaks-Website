@@ -1,5 +1,6 @@
 const DEFAULT_API_BASE_URL = 'https://api.nova-tweaks.com';
 const TOKEN_KEY = 'nova_website_token';
+let accessToken = '';
 
 export function getApiBaseUrl() {
   const configuredUrl = import.meta.env.VITE_NOVA_API_URL;
@@ -8,18 +9,16 @@ export function getApiBaseUrl() {
 }
 
 export function getStoredToken() {
-  return localStorage.getItem(TOKEN_KEY) || '';
+  return accessToken;
 }
 
 export function storeToken(token) {
-  if (!token) {
-    localStorage.removeItem(TOKEN_KEY);
-    return;
-  }
-  localStorage.setItem(TOKEN_KEY, token);
+  accessToken = typeof token === 'string' ? token.trim() : '';
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 export function clearToken() {
+  accessToken = '';
   localStorage.removeItem(TOKEN_KEY);
 }
 
@@ -179,6 +178,10 @@ function normalizeUserPayload(payload) {
 }
 
 async function request(endpoint, options = {}) {
+  if (options.auth && !accessToken && options.refresh !== false) {
+    await refreshAccessToken().catch(() => {});
+  }
+
   const headers = {
     Accept: 'application/json',
     ...(options.body ? { 'Content-Type': 'application/json; charset=utf-8' } : {}),
@@ -195,7 +198,8 @@ async function request(endpoint, options = {}) {
     response = await fetch(`${getApiBaseUrl()}${endpoint}`, {
       method: options.method || 'GET',
       headers,
-      body: options.body ? JSON.stringify(options.body) : undefined
+      body: options.body ? JSON.stringify(options.body) : undefined,
+      credentials: options.credentials || 'same-origin'
     });
   } catch (error) {
     throw createApiError(
@@ -215,6 +219,18 @@ async function request(endpoint, options = {}) {
 
   if (!response.ok) {
     const backendError = extractBackendError(payload);
+    if (
+      options.auth &&
+      options.refresh !== false &&
+      !options._retriedAfterRefresh &&
+      (response.status === 401 || backendError?.code === 'token_expired' || backendError?.code === 'token_missing')
+    ) {
+      await refreshAccessToken();
+      return request(endpoint, {
+        ...options,
+        _retriedAfterRefresh: true
+      });
+    }
     const error = createApiError(
       backendError?.message || `Request failed with ${response.status}`,
       backendError?.code || `HTTP_${response.status}`,
@@ -236,11 +252,27 @@ async function request(endpoint, options = {}) {
   return payload;
 }
 
+export async function refreshAccessToken() {
+  const payload = await request('/auth/refresh', {
+    method: 'POST',
+    credentials: 'include',
+    refresh: false
+  });
+  const nextToken = extractToken(payload);
+  if (!nextToken) {
+    clearToken();
+    throw createApiError('Refresh response did not include an access token.', 'AUTH_TOKEN_MISSING_IN_RESPONSE', payload);
+  }
+  storeToken(nextToken);
+  return payload;
+}
+
 export async function login({ identifier, password }) {
   const result = await request('/auth/login', {
     method: 'POST',
     returnMeta: true,
-    body: { identifier, password }
+    credentials: 'include',
+    body: { identifier, password, clientType: 'website' }
   });
   const payload = result?.payload && typeof result.payload === 'object' ? result.payload : {};
   const nextToken = extractToken(payload) || extractTokenFromHeaders(result?.headers);
@@ -268,7 +300,8 @@ export async function login({ identifier, password }) {
 export async function register({ username, email, password }) {
   return request('/auth/register', {
     method: 'POST',
-    body: { username, email, password }
+    credentials: 'include',
+    body: { username, email, password, clientType: 'website' }
   });
 }
 
@@ -277,6 +310,26 @@ export async function forgotPassword({ email }) {
     method: 'POST',
     body: { email }
   });
+}
+
+export async function resetPassword({ token, password, confirmPassword }) {
+  return request('/auth/reset-password', {
+    method: 'POST',
+    body: { token, password, confirmPassword }
+  });
+}
+
+export async function logout() {
+  try {
+    await request('/auth/logout', {
+      method: 'POST',
+      auth: Boolean(accessToken),
+      credentials: 'include',
+      refresh: false
+    });
+  } finally {
+    clearToken();
+  }
 }
 
 export async function getCurrentUser() {

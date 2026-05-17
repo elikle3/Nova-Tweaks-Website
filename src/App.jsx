@@ -16,6 +16,7 @@ import {
   DatabaseBackup,
   Download,
   Eye,
+  ExternalLink,
   FileText,
   FolderTree,
   Gauge,
@@ -52,14 +53,15 @@ import {
   X
 } from 'lucide-react';
 import { useInView } from './hooks/useInView';
+import ResetPasswordPage from './ResetPasswordPage';
 import {
   clearToken,
   createPremiumCheckout,
   forgotPassword,
   getCurrentUser,
   getLatestUpdate,
-  getStoredToken,
   login,
+  logout,
   register
 } from './lib/api';
 
@@ -74,181 +76,188 @@ const WEBSITE_PICTURE_SETTINGS_ONE_SRC = new URL('./assets/Nova_Tweaks_Website_P
 const WEBSITE_PICTURE_SETTINGS_TWO_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/settings_2.png', import.meta.url).href;
 const WEBSITE_PICTURE_TWEAKS_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/tweaks.png', import.meta.url).href;
 const WEBSITE_PICTURE_SELECTION_TWEAK_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/selection_tweak.png', import.meta.url).href;
+const WEBSITE_PICTURE_TIMER_RESOLUTION_SELECTION_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/timer_resolution_selection.png', import.meta.url).href;
 const WEBSITE_PICTURE_DETAILS_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/tweak_details.png', import.meta.url).href;
 const WEBSITE_PICTURE_PRIORITY_SUPPORT_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/priority_support.png', import.meta.url).href;
+const WEBSITE_PICTURE_FUTURE_PREMIUM_UPDATES_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/future_premium_updates.png', import.meta.url).href;
+const DISCORD_ICON_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/discord.png', import.meta.url).href;
+const PROFILE_PICTURE_ONE_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/profile_pictures/1.jpg', import.meta.url).href;
+const PROFILE_PICTURE_TWO_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/profile_pictures/2.jpg', import.meta.url).href;
+const PROFILE_PICTURE_THREE_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/profile_pictures/3.jpg', import.meta.url).href;
+const PROFILE_PICTURE_FOUR_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/profile_pictures/4.jpg', import.meta.url).href;
 
 const DISCORD_URL = 'https://discord.gg/AkH2jJsF3M';
 const SUPPORT_EMAIL = 'support@nova-tweaks.com';
 const CONTACT_EMAIL = 'contact@nova-tweaks.com';
-const PREMIUM_PRICE_LABEL = '19,99€';
+const PREMIUM_PRICE_LABEL = '19.99 EUR';
 
 const navItems = [
-  ['Features', '#features'],
-  ['Showcase', '#product-showcase'],
-  ['Premium', '#nova-premium'],
-  ['Performance', '#performance'],
-  ['Pricing', '#pricing'],
-  ['FAQ', '#faq'],
-  ['Download', '#download']
+  ['Features', '#features', LayoutGrid],
+  ['Showcase', '#product-showcase', MonitorCheck],
+  ['Premium', '#nova-premium', Gem],
+  ['Performance', '#performance', Activity],
+  ['Pricing', '#pricing', Tags],
+  ['FAQ', '#faq', Info],
+  ['Download', '#download', Download]
 ];
 
 const features = [
-  ['Verified Tweak States', 'Nova loads tweak definitions first, checks what is already active, and avoids misleading default disabled states.', BadgeCheck],
-  ['Backup & Config Saves', 'Manage restore points, backups, and Nova config saves before larger Windows changes.', DatabaseBackup],
-  ['Apps & Startup Control', 'Review installed apps and startup entries so background load stays visible and manageable.', Rocket],
-  ['Clean Script Handling', 'Readable script output, clear error states, and safer execution feedback keep every change understandable.', ShieldCheck],
-  ['Monitoring & Detection', 'Live monitoring and hardware detection show the system context behind your optimization decisions.', MonitorCheck],
-  ['150+ Tweak Catalog', 'Browse focused tweak categories with clear descriptions for latency, network, hardware, cleanup, power, and more.', SlidersHorizontal]
+  ['Checked Before It Changes', 'Nova checks the current Windows state first, so you do not apply tweaks blindly or guess what is already active.', BadgeCheck],
+  ['Backups Within Reach', 'Create restore points and Nova config saves before bigger changes, then return to a known setup when needed.', DatabaseBackup],
+  ['Apps and Startup, Clearly Sorted', 'See installed apps, startup entries, and supported cleanup actions without hunting through Windows menus.', Rocket],
+  ['Readable Feedback', 'Scripts show understandable progress, errors, and results, so every step feels traceable instead of mysterious.', ShieldCheck],
+  ['System Context Included', 'Live monitoring and hardware detection help you decide what to tune, and when to leave things alone.', MonitorCheck],
+  ['150+ Focused Tweaks', 'Browse practical categories for latency, network, power, cleanup, hardware, and everyday Windows behavior.', SlidersHorizontal]
 ];
 
 const productShowcaseCards = [
   {
-    eyebrow: 'Dashboard Theme',
-    title: 'Dashboard in Pink',
-    subtitle: 'The same control surface with a softer accent.',
-    description: 'The pink dashboard shows Nova as a personal optimization hub with recent changes, quick entries into common workflows, system uptime, and readable performance status.',
+    eyebrow: 'Overview',
+    title: 'Dashboard',
+    subtitle: 'Your starting point for safe Windows tuning.',
+    description: 'The dashboard brings recent activity, quick actions, system uptime, and key performance signals into one calm overview. It helps users understand their PC before they change it.',
     frame: 'hero',
-    label: 'Dashboard in Pink',
+    label: 'Dashboard',
     image: WEBSITE_PICTURE_DASHBOARD_THREE_SRC,
     benefits: [
-      { icon: ListChecks, title: 'Common flows in reach', text: 'Power plan, cleanup, startup, and latency actions are easy to start.' },
-      { icon: Clock, title: 'Recent activity visible', text: 'Completed actions stay readable without digging through logs.' },
-      { icon: Gauge, title: 'Performance at a glance', text: 'Resource values help users see when the system is under load.' },
-      { icon: ShieldCheck, title: 'Safety stays nearby', text: 'Backup and restore access stays part of the dashboard workflow.' }
+      { icon: ListChecks, title: 'Important actions nearby', text: 'Power plans, cleanup, startup, and latency workflows are easy to reach.' },
+      { icon: Clock, title: 'Recent changes visible', text: 'Completed actions stay easy to review without digging through logs.' },
+      { icon: Gauge, title: 'Load at a glance', text: 'Resource values show when the system is busy or ready for tuning.' },
+      { icon: ShieldCheck, title: 'Safety close by', text: 'Backup and restore options stay part of the normal workflow.' }
     ],
   },
   {
-    eyebrow: 'App Management',
+    eyebrow: 'Apps',
     title: 'Apps',
-    subtitle: 'Find installed software and act on it faster.',
-    description: 'The Apps view lists detected applications with search, filters, app metadata, startup visibility, and supported actions for cleanup or removal.',
+    subtitle: 'Understand what is installed and what runs in the background.',
+    description: 'The Apps view gathers installed software, startup visibility, useful metadata, and supported cleanup actions in one place. It helps users remove clutter with context, not pressure.',
     frame: 'hero',
     label: 'Apps',
     image: WEBSITE_PICTURE_APPS_SRC,
     benefits: [
-      { icon: Eye, title: 'Installed apps visible', text: 'Review detected desktop and supported app entries in one manager.' },
-      { icon: Wrench, title: 'Optimize supported apps', text: 'Run available cleanup actions such as cache cleanup where Nova supports it.' },
-      { icon: RotateCcw, title: 'Uninstall with context', text: 'Supported uninstall flows include confirmation and restart guidance.' },
-      { icon: FolderTree, title: 'Open install paths', text: 'Jump to local app locations when an install path is available.' }
+      { icon: Eye, title: 'Installed apps listed', text: 'Review detected desktop apps and supported entries in one manager.' },
+      { icon: Wrench, title: 'Supported cleanup', text: 'Run available cleanup actions, such as cache cleanup, where Nova supports them.' },
+      { icon: RotateCcw, title: 'Careful uninstall flow', text: 'Confirm removal and see restart guidance when Windows needs it.' },
+      { icon: FolderTree, title: 'Open install folders', text: 'Jump to app locations when an install path is available.' }
     ],
   },
   {
-    eyebrow: 'Safety Layer',
+    eyebrow: 'Backup',
     title: 'Backup',
-    subtitle: 'Keep rollback options close to risky changes.',
-    description: 'Backup separates Nova configuration backups from Windows Restore Points, so users can save tweak states, manage history, and recover with clearer expectations.',
+    subtitle: 'Make changes with a way back.',
+    description: 'Backup separates Nova configuration saves from Windows restore points. Users can save tweak states, review history, and restore with clearer expectations before high-impact changes.',
     frame: 'hero',
     label: 'Backup',
     image: WEBSITE_PICTURE_BACKUP_SRC,
     benefits: [
-      { icon: Save, title: 'Nova config backups', text: 'Capture tweak states, choices, profiles, settings, and related Nova data.' },
-      { icon: ShieldCheck, title: 'Windows Restore Points', text: 'Create OS-level restore points separately before deeper changes.' },
-      { icon: RotateCcw, title: 'Restore with review', text: 'Inspect what will be restored before overwriting the current setup.' },
-      { icon: Archive, title: 'Portable backup flow', text: 'Export, import, search, and manage saved backup entries.' }
+      { icon: Save, title: 'Nova config saves', text: 'Save tweak states, choices, profiles, settings, and related Nova data.' },
+      { icon: ShieldCheck, title: 'Windows restore points', text: 'Create OS-level restore points separately before deeper changes.' },
+      { icon: RotateCcw, title: 'Review before restore', text: 'See what will be restored before the current setup is overwritten.' },
+      { icon: Archive, title: 'Portable history', text: 'Export, import, search, and manage saved backup entries.' }
     ],
   },
   {
-    eyebrow: 'Premium Workflow',
+    eyebrow: 'Game Mode',
     title: 'Game Mode',
-    subtitle: 'Prepare a detected game for focused tuning.',
-    description: 'Nova Game Mode detects a game and exposes runtime controls for fullscreen optimization flags, high start priority, CPU affinity, and the one-click game preset.',
+    subtitle: 'Prepare a game session without overcomplicating it.',
+    description: 'Nova Game Mode detects a running game and gives users focused controls for priority, affinity, fullscreen optimization flags, and a one-click game preset.',
     frame: 'hero',
     label: 'Game Mode',
     image: WEBSITE_PICTURE_GAMEMODE_SRC,
     benefits: [
-      { icon: Radar, title: 'Game detection', text: 'Waits for or reacts to a detected game executable.' },
-      { icon: Gauge, title: 'Runtime tuning', text: 'Applies high-priority and affinity controls where Windows allows it.' },
-      { icon: PanelsTopLeft, title: 'Fullscreen flag', text: 'Writes the Windows compatibility flag for fullscreen optimizations.' },
-      { icon: PlayCircle, title: 'One-click preset', text: 'Runs the Game Mode optimization steps from one focused workflow.' }
+      { icon: Radar, title: 'Game detection', text: 'Wait for a game process or react when Nova detects one.' },
+      { icon: Gauge, title: 'Runtime tuning', text: 'Apply priority and affinity controls where Windows allows them.' },
+      { icon: PanelsTopLeft, title: 'Fullscreen setting', text: 'Manage the Windows compatibility setting for fullscreen optimizations.' },
+      { icon: PlayCircle, title: 'One focused preset', text: 'Start the Game Mode steps from a single, clear workflow.' }
     ],
   },
   {
     eyebrow: 'Monitoring',
-    title: 'Performance Overview',
-    subtitle: 'See current load before changing the system.',
-    description: 'The performance view tracks CPU, GPU, memory, and network activity, with a selectable CPU/GPU focus for clearer live monitoring.',
+    title: 'Performance',
+    subtitle: 'Read the system before tuning it.',
+    description: 'The performance view tracks CPU, GPU, memory, and network activity with a clear live view. It gives users a better sense of what is actually happening on their PC.',
     frame: 'hero',
     label: 'Performance',
     image: WEBSITE_PICTURE_PERFORMANCE_SRC,
     benefits: [
-      { icon: Cpu, title: 'CPU and GPU usage', text: 'Switch focus between processor and graphics usage in percent.' },
-      { icon: Activity, title: 'Live history', text: 'Recent samples make load changes easier to read.' },
+      { icon: Cpu, title: 'CPU and GPU usage', text: 'Switch focus between processor and graphics usage.' },
+      { icon: Activity, title: 'Live history', text: 'Recent samples make load changes easier to understand.' },
       { icon: HardDrive, title: 'Memory visibility', text: 'Memory usage stays visible next to other key resources.' },
-      { icon: Gauge, title: 'Network activity', text: 'Download and upload signals show background traffic.' }
+      { icon: Gauge, title: 'Network activity', text: 'Download and upload signals reveal background traffic.' }
     ],
   },
   {
     eyebrow: 'Preferences',
-    title: 'Settings: Preferences',
-    subtitle: 'Make Nova feel right without hiding controls.',
-    description: 'Preferences cover theme, language, accent color, and core interface behavior so the app can match the user setup while staying predictable.',
+    title: 'Preferences',
+    subtitle: 'Make Nova fit your setup.',
+    description: 'Preferences cover theme, language, accent color, and core interface behavior. The settings stay plain and predictable, so users know exactly what each option changes.',
     frame: 'hero',
-    label: 'Settings preferences',
+    label: 'Preferences',
     image: WEBSITE_PICTURE_SETTINGS_ONE_SRC,
     benefits: [
-      { icon: Settings2, title: 'Theme and language', text: 'Switch interface language and theme where translations are available.' },
-      { icon: Sparkles, title: 'Accent color', text: 'Pick the visual accent used across the Nova interface.' },
-      { icon: ToggleLeft, title: 'Window behavior', text: 'Control launch and interface preferences from one settings area.' },
-      { icon: Info, title: 'Clear descriptions', text: 'Settings rows explain what each preference changes.' }
+      { icon: Settings2, title: 'Theme and language', text: 'Switch the interface language and visual theme where available.' },
+      { icon: Sparkles, title: 'Accent color', text: 'Choose the accent used across the Nova interface.' },
+      { icon: ToggleLeft, title: 'Window behavior', text: 'Manage launch and interface preferences from one settings area.' },
+      { icon: Info, title: 'Plain descriptions', text: 'Each settings row explains what the option changes.' }
     ],
   },
   {
-    eyebrow: 'App Behavior',
-    title: 'Settings: Startup & Data',
-    subtitle: 'Control launch, tray, and backup behavior.',
-    description: 'Startup and data settings manage real app behavior: start minimized, tray handling, close-to-tray, last-tab restore, automatic backups, location, import/export, reset, and cache cleanup.',
+    eyebrow: 'Startup and Data',
+    title: 'Startup and Data',
+    subtitle: 'Control how Nova opens, stores, and resets data.',
+    description: 'Startup and data settings handle real app behavior: start minimized, tray behavior, last-tab restore, automatic backups, backup location, import, export, reset, and cache cleanup.',
     frame: 'hero',
-    label: 'Settings startup and data',
+    label: 'Startup and Data',
     image: WEBSITE_PICTURE_SETTINGS_TWO_SRC,
     benefits: [
-      { icon: ToggleLeft, title: 'Tray controls', text: 'Minimize to tray and close-to-tray keep Nova running when needed.' },
+      { icon: ToggleLeft, title: 'Tray behavior', text: 'Minimize to tray and close-to-tray keep Nova available when needed.' },
       { icon: Clock, title: 'Remember last tab', text: 'Reopen the last selected tab on the next launch.' },
       { icon: Save, title: 'Backup location', text: 'Choose where local Nova backup files are stored.' },
-      { icon: RefreshCw, title: 'Data maintenance', text: 'Export, import, reset settings, and clear cache from the same area.' }
+      { icon: RefreshCw, title: 'Data tools', text: 'Export, import, reset settings, and clear cache from the same area.' }
     ],
   },
   {
-    eyebrow: 'Tweak Catalog',
+    eyebrow: 'Tweak Library',
     title: 'Tweaks',
-    subtitle: 'Search, filter, and apply structured Windows tweaks.',
-    description: 'The Tweaks view organizes definitions by category and subcategory, shows detected status, recommended counts, risk filters, and quick actions for supported bulk flows.',
+    subtitle: 'Find the right tweak without losing context.',
+    description: 'The Tweaks view organizes options by category and subcategory, shows detected status, recommended counts, risk filters, and quick actions for supported bulk flows.',
     frame: 'hero',
     label: 'Tweaks',
     image: WEBSITE_PICTURE_TWEAKS_SRC,
     benefits: [
       { icon: LayoutGrid, title: 'Category browsing', text: 'Move through categories and subcategories without losing context.' },
       { icon: Radar, title: 'Status detection', text: 'Nova checks what is already active before presenting actions.' },
-      { icon: Sparkles, title: 'Recommended filters', text: 'Filter to recommended tweaks or run supported recommended actions.' },
-      { icon: ShieldCheck, title: 'Risk-aware controls', text: 'Risk labels and confirmations protect higher-impact changes.' }
+      { icon: Sparkles, title: 'Recommended view', text: 'Filter for recommended tweaks or run supported recommended actions.' },
+      { icon: ShieldCheck, title: 'Risk labels', text: 'Labels and confirmations make higher-impact changes harder to miss.' }
     ],
   },
   {
-    eyebrow: 'Workflow Feature',
-    title: 'Selection Tweak',
-    subtitle: 'Pick the best option, not just on or off.',
-    description: 'Some optimizations are choices. Selection Tweaks let users compare available options, see the current selection, and apply the exact option Nova should use next.',
+    eyebrow: 'Choice-Based Tweaks',
+    title: 'Selection Tweaks',
+    subtitle: 'Choose an option instead of guessing between on and off.',
+    description: 'Some optimizations have several valid settings. Selection Tweaks let users compare options, see the current selection, and apply the exact choice they want.',
     frame: 'hero',
-    label: 'Selection Tweak',
+    label: 'Selection Tweaks',
     image: WEBSITE_PICTURE_SELECTION_TWEAK_SRC,
     benefits: [
       { icon: CheckCircle2, title: 'Current selection visible', text: 'Shows the active option before anything changes.' },
-      { icon: Sparkles, title: 'Recommended option', text: 'Marks the safest or preferred choice where a recommendation exists.' },
-      { icon: Layers, title: 'Option comparison', text: 'Keeps every available choice in one focused modal.' },
-      { icon: MousePointerClick, title: 'Clear apply flow', text: 'Users choose an option first, then apply it deliberately.' }
+      { icon: Sparkles, title: 'Recommended option', text: 'Marks the preferred choice where a recommendation exists.' },
+      { icon: Layers, title: 'Compare options', text: 'Keeps every available choice in one focused dialog.' },
+      { icon: MousePointerClick, title: 'Deliberate apply flow', text: 'Users choose an option first, then apply it deliberately.' }
     ],
   },
   {
-    eyebrow: 'Tweak Details',
+    eyebrow: 'Details',
     title: 'Details',
-    subtitle: 'Review impact before applying a tweak.',
-    description: 'The detail panel gives users a focused read on description, category, risk level, recommendation, detected status, and the action they are about to run.',
+    subtitle: 'Know what a tweak does before you run it.',
+    description: 'The detail panel shows the description, category, risk level, recommendation, detected status, and the action that will run. It gives users a moment to understand the change.',
     frame: 'hero',
     label: 'Details',
     image: WEBSITE_PICTURE_DETAILS_SRC,
     benefits: [
-      { icon: Info, title: 'Readable explanation', text: 'Explains what the tweak is for before applying it.' },
-      { icon: Tags, title: 'Category and labels', text: 'Shows category, recommendation, and related metadata.' },
-      { icon: ShieldCheck, title: 'Risk context', text: 'Risk labels make sensitive actions easier to spot.' },
+      { icon: Info, title: 'Readable explanation', text: 'Explains what the tweak is for before it is applied.' },
+      { icon: Tags, title: 'Useful labels', text: 'Shows category, recommendation, and related metadata.' },
+      { icon: ShieldCheck, title: 'Risk context', text: 'Makes sensitive actions easier to spot.' },
       { icon: CheckCheck, title: 'Detected status', text: 'Shows whether Nova already sees the tweak as active.' }
     ],
   }
@@ -256,55 +265,57 @@ const productShowcaseCards = [
 
 const premiumFeatureCards = [
   {
-    title: 'More Powerful Tweaks',
-    copy: 'Unlock deeper latency, power, network, and system tuning options while keeping the same clear status and safety context.',
+    title: 'Advanced Tweaks',
+    copy: 'Unlock deeper latency, power, network, and system tuning options while keeping the same clear status checks and safety context.',
     frame: 'compact',
-    label: 'Power tweaks'
+    label: 'Advanced Tweaks',
+    image: WEBSITE_PICTURE_TIMER_RESOLUTION_SELECTION_SRC
   },
   {
     title: 'Nova Game Mode',
-    copy: 'Use a dedicated premium workflow for gaming sessions, responsiveness, and focused background control.',
+    copy: 'Use a focused premium workflow for game sessions, responsiveness, and background control.',
     frame: 'wide',
     label: 'Game Mode',
     image: WEBSITE_PICTURE_GAMEMODE_SRC
   },
   {
     title: 'Priority Support',
-    copy: 'Get faster help for account, setup, and optimization questions when you need a direct answer.',
+    copy: 'Get faster help with account, setup, and optimization questions when you need a clear answer.',
     frame: 'compact',
     label: 'Support',
     image: WEBSITE_PICTURE_PRIORITY_SUPPORT_SRC
   },
   {
     title: 'Future Premium Updates',
-    copy: 'Keep access to upcoming Premium features as Nova Tweaks evolves with new workflows and optimization options.',
+    copy: 'Keep access to upcoming Premium features as Nova Tweaks grows with new workflows and tuning options.',
     frame: 'compact',
-    label: 'Updates'
+    label: 'Updates',
+    image: WEBSITE_PICTURE_FUTURE_PREMIUM_UPDATES_SRC
   }
 ];
 
 const stats = [
-  { label: 'Lower Input Lag', value: 28, suffix: '%', prefix: '-', bar: 72 },
-  { label: 'Faster Boot Time', value: 34, suffix: '%', prefix: '-', bar: 78 },
-  { label: 'Cleaner System', value: 1.3, suffix: ' GB', prefix: '', bar: 64, decimals: 1 },
-  { label: 'Background Processes', value: 22, suffix: '%', prefix: '-', bar: 58 },
-  { label: 'FPS Stability', value: 18, suffix: '%', prefix: '+', bar: 68 }
+  { label: 'Input delay reduced', value: 28, suffix: '%', prefix: '-', bar: 72 },
+  { label: 'Boot time reduced', value: 34, suffix: '%', prefix: '-', bar: 78 },
+  { label: 'Clutter cleaned', value: 1.3, suffix: ' GB', prefix: '', bar: 64, decimals: 1 },
+  { label: 'Background load reduced', value: 22, suffix: '%', prefix: '-', bar: 58 },
+  { label: 'Frame pacing improved', value: 18, suffix: '%', prefix: '+', bar: 68 }
 ];
 
 const testimonials = [
-  ['Competitive Gamer', 'NovaTweaks gives me a clean pre-match routine without making me guess what changed.'],
-  ['PC Enthusiast', 'The restore flow and risk labels make it feel serious. It is built for people who care about their PC.'],
-  ['Streamer', 'My streaming setup is more predictable because I can keep background clutter under control.'],
-  ['Power User', 'It feels like a control panel for power users, not a noisy cleaner app.']
+  ['Trxy', 'Nova Tweaks gives me a clean routine before I play. I can see what changed and what is still safe to touch.', PROFILE_PICTURE_ONE_SRC],
+  ['Cayfe', 'The restore flow and risk labels make it feel serious. It is built for people who actually care about their setup.', PROFILE_PICTURE_TWO_SRC],
+  ['Reefz', 'My streaming setup feels more predictable because I can keep background clutter under control.', PROFILE_PICTURE_THREE_SRC],
+  ['Veyron', 'It feels like a proper control panel, not another loud cleaner app with empty promises.', PROFILE_PICTURE_FOUR_SRC]
 ];
 
 const faqs = [
-  ['Is NovaTweaks safe to use?', 'NovaTweaks is designed around transparency, risk labels, confirmations, and restore options so you can understand changes before applying them.'],
-  ['Can I undo changes?', 'Yes. Backup, restore, and config-save workflows are core to the product, especially before larger optimization passes.'],
-  ['Does it work on Windows 10 and 11?', 'NovaTweaks is built for modern Windows systems and supports Windows 10 and Windows 11 workflows.'],
+  ['Is Nova Tweaks safe to use?', 'Nova Tweaks is designed around transparency, risk labels, confirmations, and restore options so you can understand changes before applying them.'],
+  ['Can I undo changes?', 'Yes. Backup, restore, and config-save workflows are part of the product, especially before larger optimization passes.'],
+  ['Does it work on Windows 10 and 11?', 'Nova Tweaks is built for modern Windows systems and supports Windows 10 and Windows 11 workflows.'],
   ['Do I need admin rights?', 'Most system-level optimizations require administrator privileges because Windows protects those settings.'],
-  ['Will it increase my FPS?', 'NovaTweaks focuses on cleaner system behavior, smoother frame pacing, lower input delay, and fewer background interruptions rather than unrealistic FPS promises.'],
-  ['What is included in Premium?', 'Premium includes everything in Free plus more powerful tweaks, Nova Game Mode, priority support, and future Premium updates.']
+  ['Will it increase my FPS?', 'Nova Tweaks focuses on cleaner system behavior, smoother frame pacing, lower input delay, and fewer background interruptions rather than unrealistic FPS promises.'],
+  ['What is included in Premium?', 'Premium includes everything in Free plus advanced tweaks, Nova Game Mode, priority support, and future Premium updates.']
 ];
 
 function Logo() {
@@ -458,7 +469,12 @@ function Nav({ onSignIn, onOpenProfile, onUpgrade, onLogout, account, accountLoa
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
         <div className={`nav-links ${open ? 'nav-links-open' : ''}`}>
-          {navItems.map(([label, href]) => <a key={label} href={href} onClick={() => setOpen(false)}>{label}</a>)}
+          {navItems.map(([label, href, Icon]) => (
+            <a key={label} href={href} onClick={() => setOpen(false)}>
+              <Icon size={15} />
+              <span>{label}</span>
+            </a>
+          ))}
         </div>
         <div className="nav-actions">
           <ProfileMenu account={account} accountLoading={accountLoading} onSignIn={onSignIn} onOpenProfile={onOpenProfile} onUpgrade={onUpgrade} onLogout={onLogout} />
@@ -493,20 +509,20 @@ function Hero() {
       <div className="energy-lines" />
       <div className="section-inner hero-inner">
         <div className="hero-copy reveal">
-          <div className="badge">Windows Optimization App for Gamers & Power Users</div>
+          <div className="badge"><ShieldCheck size={14} />Windows tuning with clear safety checks</div>
           <h1 className="hero-title">
-            <span>Optimize Windows.</span>
-            <span>Keep Control.</span>
+            <span>Tune Windows.</span>
+            <span>Stay in control.</span>
           </h1>
-          <p>Tune latency, clean up background load, improve responsiveness, and keep every system change under your control with clear safety checks and restore workflows.</p>
+          <p>Nova Tweaks helps you reduce background load, improve responsiveness, and understand each system change before you apply it. No vague promises, just clear controls, restore options, and readable feedback.</p>
           <div className="hero-actions">
             <ButtonLink href="#download" icon={Download}>Download Now</ButtonLink>
-            <ButtonLink href="#features" variant="secondary">View Features</ButtonLink>
+            <ButtonLink href="#features" variant="secondary" icon={LayoutGrid}>View Features</ButtonLink>
           </div>
           <div className="trust-row">
-            <span><b>150+</b> tweak catalog</span>
-            <span><b>Real state</b> detection before display</span>
-            <span><b>Win 10/11</b> supported</span>
+            <span><ListChecks size={17} /><b>150+</b> focused tweaks</span>
+            <span><Radar size={17} /><b>Checked state</b> before action</span>
+            <span><MonitorCheck size={17} /><b>Windows 10/11</b> supported</span>
           </div>
         </div>
         <div className="hero-visual reveal delay-1"><DashboardMockup /></div>
@@ -517,10 +533,10 @@ function Hero() {
 
 function Benefits() {
   const items = [
-    [Timer, 'Lower Latency', 'Reduce background friction before play.'],
-    [Clock3, 'Verified States', 'Tweaks are checked before they are shown.'],
-    [FileText, 'Readable Details', 'Clear descriptions make each change understandable.'],
-    [DatabaseBackup, 'Backup Control', 'Manage restore points and config saves.']
+    [Timer, 'Lower latency', 'Reduce background friction before you play.'],
+    [Clock3, 'Checked states', 'Nova checks before showing actions.'],
+    [FileText, 'Readable details', 'Understand what each change does.'],
+    [DatabaseBackup, 'Restore options', 'Keep restore points and config saves nearby.']
   ];
   return (
     <section className="benefit-section">
@@ -538,8 +554,8 @@ function Features() {
     <section className="section" id="features">
       <div className="section-inner">
         <div className="section-heading reveal">
-          <span className="eyebrow">Control with clarity</span>
-          <h2>Real Controls. Clear Status. Safer Tweaks.</h2>
+          <span className="eyebrow"><ShieldCheck size={14} />Built for confidence</span>
+          <h2>Clear controls for people who care about their PC.</h2>
         </div>
         <div className="feature-grid">
           {features.map(([title, copy, Icon], index) => (
@@ -560,13 +576,13 @@ function ControlCenter() {
     <section className="section control-section">
       <div className="section-inner split">
         <div className="split-copy reveal">
-          <span className="eyebrow">System command layer</span>
-          <h2>A Control Center for Your System</h2>
-          <p>Nova Tweaks brings status-checked tweaks, app management, startup control, backups, monitoring, and readable script feedback into one focused workspace.</p>
+          <span className="eyebrow"><PanelsTopLeft size={14} />System workspace</span>
+          <h2>One place for tuning, cleanup, and rollback.</h2>
+          <p>Nova Tweaks brings checked tweak states, app management, startup control, backups, monitoring, and readable script feedback into one focused workspace.</p>
           <ul className="check-list">
-            {['Real tweak-state detection', 'Backup and config-save management', 'Apps and startup app management', 'Clean error handling and script feedback'].map((item) => <li key={item}><Check size={16} />{item}</li>)}
+            {['Tweak-state detection before action', 'Restore points and config saves', 'Apps and startup entries in one view', 'Clear script output and error feedback'].map((item) => <li key={item}><Check size={16} />{item}</li>)}
           </ul>
-          <ButtonLink href="#features" variant="secondary">Explore All Features</ButtonLink>
+          <ButtonLink href="#features" variant="secondary" icon={ArrowRight}>Explore Features</ButtonLink>
         </div>
         <div className="mockup-stack reveal delay-1">
           <div className="product-window stack-main">
@@ -586,17 +602,20 @@ function ControlCenter() {
 function ScreenshotFrame({ card }) {
   const images = card.images?.length ? card.images : (card.image ? [card.image] : []);
   const [activeImage, setActiveImage] = useState(0);
+  const [imageDirection, setImageDirection] = useState('next');
   const touchStartRef = useRef(null);
   const hasMultipleImages = images.length > 1;
   const imageSrc = images[activeImage] || images[0] || '';
 
   function showPrevious(event = null) {
     event?.stopPropagation();
+    setImageDirection('previous');
     setActiveImage((value) => (value === 0 ? images.length - 1 : value - 1));
   }
 
   function showNext(event = null) {
     event?.stopPropagation();
+    setImageDirection('next');
     setActiveImage((value) => (value + 1) % images.length);
   }
 
@@ -636,7 +655,9 @@ function ScreenshotFrame({ card }) {
         <span>{card.label || card.title}</span>
       </div>
       {imageSrc ? (
-        <img src={imageSrc} alt={`${card.title} preview ${activeImage + 1}`} loading="lazy" />
+        <div className={`screenshot-media screenshot-media-${imageDirection}`} key={`${imageSrc}-${activeImage}`}>
+          <img src={imageSrc} alt={`${card.title} preview ${activeImage + 1}`} loading="lazy" />
+        </div>
       ) : (
         <div className="screenshot-placeholder" aria-hidden="true">
           <div className="placeholder-screen">
@@ -699,16 +720,22 @@ function FeatureShowcaseText({ card }) {
 
 function ProductShowcase() {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [slideDirection, setSlideDirection] = useState('next');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const touchStartRef = useRef(null);
   const activeCard = productShowcaseCards[activeSlide];
 
+  function showSlide(nextIndex, direction) {
+    setSlideDirection(direction);
+    setActiveSlide((nextIndex + productShowcaseCards.length) % productShowcaseCards.length);
+  }
+
   function showPrevious() {
-    setActiveSlide((value) => (value === 0 ? productShowcaseCards.length - 1 : value - 1));
+    showSlide(activeSlide - 1, 'previous');
   }
 
   function showNext() {
-    setActiveSlide((value) => (value + 1) % productShowcaseCards.length);
+    showSlide(activeSlide + 1, 'next');
   }
 
   function handleTouchStart(event) {
@@ -756,11 +783,11 @@ function ProductShowcase() {
       <div className="section-inner">
         <div className="feature-showcase-head reveal">
           <div>
-            <span className="eyebrow">Nova product tour</span>
-            <h2>Real screens from the Nova Tweaks app.</h2>
-            <p>Browse the actual product views for dashboards, apps, backups, game mode, performance, settings, tweaks, and details.</p>
+            <span className="eyebrow"><MonitorCheck size={14} />Product tour</span>
+            <h2>Real screens, clear workflows.</h2>
+            <p>Browse the actual Nova Tweaks views for dashboard, apps, backups, Game Mode, performance, settings, tweaks, and details.</p>
           </div>
-          <a className="btn btn-secondary" href="#nova-premium">View Premium<ArrowRight size={17} /></a>
+          <a className="btn btn-secondary" href="#nova-premium"><Gem size={17} />View Premium</a>
         </div>
         <article className="product-tour-card reveal" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
           <div className="product-tour-visual">
@@ -770,7 +797,9 @@ function ProductShowcase() {
                 <span>{activeCard.label}</span>
               </div>
               <button className="product-tour-image-button" type="button" onClick={() => setLightboxOpen(true)} aria-label={`Open ${activeCard.title} screenshot larger`}>
-                <img src={activeCard.image} alt={`${activeCard.title} preview`} loading="lazy" />
+                <span className={`product-tour-media product-tour-media-${slideDirection}`} key={activeCard.image}>
+                  <img src={activeCard.image} alt={`${activeCard.title} preview`} loading="lazy" />
+                </span>
               </button>
               <button className="screenshot-nav screenshot-nav-prev" type="button" onClick={showPrevious} aria-label="Show previous Nova screenshot">
                 <ChevronLeft size={17} />
@@ -783,7 +812,7 @@ function ProductShowcase() {
                   <button
                     className={index === activeSlide ? 'screenshot-dot-active' : ''}
                     type="button"
-                    onClick={() => setActiveSlide(index)}
+                    onClick={() => showSlide(index, index > activeSlide ? 'next' : 'previous')}
                     aria-label={`Show ${card.title}`}
                     key={card.title}
                   />
@@ -819,28 +848,85 @@ function ProductShowcase() {
 }
 
 function PremiumFeaturesSection({ onUpgrade }) {
+  const [activePremiumFeature, setActivePremiumFeature] = useState(0);
+  const [slideDirection, setSlideDirection] = useState('next');
+  const touchStartRef = useRef(null);
+  const activeCard = premiumFeatureCards[activePremiumFeature];
+
+  function showPremiumFeature(nextIndex, direction) {
+    setSlideDirection(direction);
+    setActivePremiumFeature((nextIndex + premiumFeatureCards.length) % premiumFeatureCards.length);
+  }
+
+  function showPreviousPremiumFeature() {
+    showPremiumFeature(activePremiumFeature - 1, 'previous');
+  }
+
+  function showNextPremiumFeature() {
+    showPremiumFeature(activePremiumFeature + 1, 'next');
+  }
+
+  function handleTouchStart(event) {
+    const touch = event.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  }
+
+  function handleTouchEnd(event) {
+    if (!touchStartRef.current) return;
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+    touchStartRef.current = null;
+
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) {
+      return;
+    }
+
+    if (deltaX < 0) {
+      showNextPremiumFeature();
+    } else {
+      showPreviousPremiumFeature();
+    }
+  }
+
   return (
     <section className="section premium-features-section" id="nova-premium">
       <div className="section-inner">
         <div className="feature-showcase-head reveal">
           <div>
-            <span className="eyebrow">Premium features</span>
-            <h2>Go deeper with Nova Premium.</h2>
-            <p>Premium keeps the same clean product flow and adds stronger optimization paths, Game Mode, priority help, and future Premium updates.</p>
+            <span className="eyebrow"><Gem size={14} />Premium</span>
+            <h2>Go deeper without losing clarity.</h2>
+            <p>Premium keeps the same careful product flow and adds advanced tuning paths, Nova Game Mode, priority help, and future Premium updates.</p>
           </div>
-          <button className="btn btn-primary" type="button" onClick={onUpgrade}>Upgrade to Premium<ArrowRight size={17} /></button>
+          <button className="btn btn-primary" type="button" onClick={onUpgrade}><Gem size={17} />Upgrade to Premium</button>
         </div>
-        <div className="premium-features-grid">
-          {premiumFeatureCards.map((card, index) => (
-            <article className="premium-feature-card reveal" style={{ transitionDelay: `${index * 55}ms` }} key={card.title}>
-              <ScreenshotFrame card={card} />
-              <div>
-                <span>{card.label}</span>
-                <h3>{card.title}</h3>
-                <p>{card.copy}</p>
-              </div>
-            </article>
-          ))}
+        <div className="premium-slider reveal" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+          <button className="premium-slider-arrow premium-slider-prev" type="button" onClick={showPreviousPremiumFeature} aria-label="Show previous Premium feature">
+            <ChevronLeft size={22} />
+          </button>
+          <article className={`premium-hero-card premium-slide-${slideDirection}`} key={activeCard.title}>
+            <div className="premium-hero-copy">
+              <span>{activeCard.label}</span>
+              <h3>{activeCard.title}</h3>
+              <p>{activeCard.copy}</p>
+              <button className="btn btn-primary" type="button" onClick={onUpgrade}>Unlock Premium<ArrowRight size={17} /></button>
+            </div>
+            <ScreenshotFrame card={{ ...activeCard, frame: 'hero' }} />
+          </article>
+          <button className="premium-slider-arrow premium-slider-next" type="button" onClick={showNextPremiumFeature} aria-label="Show next Premium feature">
+            <ChevronRight size={22} />
+          </button>
+          <div className="premium-slider-dots" aria-label="Premium feature selector">
+            {premiumFeatureCards.map((card, index) => (
+              <button
+                className={index === activePremiumFeature ? 'premium-slider-dot-active' : ''}
+                type="button"
+                onClick={() => showPremiumFeature(index, index > activePremiumFeature ? 'next' : 'previous')}
+                aria-label={`Show ${card.title}`}
+                key={card.title}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -979,22 +1065,22 @@ function Performance() {
     <section className="section performance-section" id="performance" ref={ref}>
       <div className="section-inner">
         <div className="section-heading reveal">
-          <span className="eyebrow">Frame pacing, not fantasy claims</span>
-          <h2>Built for Gamers. Proven Results.</h2>
-          <p>Smoother sessions come from stability, fewer drops, and less background interference.</p>
+          <span className="eyebrow"><Activity size={14} />Performance</span>
+          <h2>Focused on smoother sessions, not inflated claims.</h2>
+          <p>Better sessions come from stability, fewer interruptions, and less background interference. Nova Tweaks keeps those goals visible.</p>
         </div>
         <div className="performance-layout">
           <div className={`graph-card reveal ${active ? 'revealed' : ''}`}>
             <div className="graph-header">
               <div className="graph-title-block">
-                <span>Before vs After</span>
+                <span>Before vs after</span>
                 <b>Frame pacing stability</b>
                 <div className="performance-legend" aria-label="Chart legend">
                   <span><i className="legend-dot red" />Before optimization</span>
-                  <span><i className="legend-dot blue" />After NovaTweaks</span>
+                  <span><i className="legend-dot blue" />After Nova Tweaks</span>
                 </div>
               </div>
-              <span className="live-pill"><i />Live motion</span>
+              <span className="live-pill"><i />Animated example</span>
             </div>
             <PerformanceGraph active={active} />
           </div>
@@ -1009,20 +1095,20 @@ function Pricing({ account, onRequireAuth, onUpgrade }) {
   return (
     <section className="section" id="pricing">
       <div className="section-inner">
-        <div className="section-heading reveal"><span className="eyebrow">Clean value</span><h2>Simple Pricing. Maximum Value.</h2></div>
+        <div className="section-heading reveal"><span className="eyebrow"><Tags size={14} />Pricing</span><h2>Simple pricing, no forced subscription.</h2></div>
         <div className="pricing-grid">
           <article className="price-card reveal">
             <h3>Free</h3>
-            <div className="price">0€ <span>/ Forever</span></div>
-            {['Core tweaks with real status detection', 'Backup and config saves', 'Apps and startup app management', 'System monitoring and detection', 'Design settings', '150+ readable tweak descriptions'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
+            <div className="price">0 EUR <span>/ forever</span></div>
+            {['Core tweaks with checked status', 'Restore points and config saves', 'Apps and startup management', 'System monitoring and hardware detection', 'Interface preferences', '150+ readable tweak descriptions'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
             <a className="btn btn-secondary full" href="#download">Download Free</a>
           </article>
           <article className="price-card price-pro reveal delay-1">
-            <div className="popular">Most Popular</div>
+            <div className="popular"><Star size={13} />Most chosen</div>
             <h3>Premium</h3>
-            <div className="price">{PREMIUM_PRICE_LABEL} <span>/ Lifetime access</span></div>
-            {['More powerful tweaks', 'Nova Game Mode', 'Priority support', 'Future Premium updates'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
-            <button className="btn btn-primary full" type="button" onClick={() => (account ? onUpgrade() : onRequireAuth())}><span>Get Premium Now</span><ArrowRight size={17} /></button>
+            <div className="price">{PREMIUM_PRICE_LABEL} <span>/ lifetime access</span></div>
+            {['Advanced tuning options', 'Nova Game Mode', 'Priority support', 'Future Premium updates'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
+            <button className="btn btn-primary full" type="button" onClick={() => (account ? onUpgrade() : onRequireAuth())}><Gem size={17} /><span>Get Premium</span></button>
           </article>
         </div>
       </div>
@@ -1034,12 +1120,16 @@ function Testimonials() {
   return (
     <section className="section">
       <div className="section-inner">
-        <div className="section-heading reveal"><span className="eyebrow">Real product trust</span><h2>Trusted by Gamers & Power Users</h2></div>
+        <div className="section-heading reveal"><span className="eyebrow"><Star size={14} />User voices</span><h2>Built for gamers and careful PC users.</h2></div>
         <div className="testimonial-grid">
-          {testimonials.map(([role, quote]) => (
-            <article className="testimonial-card reveal" key={role}>
-              <div className="stars">{Array.from({ length: 5 }).map((_, index) => <Star size={15} key={index} />)}</div>
-              <p>"{quote}"</p><b>{role}</b>
+          {testimonials.map(([name, quote, avatar]) => (
+            <article className="testimonial-card reveal" key={name}>
+              <div className="testimonial-author">
+                <img src={avatar} alt="" />
+                <b>{name}</b>
+              </div>
+              <div className="stars" aria-label="5 out of 5 stars">{Array.from({ length: 5 }).map((_, index) => <Star size={15} fill="currentColor" strokeWidth={1.8} key={index} />)}</div>
+              <p>"{quote}"</p>
             </article>
           ))}
         </div>
@@ -1053,7 +1143,7 @@ function FAQ() {
   return (
     <section className="section" id="faq">
       <div className="section-inner faq-wrap">
-        <div className="section-heading reveal"><span className="eyebrow">Support-ready answers</span><h2>Got Questions? We've Got Answers.</h2></div>
+        <div className="section-heading reveal"><span className="eyebrow"><Info size={14} />Answers</span><h2>Questions people ask before they trust a tuning app.</h2></div>
         <div className="faq-list">
           {faqs.map(([question, answer], index) => (
             <article className={`faq-item ${open === index ? 'faq-open' : ''}`} key={question}>
@@ -1111,25 +1201,45 @@ function AuthModal({ open, onClose, onAuth }) {
     <div className="modal-backdrop">
       <div className="auth-modal" role="dialog" aria-modal="true" aria-label="Nova account sign in">
         <button className="modal-close" type="button" onClick={onClose} aria-label="Close"><X size={18} /></button>
-        <div className="badge">Nova Account</div>
+        <div className="badge"><User size={14} />Nova Account</div>
         <h2>{view === 'login' ? 'Sign in to Nova' : view === 'register' ? 'Create your Nova account' : 'Reset your password'}</h2>
-        <p>Use the same account connected to NovaTweaks licensing and product access.</p>
+        <p>Use the account connected to your Nova Tweaks license, downloads, and product access.</p>
         {status ? <div className="form-status">{status}</div> : null}
         <form className="auth-form" onSubmit={handleSubmit}>
           {view === 'login' ? (
             <>
-              <input required value={form.identifier} onChange={(e) => setForm({ ...form, identifier: e.target.value })} placeholder="Email or username" />
-              <input required type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Password" />
+              <label className="auth-field">
+                <Mail size={17} />
+                <input required value={form.identifier} onChange={(e) => setForm({ ...form, identifier: e.target.value })} placeholder="Email or username" />
+              </label>
+              <label className="auth-field">
+                <Lock size={17} />
+                <input required type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Password" />
+              </label>
             </>
           ) : null}
           {view === 'register' ? (
             <>
-              <input required value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} placeholder="Username" />
-              <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" />
-              <input required type="password" value={form.registerPassword} onChange={(e) => setForm({ ...form, registerPassword: e.target.value })} placeholder="Strong password" />
+              <label className="auth-field">
+                <User size={17} />
+                <input required value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} placeholder="Username" />
+              </label>
+              <label className="auth-field">
+                <Mail size={17} />
+                <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email" />
+              </label>
+              <label className="auth-field">
+                <Lock size={17} />
+                <input required type="password" value={form.registerPassword} onChange={(e) => setForm({ ...form, registerPassword: e.target.value })} placeholder="Strong password" />
+              </label>
             </>
           ) : null}
-          {view === 'forgot' ? <input required type="email" value={form.forgotEmail} onChange={(e) => setForm({ ...form, forgotEmail: e.target.value })} placeholder="Account email" /> : null}
+          {view === 'forgot' ? (
+            <label className="auth-field">
+              <Mail size={17} />
+              <input required type="email" value={form.forgotEmail} onChange={(e) => setForm({ ...form, forgotEmail: e.target.value })} placeholder="Account email" />
+            </label>
+          ) : null}
           <button className="btn btn-primary full" type="submit" disabled={loading}>{loading ? 'Working...' : view === 'login' ? 'Sign In' : view === 'register' ? 'Create Account' : 'Send Reset Link'}</button>
         </form>
         <div className="auth-switch">
@@ -1197,9 +1307,9 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
     <section className="section account-section" id="account">
       <div className="section-inner account-panel reveal">
         <div>
-          <span className="eyebrow">Account portal</span>
-          <h2>Access Your Nova Account</h2>
-          <p>Sign in to retrieve real account data from the Nova API, including plan status, email, username, and product access.</p>
+          <span className="eyebrow"><Lock size={14} />Account</span>
+          <h2>Your license and downloads in one place.</h2>
+          <p>Sign in to see your plan, product access, and account details from the Nova API.</p>
         </div>
         {account ? (
           <div className="account-card">
@@ -1218,8 +1328,8 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
           <div className="account-card empty">
             <Lock size={28} />
             <h3>{accountLoading ? 'Checking session...' : 'Sign in to load your account'}</h3>
-            <p>No account data is shown until the Nova API authenticates your session.</p>
-            <button className="btn btn-primary full" type="button" onClick={onSignIn}>Continue to Sign In</button>
+            <p>Your account data stays hidden until your session is authenticated.</p>
+            <button className="btn btn-primary full" type="button" onClick={onSignIn}><User size={17} />Sign In</button>
           </div>
         )}
       </div>
@@ -1232,20 +1342,20 @@ function LegalNotice() {
     <section className="section legal-section" id="legal">
       <div className="section-inner legal-panel reveal">
         <div>
-          <span className="eyebrow">Beta transparency</span>
-          <h2>Privacy, Terms, and Support Before Public Release</h2>
-          <p>Nova Tweaks stores account, license, device-binding, diagnostic, and local backup data only for product access, safety, support, and troubleshooting workflows.</p>
+          <span className="eyebrow"><ShieldCheck size={14} />Transparency</span>
+          <h2>Privacy, safety, and support.</h2>
+          <p>Nova Tweaks uses account, license, device, diagnostic, and local backup data only for access, safety checks, support, and troubleshooting.</p>
         </div>
         <div className="legal-grid">
           <article>
             <ShieldCheck size={20} />
             <h3>Privacy baseline</h3>
-            <p>Diagnostics are redacted, local token storage uses the desktop secure store, and account export/delete workflows are part of the release checklist.</p>
+            <p>Diagnostics are limited, local token storage uses the desktop secure store, and account export/delete workflows are part of the release checklist.</p>
           </article>
           <article>
             <FileText size={20} />
             <h3>Terms and safety</h3>
-            <p>System-level tweaks require administrator rights and can affect Windows behavior. Beta users should keep restore points and backups available.</p>
+            <p>System-level tweaks require administrator rights and can affect Windows behavior. Keep restore points and backups available before bigger changes.</p>
           </article>
           <article>
             <Mail size={20} />
@@ -1253,7 +1363,7 @@ function LegalNotice() {
             <p>Support: <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a><br />Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
           </article>
         </div>
-        <p className="legal-disclaimer">Public privacy policy, terms, imprint, and processor disclosures must be reviewed by counsel before a non-beta launch.</p>
+        <p className="legal-disclaimer">Public privacy policy, terms, imprint, and processor disclosures should be reviewed before a full public launch.</p>
       </div>
     </section>
   );
@@ -1290,12 +1400,12 @@ function FinalCTA({ onSignIn, onUpgrade }) {
     <section className="section final-cta" id="download">
       <div className="section-inner cta-panel reveal">
         <BadgeCheck size={34} />
-        <h2>Nova Tweaks Desktop Beta</h2>
-        <p>Download the Windows beta, verify the checksum, and keep changes transparent with backups, risk confirmations, compatibility warnings, and diagnostics.</p>
+        <h2>Download Nova Tweaks for Windows.</h2>
+        <p>Install the Windows beta and tune with visible checks, restore options, risk confirmations, compatibility notes, and readable release information.</p>
         <div className="download-meta" aria-label="Desktop beta download details">
           <span><MonitorCheck size={15} />Windows 10 / 11 x64</span>
           <span><FileText size={15} />Version {updateInfo.version || '1.0.0'}</span>
-          <span><ShieldCheck size={15} />Manual beta update</span>
+          <span><ShieldCheck size={15} />Clear beta updates</span>
         </div>
         {updateInfo.releaseNotes ? <p className="download-release-note">{updateInfo.releaseNotes}</p> : null}
         {updateInfo.sha256 ? (
@@ -1306,12 +1416,12 @@ function FinalCTA({ onSignIn, onUpgrade }) {
           </div>
         ) : null}
         <div className="hero-actions">
-          <a className="btn btn-primary" href={downloadHref}><Download size={17} />Download Beta</a>
+          <a className="btn btn-primary download-button" href={downloadHref}><Download size={17} />Download Beta</a>
           <button className="btn btn-secondary" type="button" onClick={onUpgrade}><Gem size={17} />Upgrade to Premium</button>
-          <a className="btn btn-secondary" href={DISCORD_URL} target="_blank" rel="noreferrer">Join Discord</a>
-          <button className="btn btn-secondary" type="button" onClick={onSignIn}>Open Account</button>
+          <a className="btn btn-secondary" href={DISCORD_URL} target="_blank" rel="noreferrer"><img className="btn-image-icon" src={DISCORD_ICON_SRC} alt="" />Join Discord</a>
+          <button className="btn btn-secondary" type="button" onClick={onSignIn}><ExternalLink size={17} />Open Account</button>
         </div>
-        <p className="download-fineprint">Beta builds are distributed from this website. Review release notes and checksum before installing.</p>
+        <p className="download-fineprint">Beta builds are distributed from this website. Review the release notes and checksum before installing.</p>
       </div>
     </section>
   );
@@ -1347,7 +1457,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="section-inner footer-grid">
-        <div><Logo /><p>Premium Windows optimization and control for gamers and power users.</p></div>
+        <div><Logo /><p>Clear Windows tuning for gamers, creators, and anyone who wants more control without guesswork.</p></div>
         {columns.map(([title, links]) => (
           <div key={title}>
             <h3>{title}</h3>
@@ -1357,7 +1467,7 @@ function Footer() {
           </div>
         ))}
       </div>
-      <div className="footer-bottom">(c) 2026 NovaTweaks. All rights reserved.</div>
+      <div className="footer-bottom">(c) 2026 Nova Tweaks. All rights reserved.</div>
     </footer>
   );
 }
@@ -1377,19 +1487,17 @@ function formatAuthError(code = '') {
 }
 
 function App() {
+  if (window.location.pathname === '/reset-password') {
+    return <ResetPasswordPage />;
+  }
+
   const [authOpen, setAuthOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [account, setAccount] = useState(null);
-  const [accountLoading, setAccountLoading] = useState(Boolean(getStoredToken()));
+  const [accountLoading, setAccountLoading] = useState(true);
   const [notice, setNotice] = useState('');
 
   const loadAccount = async () => {
-    const token = getStoredToken();
-    if (!token) {
-      setAccount(null);
-      setAccountLoading(false);
-      return;
-    }
     setAccountLoading(true);
     try {
       setAccount(await getCurrentUser());
@@ -1434,8 +1542,8 @@ function App() {
     }
   }
 
-  function handleLogout() {
-    clearToken();
+  async function handleLogout() {
+    await logout().catch(() => clearToken());
     setAccount(null);
     setProfileOpen(false);
   }
