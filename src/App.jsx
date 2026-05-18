@@ -1108,6 +1108,7 @@ function Pricing({ account, onRequireAuth, onUpgrade }) {
             <h3>Premium</h3>
             <div className="price">{PREMIUM_PRICE_LABEL} <span>/ lifetime access</span></div>
             {['Advanced tuning options', 'Nova Game Mode', 'Priority support', 'Future Premium updates'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
+            <p>Final price, VAT handling, digital-content withdrawal information, and license terms are shown during checkout and must be reviewed before purchase.</p>
             <button className="btn btn-primary full" type="button" onClick={() => (account ? onUpgrade() : onRequireAuth())}><Gem size={17} /><span>Get Premium</span></button>
           </article>
         </div>
@@ -1241,6 +1242,9 @@ function AuthModal({ open, onClose, onAuth }) {
             </label>
           ) : null}
           <button className="btn btn-primary full" type="submit" disabled={loading}>{loading ? 'Working...' : view === 'login' ? 'Sign In' : view === 'register' ? 'Create Account' : 'Send Reset Link'}</button>
+          {view === 'register' ? (
+            <p className="legal-disclaimer">By creating an account you acknowledge the privacy policy and terms linked below. Your email, username, password hash, license status, and device binding data are processed for account security and product access.</p>
+          ) : null}
         </form>
         <div className="auth-switch">
           <button type="button" onClick={() => setView(view === 'register' ? 'login' : 'register')}>{view === 'register' ? 'Already have an account?' : 'Create account'}</button>
@@ -1338,36 +1342,36 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
 }
 
 function LegalNotice() {
-  return (
-    <section className="section legal-section" id="legal">
-      <div className="section-inner legal-panel reveal">
-        <div>
-          <span className="eyebrow"><ShieldCheck size={14} />Transparency</span>
-          <h2>Privacy, safety, and support.</h2>
-          <p>Nova Tweaks uses account, license, device, diagnostic, and local backup data only for access, safety checks, support, and troubleshooting.</p>
+    return (
+      <section className="section legal-section" id="legal">
+        <div className="section-inner legal-panel reveal">
+          <div>
+            <span className="eyebrow"><ShieldCheck size={14} />Transparency</span>
+            <h2>Legal, privacy, and safety.</h2>
+            <p>Nova Tweaks uses account, license, device, diagnostic, and local backup data for access, safety checks, support, troubleshooting, and payment handling through trusted providers.</p>
+          </div>
+          <div className="legal-grid">
+            <article id="privacy">
+              <ShieldCheck size={20} />
+              <h3>Privacy policy</h3>
+              <p>Account data, device identifiers, support diagnostics, logs, and payment provider IDs are processed only for product access, security, billing, and support. Diagnostics should be shared only after a deliberate user action.</p>
+            </article>
+            <article id="terms">
+              <FileText size={20} />
+              <h3>Terms, EULA, and withdrawal</h3>
+              <p>Digital Premium access, licensing terms, refund/withdrawal information, and EULA limits for system-level Windows changes must be reviewed before purchase and finalized by legal counsel.</p>
+            </article>
+            <article id="imprint">
+              <Mail size={20} />
+              <h3>Imprint and contact</h3>
+              <p>Provider details must be completed before public sale. Support: <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a><br />Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+            </article>
+          </div>
+          <p className="legal-disclaimer">Payment processing is handled by Stripe. Email delivery, hosting/database, Discord, and any analytics or AI providers must be listed in the final privacy policy and data processing documentation.</p>
         </div>
-        <div className="legal-grid">
-          <article>
-            <ShieldCheck size={20} />
-            <h3>Privacy baseline</h3>
-            <p>Diagnostics are limited, local token storage uses the desktop secure store, and account export/delete workflows are part of the release checklist.</p>
-          </article>
-          <article>
-            <FileText size={20} />
-            <h3>Terms and safety</h3>
-            <p>System-level tweaks require administrator rights and can affect Windows behavior. Keep restore points and backups available before bigger changes.</p>
-          </article>
-          <article>
-            <Mail size={20} />
-            <h3>Support contact</h3>
-            <p>Support: <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a><br />Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
-          </article>
-        </div>
-        <p className="legal-disclaimer">Public privacy policy, terms, imprint, and processor disclosures should be reviewed before a full public launch.</p>
-      </div>
-    </section>
-  );
-}
+      </section>
+    );
+  }
 
 function FinalCTA({ onSignIn, onUpgrade }) {
   const [updateInfo, setUpdateInfo] = useState({
@@ -1441,12 +1445,12 @@ function Footer() {
       ['Changelog', '#top'],
       ['Status', '#top']
     ]],
-    ['Company', [
-      ['About', '#top'],
-      ['Contact', `mailto:${CONTACT_EMAIL}`],
-      ['Privacy', '#legal'],
-      ['Terms', '#legal']
-    ]],
+      ['Company', [
+        ['Imprint', '#imprint'],
+        ['Contact', `mailto:${CONTACT_EMAIL}`],
+        ['Privacy', '#privacy'],
+        ['Terms', '#terms']
+      ]],
     ['Community', [
       ['Discord', DISCORD_URL],
       ['YouTube', '#top'],
@@ -1478,11 +1482,11 @@ function formatAuthError(code = '') {
     : String(code || '');
   const normalized = source.toLowerCase();
   if (normalized.includes('invalid_credentials') || normalized.includes('invalid_login')) return 'Invalid username/email or password.';
-  if (normalized.includes('email_not_verified')) return 'Please verify your email before signing in.';
+    if (normalized.includes('email_not_verified')) return 'Invalid username/email or password.';
   if (normalized.includes('token_missing')) return 'Login succeeded, but the backend did not return a usable session token.';
   if (normalized.includes('api_network_error')) return 'Nova API is not reachable. Please make sure the local API server is running.';
   if (normalized.includes('weak_password')) return 'Password must include uppercase, lowercase, number, and special character.';
-  if (normalized.includes('user_already_exists') || normalized.includes('already_registered')) return 'An account with that email or username already exists.';
+    if (normalized.includes('user_already_exists') || normalized.includes('already_registered')) return 'If the account can be created, we will send a verification email.';
   return source.trim() || 'Something went wrong. Please try again.';
 }
 
