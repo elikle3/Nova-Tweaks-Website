@@ -1378,7 +1378,7 @@ function FinalCTA({ onSignIn, onUpgrade }) {
     version: '1.0.0',
     downloadUrl: '/downloads/NovaTweaks-Setup.exe',
     sha256: '',
-    releaseNotes: 'Desktop beta for Windows 10 and Windows 11.',
+    releaseNotes: 'Unsigned desktop beta for Windows 10 and Windows 11.',
     minimumSupportedVersion: '1.0.0'
   });
 
@@ -1409,23 +1409,25 @@ function FinalCTA({ onSignIn, onUpgrade }) {
         <div className="download-meta" aria-label="Desktop beta download details">
           <span><MonitorCheck size={15} />Windows 10 / 11 x64</span>
           <span><FileText size={15} />Version {updateInfo.version || '1.0.0'}</span>
-          <span><ShieldCheck size={15} />Clear beta updates</span>
+          <span><ShieldCheck size={15} />Manual beta updates</span>
         </div>
         {updateInfo.releaseNotes ? <p className="download-release-note">{updateInfo.releaseNotes}</p> : null}
         {updateInfo.sha256 ? (
           <div className="checksum-box">
-            <Hash size={16} />
-            <span>SHA256</span>
-            <code>{updateInfo.sha256}</code>
+            <div className="checksum-label">
+              <Hash size={16} />
+              <span>SHA256 checksum</span>
+            </div>
+            <code title={updateInfo.sha256}>{updateInfo.sha256}</code>
           </div>
         ) : null}
-        <div className="hero-actions">
+        <div className="download-actions">
           <a className="btn btn-primary download-button" href={downloadHref}><Download size={17} />Download Beta</a>
           <button className="btn btn-secondary" type="button" onClick={onUpgrade}><Gem size={17} />Upgrade to Premium</button>
           <a className="btn btn-secondary" href={DISCORD_URL} target="_blank" rel="noreferrer"><img className="btn-image-icon" src={DISCORD_ICON_SRC} alt="" />Join Discord</a>
           <button className="btn btn-secondary" type="button" onClick={onSignIn}><ExternalLink size={17} />Open Account</button>
         </div>
-        <p className="download-fineprint">Beta builds are distributed from this website. Review the release notes and checksum before installing.</p>
+        <p className="download-fineprint">Early beta builds may be unsigned and can trigger a Windows SmartScreen warning. Review the release notes and SHA256 checksum before installing; automatic public updates stay disabled until signed releases are ready.</p>
       </div>
     </section>
   );
