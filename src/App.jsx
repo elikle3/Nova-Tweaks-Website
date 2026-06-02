@@ -78,7 +78,6 @@ const WEBSITE_PICTURE_TWEAKS_SRC = new URL('./assets/Nova_Tweaks_Website_Picture
 const WEBSITE_PICTURE_SELECTION_TWEAK_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/selection_tweak.png', import.meta.url).href;
 const WEBSITE_PICTURE_TIMER_RESOLUTION_SELECTION_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/timer_resolution_selection.png', import.meta.url).href;
 const WEBSITE_PICTURE_DETAILS_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/tweak_details.png', import.meta.url).href;
-const WEBSITE_PICTURE_PRIORITY_SUPPORT_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/priority_support.png', import.meta.url).href;
 const WEBSITE_PICTURE_FUTURE_PREMIUM_UPDATES_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/future_premium_updates.png', import.meta.url).href;
 const DISCORD_ICON_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/discord.png', import.meta.url).href;
 const PROFILE_PICTURE_ONE_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/profile_pictures/1.jpg', import.meta.url).href;
@@ -279,13 +278,6 @@ const premiumFeatureCards = [
     image: WEBSITE_PICTURE_GAMEMODE_SRC
   },
   {
-    title: 'Priority Support',
-    copy: 'Get faster help with account, setup, and optimization questions when you need a clear answer.',
-    frame: 'compact',
-    label: 'Support',
-    image: WEBSITE_PICTURE_PRIORITY_SUPPORT_SRC
-  },
-  {
     title: 'Future Premium Updates',
     copy: 'Keep access to upcoming Premium features as Nova Tweaks grows with new workflows and tuning options.',
     frame: 'compact',
@@ -315,7 +307,7 @@ const faqs = [
   ['Does it work on Windows 10 and 11?', 'Nova Tweaks is built for modern Windows systems and supports Windows 10 and Windows 11 workflows.'],
   ['Do I need admin rights?', 'Most system-level optimizations require administrator privileges because Windows protects those settings.'],
   ['Will it increase my FPS?', 'Nova Tweaks focuses on cleaner system behavior, smoother frame pacing, lower input delay, and fewer background interruptions rather than unrealistic FPS promises.'],
-  ['What is included in Premium?', 'Premium includes everything in Free plus advanced tweaks, Nova Game Mode, priority support, and future Premium updates.']
+  ['What is included in Premium?', 'Premium includes everything in Free plus advanced tweaks, Nova Game Mode, and future Premium updates.']
 ];
 
 function Logo() {
@@ -485,16 +477,6 @@ function Nav({ onSignIn, onOpenProfile, onUpgrade, onLogout, account, accountLoa
   );
 }
 
-function MiniChart() {
-  return (
-    <svg className="mini-chart" viewBox="0 0 320 120" aria-hidden="true">
-      <path className="chart-grid-line" d="M10 30H310M10 60H310M10 90H310" />
-      <path className="hero-chart-glow" d="M10 90 C42 72 58 78 82 58 C112 31 133 46 158 42 C191 36 207 68 235 47 C265 25 286 33 310 20" />
-      <path className="hero-chart-line" d="M10 90 C42 72 58 78 82 58 C112 31 133 46 158 42 C191 36 207 68 235 47 C265 25 286 33 310 20" />
-    </svg>
-  );
-}
-
 function DashboardMockup() {
   return (
     <div className="hero-mockup-frame">
@@ -565,34 +547,6 @@ function Features() {
               <p>{copy}</p>
             </article>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ControlCenter() {
-  return (
-    <section className="section control-section">
-      <div className="section-inner split">
-        <div className="split-copy reveal">
-          <span className="eyebrow"><PanelsTopLeft size={14} />System workspace</span>
-          <h2>One place for tuning, cleanup, and rollback.</h2>
-          <p>Nova Tweaks brings checked tweak states, app management, startup control, backups, monitoring, and readable script feedback into one focused workspace.</p>
-          <ul className="check-list">
-            {['Tweak-state detection before action', 'Restore points and config saves', 'Apps and startup entries in one view', 'Clear script output and error feedback'].map((item) => <li key={item}><Check size={16} />{item}</li>)}
-          </ul>
-          <ButtonLink href="#features" variant="secondary" icon={ArrowRight}>Explore Features</ButtonLink>
-        </div>
-        <div className="mockup-stack reveal delay-1">
-          <div className="product-window stack-main">
-            <div className="window-top"><div className="window-dots"><span /><span /><span /></div><span>Dashboard</span></div>
-            <div className="stack-grid"><div className="metric-ring"><span>92</span><small>System score</small></div><MiniChart /></div>
-          </div>
-          <div className="product-window stack-card">
-            <div className="window-top"><span>Backups & Config Saves</span><span className="window-status">3 saved</span></div>
-            {['Before Gaming Profile', 'Startup Cleanup', 'Network Tune'].map((item) => <div className="backup-row" key={item}><DatabaseBackup size={15} /><span>{item}</span><b>Ready</b></div>)}
-          </div>
         </div>
       </div>
     </section>
@@ -933,105 +887,272 @@ function PremiumFeaturesSection({ onUpgrade }) {
   );
 }
 
-const beforeChartPoints = [
-  { x: 72, y: 166 },
-  { x: 116, y: 142 },
-  { x: 150, y: 184 },
-  { x: 178, y: 238, marker: true, label: 'Input spike', labelX: 196, labelY: 198, labelWidth: 94 },
-  { x: 216, y: 174 },
-  { x: 256, y: 146 },
-  { x: 294, y: 196 },
-  { x: 328, y: 272, marker: true, label: 'Background spike', labelX: 346, labelY: 232, labelWidth: 130 },
-  { x: 370, y: 182 },
-  { x: 414, y: 150 },
-  { x: 452, y: 184 },
-  { x: 496, y: 246, marker: true, label: 'Heavy fight scene', labelX: 514, labelY: 266, labelWidth: 132 },
-  { x: 540, y: 168 },
-  { x: 588, y: 206 },
-  { x: 632, y: 156 },
-  { x: 690, y: 214 },
-  { x: 774, y: 188 }
-];
+function CinematicOptimizationVisual({ active }) {
+  const graphCanvasRef = useRef(null);
+  const particleCanvasRef = useRef(null);
+  const wrapRef = useRef(null);
 
-const afterChartPoints = [
-  { x: 72, y: 178 },
-  { x: 132, y: 171 },
-  { x: 196, y: 160 },
-  { x: 258, y: 154 },
-  { x: 318, y: 156 },
-  { x: 384, y: 146 },
-  { x: 446, y: 142 },
-  { x: 506, y: 138 },
-  { x: 566, y: 132 },
-  { x: 626, y: 127 },
-  { x: 690, y: 121, marker: true, label: 'Stable optimized path', labelX: 610, labelY: 82, labelWidth: 152 },
-  { x: 774, y: 114 }
-];
+  useEffect(() => {
+    const graphCanvas = graphCanvasRef.current;
+    const particleCanvas = particleCanvasRef.current;
+    const wrap = wrapRef.current;
+    if (!graphCanvas || !particleCanvas || !wrap) return undefined;
 
-function createPointPath(points) {
-  return points.map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x} ${point.y}`).join(' ');
-}
+    const graphCtx = graphCanvas.getContext('2d');
+    const particleCtx = particleCanvas.getContext('2d');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let graphW = 0;
+    let graphH = 0;
+    let particleW = 0;
+    let particleH = 0;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let frame = 0;
 
-function createAreaPath(points, baseline = 330) {
-  return `${createPointPath(points)} L${points[points.length - 1].x} ${baseline} L${points[0].x} ${baseline} Z`;
-}
+    const particles = Array.from({ length: 78 }, () => ({
+      x: Math.random(),
+      y: Math.random(),
+      z: Math.random(),
+      r: 0.25 + Math.random() * 1.15,
+      speed: 0.000025 + Math.random() * 0.000075,
+      phase: Math.random() * Math.PI * 2,
+      alpha: 0.05 + Math.random() * 0.22
+    }));
 
-function PerformanceGraph({ active }) {
-  const beforePath = createPointPath(beforeChartPoints);
-  const afterPath = createPointPath(afterChartPoints);
-  const afterAreaPath = createAreaPath(afterChartPoints);
-  const markers = [
-    ...beforeChartPoints.filter((point) => point.marker).map((point) => ({ ...point, tone: 'red' })),
-    ...afterChartPoints.filter((point) => point.marker).map((point) => ({ ...point, tone: 'blue' }))
-  ];
+    function resizeCanvas(canvas, ctx, rect) {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return [rect.width, rect.height];
+    }
+
+    function resize() {
+      [graphW, graphH] = resizeCanvas(graphCanvas, graphCtx, graphCanvas.getBoundingClientRect());
+      [particleW, particleH] = resizeCanvas(particleCanvas, particleCtx, particleCanvas.getBoundingClientRect());
+    }
+
+    function drawGrid(ctx, x, y, w, h, time) {
+      ctx.save();
+      const glow = ctx.createRadialGradient(x + w * 0.65, y + h * 0.45, 0, x + w * 0.65, y + h * 0.45, w * 0.7);
+      glow.addColorStop(0, 'rgba(68, 148, 220, 0.08)');
+      glow.addColorStop(0.45, 'rgba(28, 72, 130, 0.025)');
+      glow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(x, y, w, h);
+
+      const verticals = 16;
+      const horizontals = 7;
+      ctx.lineWidth = 0.8;
+      for (let i = 0; i <= verticals; i += 1) {
+        const px = x + (i / verticals) * w;
+        ctx.strokeStyle = `rgba(120, 175, 220, ${i % 3 === 0 ? 0.095 : 0.042})`;
+        ctx.beginPath();
+        ctx.moveTo(px, y);
+        ctx.lineTo(px, y + h);
+        ctx.stroke();
+      }
+
+      for (let i = 0; i <= horizontals; i += 1) {
+        const py = y + (i / horizontals) * h;
+        ctx.strokeStyle = `rgba(120, 175, 220, ${i % 2 === 0 ? 0.085 : 0.038})`;
+        ctx.beginPath();
+        ctx.moveTo(x, py);
+        ctx.lineTo(x + w, py);
+        ctx.stroke();
+      }
+
+      const shimmerX = x + ((time * 0.015) % 1) * w;
+      const shimmer = ctx.createLinearGradient(shimmerX - w * 0.22, y, shimmerX + w * 0.22, y);
+      shimmer.addColorStop(0, 'rgba(255,255,255,0)');
+      shimmer.addColorStop(0.5, 'rgba(255,255,255,0.032)');
+      shimmer.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = shimmer;
+      ctx.fillRect(x, y, w, h);
+      ctx.restore();
+    }
+
+    function beforeValue(progress, time) {
+      const base =
+        0.58 +
+        Math.sin(progress * 12.5 + time * 0.00185) * 0.048 +
+        Math.sin(progress * 42.0 + time * 0.0055) * 0.028 +
+        Math.sin(progress * 85.0 + time * 0.01) * 0.018;
+      let spikes = 0;
+      const centers = [0.08, 0.16, 0.24, 0.32, 0.4, 0.5, 0.58, 0.66, 0.76, 0.86, 0.94];
+      for (let i = 0; i < centers.length; i += 1) {
+        const center = (centers[i] + Math.sin(time * 0.00016 + i) * 0.01 + 1) % 1;
+        const distance = Math.abs(progress - center);
+        const spike = Math.exp(-(distance * distance) / (0.000085 + (i % 3) * 0.00003));
+        spikes += spike * (0.1 + (i % 4) * 0.032);
+      }
+      const dip = Math.sin(progress * 28 - time * 0.0025) > 0.82 ? -0.075 : 0;
+      const jitter = Math.sin(progress * 900 + time * 0.08) * 0.01;
+      return Math.max(0.2, Math.min(0.88, base + spikes + dip + jitter));
+    }
+
+    function afterValue(progress, time) {
+      const glide =
+        0.4 +
+        Math.sin(progress * 7.8 + time * 0.001) * 0.014 +
+        Math.sin(progress * 16.0 - time * 0.0006) * 0.007 +
+        Math.sin(progress * 3.0 + time * 0.00048) * 0.01;
+      return Math.max(0.32, Math.min(0.48, glide));
+    }
+
+    function drawGraph(time) {
+      graphCtx.clearRect(0, 0, graphW, graphH);
+      const padX = graphW * 0.08;
+      const padY = graphH * 0.16;
+      const x = padX;
+      const y = padY;
+      const w = graphW - padX * 2;
+      const h = graphH - padY * 2;
+      drawGrid(graphCtx, x, y, w, h, time);
+
+      const beforePoints = [];
+      const afterPoints = [];
+      const offsetBefore = (time * 0.00008) % 1;
+      const offsetAfter = (time * 0.000048) % 1;
+      for (let i = 0; i < 180; i += 1) {
+        const progress = i / 179;
+        beforePoints.push({ x: x + progress * w, y: y + beforeValue((progress + offsetBefore) % 1, time) * h });
+        afterPoints.push({ x: x + progress * w, y: y + afterValue((progress + offsetAfter) % 1, time) * h });
+      }
+
+      graphCtx.save();
+      const beforeFill = graphCtx.createLinearGradient(0, y + h * 0.4, 0, y + h);
+      beforeFill.addColorStop(0, 'rgba(210, 73, 73, 0.06)');
+      beforeFill.addColorStop(1, 'rgba(210, 73, 73, 0)');
+      graphCtx.beginPath();
+      graphCtx.moveTo(beforePoints[0].x, beforePoints[0].y);
+      beforePoints.forEach((point) => graphCtx.lineTo(point.x, point.y));
+      graphCtx.lineTo(beforePoints[beforePoints.length - 1].x, y + h);
+      graphCtx.lineTo(beforePoints[0].x, y + h);
+      graphCtx.closePath();
+      graphCtx.fillStyle = beforeFill;
+      graphCtx.fill();
+
+      const afterFill = graphCtx.createLinearGradient(0, y + h * 0.3, 0, y + h);
+      afterFill.addColorStop(0, 'rgba(82, 171, 255, 0.08)');
+      afterFill.addColorStop(0.6, 'rgba(82, 171, 255, 0.02)');
+      afterFill.addColorStop(1, 'rgba(82, 171, 255, 0)');
+      graphCtx.beginPath();
+      graphCtx.moveTo(afterPoints[0].x, afterPoints[0].y);
+      for (let i = 1; i < afterPoints.length - 2; i += 1) {
+        const xc = (afterPoints[i].x + afterPoints[i + 1].x) / 2;
+        const yc = (afterPoints[i].y + afterPoints[i + 1].y) / 2;
+        graphCtx.quadraticCurveTo(afterPoints[i].x, afterPoints[i].y, xc, yc);
+      }
+      graphCtx.lineTo(afterPoints[afterPoints.length - 1].x, y + h);
+      graphCtx.lineTo(afterPoints[0].x, y + h);
+      graphCtx.closePath();
+      graphCtx.fillStyle = afterFill;
+      graphCtx.fill();
+
+      graphCtx.globalAlpha = 0.72;
+      graphCtx.lineWidth = 1.4;
+      graphCtx.lineCap = 'round';
+      graphCtx.lineJoin = 'miter';
+      graphCtx.strokeStyle = 'rgba(210, 73, 73, 0.85)';
+      graphCtx.shadowColor = 'rgba(210, 73, 73, 0.25)';
+      graphCtx.shadowBlur = 3;
+      graphCtx.beginPath();
+      graphCtx.moveTo(beforePoints[0].x, beforePoints[0].y);
+      beforePoints.forEach((point) => graphCtx.lineTo(point.x, point.y));
+      graphCtx.stroke();
+
+      graphCtx.globalAlpha = 0.92;
+      graphCtx.lineWidth = 1.95;
+      graphCtx.lineJoin = 'round';
+      graphCtx.strokeStyle = 'rgba(117, 196, 255, 0.96)';
+      graphCtx.shadowColor = 'rgba(87, 178, 255, 0.35)';
+      graphCtx.shadowBlur = 8;
+      graphCtx.beginPath();
+      graphCtx.moveTo(afterPoints[0].x, afterPoints[0].y);
+      for (let i = 1; i < afterPoints.length - 2; i += 1) {
+        const xc = (afterPoints[i].x + afterPoints[i + 1].x) / 2;
+        const yc = (afterPoints[i].y + afterPoints[i + 1].y) / 2;
+        graphCtx.quadraticCurveTo(afterPoints[i].x, afterPoints[i].y, xc, yc);
+      }
+      graphCtx.lineTo(afterPoints[afterPoints.length - 1].x, afterPoints[afterPoints.length - 1].y);
+      graphCtx.stroke();
+
+      graphCtx.globalAlpha = 1;
+      for (let i = 0; i < 10; i += 1) {
+        const progress = ((time * 0.000035) + i / 10) % 1;
+        const point = afterPoints[Math.floor(progress * (afterPoints.length - 1))];
+        graphCtx.fillStyle = `rgba(125, 205, 255, ${0.035 + (i % 3) * 0.02})`;
+        graphCtx.beginPath();
+        graphCtx.arc(point.x, point.y, 1.1 + (i % 3) * 0.4, 0, Math.PI * 2);
+        graphCtx.fill();
+      }
+
+      const last = afterPoints[afterPoints.length - 1];
+      const pulse = 0.45 + Math.sin(time * 0.0035) * 0.48;
+      const dot = graphCtx.createRadialGradient(last.x, last.y, 0, last.x, last.y, 16 + pulse * 7);
+      dot.addColorStop(0, 'rgba(166, 219, 255, 0.78)');
+      dot.addColorStop(0.35, 'rgba(83, 177, 255, 0.28)');
+      dot.addColorStop(1, 'rgba(83, 177, 255, 0)');
+      graphCtx.globalAlpha = 0.8;
+      graphCtx.fillStyle = dot;
+      graphCtx.beginPath();
+      graphCtx.arc(last.x, last.y, 16 + pulse * 7, 0, Math.PI * 2);
+      graphCtx.fill();
+      graphCtx.restore();
+    }
+
+    function drawParticles(time) {
+      particleCtx.clearRect(0, 0, particleW, particleH);
+      const driftX = Math.sin(time * 0.00012) * particleW * 0.014;
+      const driftY = Math.cos(time * 0.0001) * particleH * 0.012;
+      for (const particle of particles) {
+        particle.y -= particle.speed * (1 + particle.z) * 8;
+        if (particle.y < -0.05) {
+          particle.y = 1.05;
+          particle.x = Math.random();
+        }
+        const depthScale = 0.32 + particle.z * 1.08;
+        const x = particle.x * particleW + Math.sin(time * 0.00018 + particle.phase) * 14 * depthScale + driftX;
+        const y = particle.y * particleH + Math.cos(time * 0.00015 + particle.phase) * 8 * depthScale + driftY;
+        const alpha = particle.alpha * (0.52 + Math.sin(time * 0.00085 + particle.phase) * 0.32);
+        particleCtx.beginPath();
+        particleCtx.fillStyle = `rgba(110, 175, 240, ${Math.max(0.012, alpha)})`;
+        particleCtx.arc(x, y, particle.r * depthScale, 0, Math.PI * 2);
+        particleCtx.fill();
+      }
+    }
+
+    function animate(time) {
+      drawParticles(time);
+      drawGraph(time);
+      if (!reduceMotion) frame = requestAnimationFrame(animate);
+    }
+
+    resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(wrap);
+    frame = requestAnimationFrame(animate);
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return (
-    <svg className={`performance-chart ${active ? 'chart-active' : ''}`} viewBox="0 0 820 390" role="img" aria-label="Before and after frame pacing chart">
-      <defs>
-        <linearGradient id="blueAreaFill" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#35c9ff" stopOpacity="0.24" />
-          <stop offset="78%" stopColor="#008cff" stopOpacity="0.02" />
-        </linearGradient>
-        <linearGradient id="blueTravelGlow" x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0%" stopColor="#35c9ff" stopOpacity="0" />
-          <stop offset="45%" stopColor="#ffffff" stopOpacity="0.85" />
-          <stop offset="100%" stopColor="#008cff" stopOpacity="0" />
-        </linearGradient>
-        <filter id="blueLineGlow"><feGaussianBlur stdDeviation="3" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
-        <filter id="redSpikeGlow"><feGaussianBlur stdDeviation="4" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
-      </defs>
-
-      <g className="axis-shell">
-        <path className="chart-axis" d="M72 54V330H774" />
-        <path className="chart-grid" d="M72 88H774M72 134H774M72 180H774M72 226H774M72 272H774M72 318H774M188 54V330M304 54V330M420 54V330M536 54V330M652 54V330M768 54V330" />
-      </g>
-
-      <path className="after-area" d={afterAreaPath} />
-
-      <path className="before-line before-glow" d={beforePath} />
-      <path className="before-line" d={beforePath} />
-
-      <path className="after-line after-glow" d={afterPath} />
-      <path className="after-line" d={afterPath} />
-      <path className="after-highlight" d={afterPath} />
-
-      <g className="chart-chip">
-        <rect x="532" y="28" width="158" height="28" rx="14" />
-        <text x="548" y="47">Smoother frame pacing</text>
-      </g>
-
-      <g className="markers">
-        {markers.map((marker, index) => (
-          <g className={`marker marker-${marker.tone}`} style={{ '--marker-index': index }} key={marker.label}>
-            <circle cx={marker.x} cy={marker.y} r="6" />
-            <g className="marker-label" transform={`translate(${marker.labelX} ${marker.labelY})`}>
-              <rect width={marker.labelWidth} height="26" rx="13" />
-              <text x="12" y="17">{marker.label}</text>
-            </g>
-          </g>
-        ))}
-      </g>
-    </svg>
+    <div className={`cinematic-performance-visual ${active ? 'cinematic-performance-active' : ''}`} ref={wrapRef} aria-label="Cinematic gaming optimization animation">
+      <canvas ref={particleCanvasRef} className="cinematic-particle-canvas" aria-hidden="true" />
+      <div className="cinematic-ambient-glow" aria-hidden="true" />
+      <div className="cinematic-monitor-glow" aria-hidden="true" />
+      <div className="cinematic-dashboard-wrap" aria-hidden="true">
+        <div className="cinematic-under-shadow" />
+        <div className="cinematic-dashboard">
+          <canvas ref={graphCanvasRef} className="cinematic-graph-canvas" />
+        </div>
+      </div>
+      <div className="cinematic-depth-accent" aria-hidden="true" />
+      <div className="cinematic-vignette" aria-hidden="true" />
+    </div>
   );
 }
 
@@ -1082,7 +1203,7 @@ function Performance() {
               </div>
               <span className="live-pill"><i />Animated example</span>
             </div>
-            <PerformanceGraph active={active} />
+            <CinematicOptimizationVisual active={active} />
           </div>
           <div className="stats-grid">{stats.map((stat) => <AnimatedStat key={stat.label} stat={stat} active={active} />)}</div>
         </div>
@@ -1107,7 +1228,7 @@ function Pricing({ account, onRequireAuth, onUpgrade }) {
             <div className="popular"><Star size={13} />Most chosen</div>
             <h3>Premium</h3>
             <div className="price">{PREMIUM_PRICE_LABEL} <span>/ lifetime access</span></div>
-            {['Advanced tuning options', 'Nova Game Mode', 'Priority support', 'Future Premium updates'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
+            {['Advanced tuning options', 'Nova Game Mode', 'Future Premium updates'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
             <p>Final price, VAT handling, digital-content withdrawal information, and license terms are shown during checkout and must be reviewed before purchase.</p>
             <button className="btn btn-primary full" type="button" onClick={() => (account ? onUpgrade() : onRequireAuth())}><Gem size={17} /><span>Get Premium</span></button>
           </article>
@@ -1569,7 +1690,6 @@ function App() {
         <Hero />
         <Benefits />
         <Features />
-        <ControlCenter />
         <ProductShowcase />
         <PremiumFeaturesSection onUpgrade={handleUpgrade} />
         <Performance />
