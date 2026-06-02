@@ -10,6 +10,8 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  CircleCheck,
+  CircuitBoard,
   Clock,
   Clock3,
   Cpu,
@@ -20,8 +22,10 @@ import {
   FileText,
   FolderTree,
   Gauge,
+  Gpu,
   Hash,
   HardDrive,
+  History,
   Info,
   Layers,
   LayoutGrid,
@@ -30,8 +34,11 @@ import {
   Lock,
   LogOut,
   Mail,
+  MemoryStick,
   Menu,
+  MonitorCog,
   MonitorCheck,
+  MousePointer2,
   MousePointerClick,
   PanelsTopLeft,
   PlayCircle,
@@ -46,13 +53,18 @@ import {
   Sparkles,
   Star,
   Tags,
+  Thermometer,
   Timer,
   ToggleLeft,
+  Trash2,
   User,
+  Wifi,
   Wrench,
   X
 } from 'lucide-react';
 import { useInView } from './hooks/useInView';
+import HomePage from './landing/HomePage';
+import PrivacyPolicyPage from './PrivacyPolicyPage';
 import ResetPasswordPage from './ResetPasswordPage';
 import {
   clearToken,
@@ -66,19 +78,19 @@ import {
 } from './lib/api';
 
 const APP_LOGO_SRC = new URL('./assets/logo.ico', import.meta.url).href;
-const HERO_MOCKUP_SRC = new URL('./assets/website-mockup-transparent.png', import.meta.url).href;
-const WEBSITE_PICTURE_DASHBOARD_THREE_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/dashboard_3.png', import.meta.url).href;
-const WEBSITE_PICTURE_APPS_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/apps.png', import.meta.url).href;
-const WEBSITE_PICTURE_BACKUP_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/backup.png', import.meta.url).href;
-const WEBSITE_PICTURE_GAMEMODE_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/gamemode.png', import.meta.url).href;
-const WEBSITE_PICTURE_PERFORMANCE_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/performance overview.png', import.meta.url).href;
-const WEBSITE_PICTURE_SETTINGS_ONE_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/settings_1.png', import.meta.url).href;
-const WEBSITE_PICTURE_SETTINGS_TWO_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/settings_2.png', import.meta.url).href;
-const WEBSITE_PICTURE_TWEAKS_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/tweaks.png', import.meta.url).href;
-const WEBSITE_PICTURE_SELECTION_TWEAK_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/selection_tweak.png', import.meta.url).href;
-const WEBSITE_PICTURE_TIMER_RESOLUTION_SELECTION_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/timer_resolution_selection.png', import.meta.url).href;
-const WEBSITE_PICTURE_DETAILS_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/tweak_details.png', import.meta.url).href;
-const WEBSITE_PICTURE_FUTURE_PREMIUM_UPDATES_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/future_premium_updates.png', import.meta.url).href;
+const WEBSITE_PICTURE_DASHBOARD_THREE_SRC = '';
+const WEBSITE_PICTURE_APPS_SRC = '';
+const WEBSITE_PICTURE_BACKUP_SRC = '';
+const WEBSITE_PICTURE_GAMEMODE_SRC = '';
+const WEBSITE_PICTURE_PERFORMANCE_SRC = '';
+const WEBSITE_PICTURE_SETTINGS_ONE_SRC = '';
+const WEBSITE_PICTURE_SETTINGS_TWO_SRC = '';
+const WEBSITE_PICTURE_TWEAKS_SRC = '';
+const WEBSITE_PICTURE_SELECTION_TWEAK_SRC = '';
+const WEBSITE_PICTURE_TIMER_RESOLUTION_SELECTION_SRC = '';
+const WEBSITE_PICTURE_DETAILS_SRC = '';
+const WEBSITE_PICTURE_FUTURE_PREMIUM_UPDATES_SRC = '';
+const WEBSITE_PICTURE_PRIORITY_SUPPORT_SRC = '';
 const DISCORD_ICON_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/discord.png', import.meta.url).href;
 const PROFILE_PICTURE_ONE_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/profile_pictures/1.jpg', import.meta.url).href;
 const PROFILE_PICTURE_TWO_SRC = new URL('./assets/Nova_Tweaks_Website_Pictures/profile_pictures/2.jpg', import.meta.url).href;
@@ -91,22 +103,119 @@ const CONTACT_EMAIL = 'contact@nova-tweaks.com';
 const PREMIUM_PRICE_LABEL = '19.99 EUR';
 
 const navItems = [
-  ['Features', '#features', LayoutGrid],
-  ['Showcase', '#product-showcase', MonitorCheck],
-  ['Premium', '#nova-premium', Gem],
+  ['Dashboard', '#dashboard-showcase', MonitorCheck],
   ['Performance', '#performance', Activity],
+  ['Free', '#nova-free', Sparkles],
+  ['Premium', '#nova-premium', Gem],
   ['Pricing', '#pricing', Tags],
   ['FAQ', '#faq', Info],
   ['Download', '#download', Download]
 ];
 
+const novaAppNavItems = [
+  ['Dashboard', LayoutGrid, true],
+  ['Tweaks', SlidersHorizontal],
+  ['Game Mode', PlayCircle],
+  ['Performance', Activity],
+  ['Backup', DatabaseBackup],
+  ['Apps', Rocket],
+  ['Settings', Settings2]
+];
+
+const novaDashboardHardwareCards = [
+  { key: 'gpu', label: 'GPU', primary: 'NVIDIA GeForce RTX 4070', secondary: 'Detected', icon: Gpu },
+  { key: 'cpu', label: 'CPU', primary: 'AMD Ryzen 7 7800X3D', secondary: '8 cores / 16 threads', icon: Cpu },
+  { key: 'ram', label: 'RAM', primary: '32 GB DDR5', secondary: '6000 MT/s', icon: MemoryStick },
+  { key: 'mb', label: 'MB', primary: 'MSI MAG B650 Tomahawk', secondary: 'AM5 platform', icon: CircuitBoard }
+];
+
+const novaDashboardMetrics = [
+  { icon: Cpu, label: 'CPU Usage', value: '18%', detail: '47 C', detailIcon: Thermometer, accent: 'var(--accent)' },
+  { icon: Gpu, label: 'GPU Usage', value: '12%', detail: '44 C', detailIcon: Thermometer, accent: 'var(--accent-secondary)' },
+  { icon: MemoryStick, label: 'Memory Usage', value: '9.8 GB', detail: 'Used', accent: '#8B5CF6' },
+  { icon: Wifi, label: 'Network Usage', value: '18.4 Mbit/s', detail: 'Inbound', accent: '#06B6D4' }
+];
+
+const novaDashboardActivities = [
+  ['Apply Powerplan opened', 'just now', 'var(--accent)'],
+  ['Clean Temporary Files opened', '2m ago', 'var(--accent-secondary)'],
+  ['Manage Startup Apps opened', '8m ago', '#8B5CF6'],
+  ['Reduce Input Delay opened', '13m ago', '#06B6D4']
+];
+
 const features = [
-  ['Checked Before It Changes', 'Nova checks the current Windows state first, so you do not apply tweaks blindly or guess what is already active.', BadgeCheck],
-  ['Backups Within Reach', 'Create restore points and Nova config saves before bigger changes, then return to a known setup when needed.', DatabaseBackup],
-  ['Apps and Startup, Clearly Sorted', 'See installed apps, startup entries, and supported cleanup actions without hunting through Windows menus.', Rocket],
-  ['Readable Feedback', 'Scripts show understandable progress, errors, and results, so every step feels traceable instead of mysterious.', ShieldCheck],
-  ['System Context Included', 'Live monitoring and hardware detection help you decide what to tune, and when to leave things alone.', MonitorCheck],
-  ['150+ Focused Tweaks', 'Browse practical categories for latency, network, power, cleanup, hardware, and everyday Windows behavior.', SlidersHorizontal]
+  ['Checked Before It Changes', 'Nova checks the current Windows state first, so you do not apply tweaks blindly or guess what is already active.', BadgeCheck, 'Checked'],
+  ['Backups Within Reach', 'Create restore points and Nova config saves before bigger changes, then return to a known setup when needed.', DatabaseBackup, 'Protected'],
+  ['Apps and Startup, Clearly Sorted', 'See installed apps, startup entries, and supported cleanup actions without hunting through Windows menus.', Rocket, 'Mapped'],
+  ['Readable Feedback', 'Scripts show understandable progress, errors, and results, so every step feels traceable instead of mysterious.', ShieldCheck, 'Traceable'],
+  ['System Context Included', 'Live monitoring and hardware detection help you decide what to tune, and when to leave things alone.', MonitorCheck, 'Live'],
+  ['150+ Focused Tweaks', 'Browse practical categories for latency, network, power, cleanup, hardware, and everyday Windows behavior.', SlidersHorizontal, 'Ready']
+];
+
+const freeLandingFeatures = [
+  {
+    title: 'System Tweaks',
+    copy: 'Tune Windows power, latency, cleanup, network, and interface settings from one focused library.',
+    image: WEBSITE_PICTURE_TWEAKS_SRC,
+    icon: SlidersHorizontal
+  },
+  {
+    title: 'Smart Status Detection',
+    copy: 'Nova checks current state before presenting actions, so users know what is already active.',
+    image: WEBSITE_PICTURE_SELECTION_TWEAK_SRC,
+    icon: Radar
+  },
+  {
+    title: 'Performance Overview',
+    copy: 'Read CPU, GPU, memory, and network signals before making changes to the system.',
+    image: WEBSITE_PICTURE_PERFORMANCE_SRC,
+    icon: Activity
+  },
+  {
+    title: 'Backup and Restore',
+    copy: 'Create Nova config saves and Windows restore points before bigger optimization passes.',
+    image: WEBSITE_PICTURE_BACKUP_SRC,
+    icon: DatabaseBackup
+  },
+  {
+    title: 'Apps and Startup',
+    copy: 'Review installed software, startup impact, and supported cleanup actions in a clear workflow.',
+    image: WEBSITE_PICTURE_APPS_SRC,
+    icon: Rocket
+  },
+  {
+    title: 'Settings That Stay Clear',
+    copy: 'Theme, language, startup behavior, data tools, and backup locations stay easy to control.',
+    image: WEBSITE_PICTURE_SETTINGS_ONE_SRC,
+    icon: Settings2
+  }
+];
+
+const premiumLandingFeatures = [
+  {
+    title: 'Nova Game Mode',
+    copy: 'Prepare active game sessions with priority, affinity, fullscreen behavior, and session-focused tuning.',
+    image: WEBSITE_PICTURE_GAMEMODE_SRC,
+    icon: PlayCircle
+  },
+  {
+    title: 'Timer Resolution Control',
+    copy: 'Use advanced timer workflows for latency-focused setups with clearer selection states.',
+    image: WEBSITE_PICTURE_TIMER_RESOLUTION_SELECTION_SRC,
+    icon: Timer
+  },
+  {
+    title: 'Future Premium Updates',
+    copy: 'Keep access to new premium workflows as Nova adds deeper performance tooling.',
+    image: WEBSITE_PICTURE_FUTURE_PREMIUM_UPDATES_SRC,
+    icon: Sparkles
+  },
+  {
+    title: 'Priority Support',
+    copy: 'Get help faster for setup, licensing, and PC tuning questions through the Nova support flow.',
+    image: WEBSITE_PICTURE_PRIORITY_SUPPORT_SRC,
+    icon: BadgeCheck
+  }
 ];
 
 const productShowcaseCards = [
@@ -312,7 +421,7 @@ const faqs = [
 
 function Logo() {
   return (
-    <a className="logo" href="#top" aria-label="NovaTweaks home">
+    <a className="logo" href="/" aria-label="NovaTweaks home">
       <span className="logo-mark"><img src={APP_LOGO_SRC} alt="" /></span>
       <span>Nova Tweaks</span>
     </a>
@@ -451,8 +560,9 @@ function ProfileMenu({ account, accountLoading, onSignIn, onOpenProfile, onUpgra
   );
 }
 
-function Nav({ onSignIn, onOpenProfile, onUpgrade, onLogout, account, accountLoading }) {
+function Nav({ onSignIn, onOpenProfile, onUpgrade, onLogout, account, accountLoading, showAccount = true }) {
   const [open, setOpen] = useState(false);
+  const isHomePage = window.location.pathname === '/';
   return (
     <header className="nav-shell">
       <nav className="nav">
@@ -462,25 +572,345 @@ function Nav({ onSignIn, onOpenProfile, onUpgrade, onLogout, account, accountLoa
         </button>
         <div className={`nav-links ${open ? 'nav-links-open' : ''}`}>
           {navItems.map(([label, href, Icon]) => (
-            <a key={label} href={href} onClick={() => setOpen(false)}>
+            <a key={label} href={!isHomePage && href.startsWith('#') ? `/${href}` : href} onClick={() => setOpen(false)}>
               <Icon size={15} />
               <span>{label}</span>
             </a>
           ))}
         </div>
         <div className="nav-actions">
-          <ProfileMenu account={account} accountLoading={accountLoading} onSignIn={onSignIn} onOpenProfile={onOpenProfile} onUpgrade={onUpgrade} onLogout={onLogout} />
-          <a className="btn btn-small btn-primary" href="#download"><Download size={16} />Download Now</a>
+          {showAccount ? (
+            <ProfileMenu account={account} accountLoading={accountLoading} onSignIn={onSignIn} onOpenProfile={onOpenProfile} onUpgrade={onUpgrade} onLogout={onLogout} />
+          ) : null}
+          <a className="btn btn-small btn-primary" href="/#download"><Download size={16} />Download Now</a>
         </div>
       </nav>
     </header>
   );
 }
 
+const NOVA_ICON_PROPS = {
+  size: 18,
+  strokeWidth: 1.8
+};
+
+function NovaIconContainer({ className = '', children, style }) {
+  return (
+    <span className={`ui-icon-container ${className}`.trim()} style={style}>
+      {children}
+    </span>
+  );
+}
+
+function NovaDashboardTopIcon({ icon: Icon, tone = 'accent' }) {
+  return (
+    <NovaIconContainer className={`dashboard-top-row-icon dashboard-top-row-icon--${tone}`}>
+      <Icon {...NOVA_ICON_PROPS} aria-hidden="true" />
+    </NovaIconContainer>
+  );
+}
+
+function NovaBackupHeroIllustration() {
+  return (
+    <svg className="dashboard-top-row-backup-hero" viewBox="0 0 210 160" role="img" aria-hidden="true">
+      <defs>
+        <linearGradient id="backupHeroAccentWebsite" x1="34" y1="18" x2="165" y2="138" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="var(--accent)" stopOpacity="0.95" />
+          <stop offset="1" stopColor="var(--accent-secondary)" stopOpacity="0.65" />
+        </linearGradient>
+        <linearGradient id="backupHeroSurfaceWebsite" x1="64" y1="105" x2="148" y2="145" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="var(--surface-hover)" stopOpacity="0.9" />
+          <stop offset="1" stopColor="var(--surface)" stopOpacity="0.26" />
+        </linearGradient>
+      </defs>
+      <ellipse className="dashboard-top-row-backup-orbit" cx="111" cy="79" rx="77" ry="28" transform="rotate(-24 111 79)" />
+      <path className="dashboard-top-row-backup-platform" d="M54 116 103 91c5-3 13-3 18 0l44 22c5 3 5 8 0 10l-49 25c-5 3-13 3-18 0l-44-22c-5-3-5-8 0-10Z" />
+      <path className="dashboard-top-row-backup-platform dashboard-top-row-backup-platform--lower" d="M63 129 105 108c4-2 10-2 14 0l37 18c4 2 4 6 0 8l-42 21c-4 2-10 2-14 0l-37-18c-4-2-4-6 0-8Z" />
+      <g className="dashboard-top-row-backup-core">
+        <ellipse cx="111" cy="54" rx="28" ry="13" fill="url(#backupHeroAccentWebsite)" />
+        <path d="M83 54v51c0 7 13 13 28 13s28-6 28-13V54c0 7-13 13-28 13S83 61 83 54Z" fill="url(#backupHeroAccentWebsite)" opacity="0.68" />
+        <path d="M83 73c0 7 13 13 28 13s28-6 28-13M83 92c0 7 13 13 28 13s28-6 28-13" fill="none" stroke="var(--text-primary)" strokeOpacity="0.24" strokeWidth="2" />
+        <path d="M92 51c6-5 29-7 39 0" fill="none" stroke="var(--text-primary)" strokeOpacity="0.45" strokeWidth="2" strokeLinecap="round" />
+      </g>
+      <path className="dashboard-top-row-backup-shield" d="M111 22 141 34v28c0 24-15 39-30 46-15-7-30-22-30-46V34l30-12Z" />
+      <circle className="dashboard-top-row-backup-node dashboard-top-row-backup-node--left" cx="39" cy="101" r="4" />
+      <circle className="dashboard-top-row-backup-node dashboard-top-row-backup-node--right" cx="176" cy="40" r="5" />
+    </svg>
+  );
+}
+
+function NovaUptimeSparkline() {
+  return (
+    <svg className="dashboard-top-row-sparkline" viewBox="0 0 240 86" role="img" aria-hidden="true" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="uptimeSparklineStrokeWebsite" x1="0" y1="0" x2="240" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="var(--dashboard-top-row-accent)" stopOpacity="0.7" />
+          <stop offset="1" stopColor="var(--dashboard-top-row-accent)" />
+        </linearGradient>
+        <linearGradient id="uptimeSparklineFillWebsite" x1="0" y1="24" x2="0" y2="86" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="var(--dashboard-top-row-accent)" stopOpacity="0.2" />
+          <stop offset="1" stopColor="var(--dashboard-top-row-accent)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path className="dashboard-top-row-sparkline-grid" d="M2 72H238M2 58H238M2 44H238M2 30H238" />
+      <path d="M4 68 C28 51 48 55 68 59 C92 64 106 33 132 33 C158 33 162 65 190 62 C211 60 220 41 236 29 L236 86 L4 86 Z" fill="url(#uptimeSparklineFillWebsite)" />
+      <path className="dashboard-top-row-sparkline-line" d="M4 68 C28 51 48 55 68 59 C92 64 106 33 132 33 C158 33 162 65 190 62 C211 60 220 41 236 29" />
+      <circle className="dashboard-top-row-sparkline-dot" cx="236" cy="29" r="4" />
+    </svg>
+  );
+}
+
+function NovaDashboardSectionTitle({ icon: Icon, title }) {
+  return (
+    <div className="dashboard-section-title">
+      <NovaIconContainer className="dashboard-section-title__icon">
+        <Icon {...NOVA_ICON_PROPS} aria-hidden="true" />
+      </NovaIconContainer>
+      <h2>{title}</h2>
+    </div>
+  );
+}
+
+function NovaHardwareStatusTile({ card }) {
+  const Icon = card.icon;
+  return (
+    <div className="dashboard-top-row-hardware-tile is-detected">
+      <NovaIconContainer className="dashboard-top-row-hardware-icon is-detected">
+        <Icon {...NOVA_ICON_PROPS} aria-hidden="true" />
+      </NovaIconContainer>
+      <div className="dashboard-top-row-hardware-copy">
+        <p className="dashboard-top-row-hardware-label">{card.label}</p>
+        <p className="dashboard-top-row-hardware-primary" title={card.primary}>{card.primary}</p>
+        <p className="dashboard-top-row-hardware-secondary" title={card.secondary}>{card.secondary}</p>
+      </div>
+      <CircleCheck {...NOVA_ICON_PROPS} className="dashboard-top-row-hardware-check is-detected" aria-hidden="true" />
+    </div>
+  );
+}
+
+function NovaOverviewMetricCard({ icon: Icon, label, value, detail, detailIcon: DetailIcon, accent }) {
+  return (
+    <article className="dashboard-metric-card ui-card-subtle">
+      <div className="dashboard-metric-card-top">
+        <NovaIconContainer
+          className="dashboard-metric-card-icon"
+          style={{
+            color: accent,
+            background: `color-mix(in srgb, ${accent} 9%, var(--surface-elevated))`,
+            borderColor: `color-mix(in srgb, ${accent} 18%, var(--border))`
+          }}
+        >
+          <Icon {...NOVA_ICON_PROPS} aria-hidden="true" />
+        </NovaIconContainer>
+        <p className="dashboard-metric-card-detail">
+          {DetailIcon ? <DetailIcon {...NOVA_ICON_PROPS} aria-hidden="true" /> : null}
+          <span>{detail}</span>
+        </p>
+      </div>
+      <div className="dashboard-metric-card-copy">
+        <p>{label}</p>
+        <p title={String(value)}>{value}</p>
+      </div>
+    </article>
+  );
+}
+
+function NovaPerformanceChart() {
+  return (
+    <div className="dashboard-performance-chart">
+      <svg className="nova-real-chart" viewBox="0 0 720 280" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="novaChartFillWebsite" x1="0" y1="40" x2="0" y2="260" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="var(--accent)" stopOpacity="0.2" />
+            <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <g className="nova-real-chart-grid">
+          <path d="M42 30H700M42 82H700M42 134H700M42 186H700M42 238H700" />
+          <path d="M86 20V250M180 20V250M274 20V250M368 20V250M462 20V250M556 20V250M650 20V250" />
+        </g>
+        <path className="nova-real-chart-area" d="M44 212 C86 184 122 198 156 170 C196 136 234 176 272 148 C318 112 356 124 396 96 C442 64 480 122 520 104 C570 82 604 118 650 76 C674 54 690 62 704 48 L704 260 L44 260 Z" />
+        <path className="nova-real-chart-line nova-real-chart-line-shadow" d="M44 212 C86 184 122 198 156 170 C196 136 234 176 272 148 C318 112 356 124 396 96 C442 64 480 122 520 104 C570 82 604 118 650 76 C674 54 690 62 704 48" />
+        <path className="nova-real-chart-line" d="M44 212 C86 184 122 198 156 170 C196 136 234 176 272 148 C318 112 356 124 396 96 C442 64 480 122 520 104 C570 82 604 118 650 76 C674 54 690 62 704 48" />
+        <circle className="nova-real-chart-dot" cx="704" cy="48" r="5" />
+      </svg>
+    </div>
+  );
+}
+
 function DashboardMockup() {
   return (
-    <div className="hero-mockup-frame">
-      <img className="hero-mockup-image" src={HERO_MOCKUP_SRC} alt="Nova Tweaks dashboard interface preview" />
+    <div className="hero-real-app-stage" aria-label="Nova Tweaks dashboard app preview">
+      <div className="hero-real-app-glow" aria-hidden="true" />
+      <div className="nova-real-window app-grid-bg">
+        <header className="nova-real-titlebar">
+          <div className="nova-real-titlebar-brand">
+            <img src={APP_LOGO_SRC} alt="" />
+            <span>Nova Tweaks</span>
+          </div>
+          <div className="nova-real-titlebar-controls" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+        </header>
+        <div className="nova-real-app-shell">
+          <aside className="nova-real-sidebar">
+            <div className="nova-real-sidebar-brand">
+              <span><img src={APP_LOGO_SRC} alt="" /></span>
+              <b>Nova Tweaks</b>
+            </div>
+            <nav aria-label="Nova Tweaks app navigation">
+              {novaAppNavItems.map(([label, Icon, active]) => (
+                <span className={active ? 'is-active' : ''} key={label}>
+                  <Icon {...NOVA_ICON_PROPS} aria-hidden="true" />
+                  {label}
+                </span>
+              ))}
+            </nav>
+          </aside>
+          <main className="ui-page-shell dashboard-shell nova-dashboard-mock">
+            <header className="dashboard-header">
+              <div className="dashboard-header-copy">
+                <h1 className="dashboard-title">
+                  Hello, <span>NT_Admin</span>
+                </h1>
+                <p className="dashboard-subtitle">Welcome back! Everything looks good.</p>
+              </div>
+              <button type="button" className="dashboard-update-notes-button ui-btn ui-btn-secondary ui-btn-sm">
+                <FileText {...NOVA_ICON_PROPS} aria-hidden="true" />
+                <span>Update Notes</span>
+              </button>
+            </header>
+
+            <section className="dashboard-top-row">
+              <article className="dashboard-top-row-card dashboard-top-row-card--backup">
+                <NovaBackupHeroIllustration />
+                <div className="dashboard-top-row-card-content dashboard-top-row-card-content--backup">
+                  <div className="dashboard-top-row-card-header">
+                    <div className="dashboard-top-row-title-group">
+                      <NovaDashboardTopIcon icon={DatabaseBackup} tone="accent" />
+                      <h2 className="dashboard-top-row-label">Create Backup</h2>
+                    </div>
+                  </div>
+                  <div className="dashboard-top-row-copy">
+                    <p className="dashboard-top-row-headline">Backup your system</p>
+                    <p className="dashboard-top-row-description">Save your current tweak state.</p>
+                  </div>
+                  <div className="dashboard-top-row-footer dashboard-top-row-footer--backup">
+                    <button type="button" className="ui-btn ui-btn-primary dashboard-top-row-primary-button">
+                      <DatabaseBackup {...NOVA_ICON_PROPS} aria-hidden="true" />
+                      <span>Create Backup</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+
+              <article className="dashboard-top-row-card dashboard-top-row-card--uptime">
+                <div className="dashboard-top-row-card-content">
+                  <div className="dashboard-top-row-card-header">
+                    <div className="dashboard-top-row-title-group">
+                      <NovaDashboardTopIcon icon={Clock} tone="accent" />
+                      <h2 className="dashboard-top-row-label">System Uptime</h2>
+                    </div>
+                  </div>
+                  <div className="dashboard-top-row-uptime-body">
+                    <p className="dashboard-top-row-uptime-value">5h 24m</p>
+                    <p className="dashboard-top-row-description">Running smoothly</p>
+                  </div>
+                  <NovaUptimeSparkline />
+                </div>
+              </article>
+
+              <article className="dashboard-top-row-card dashboard-top-row-card--detection">
+                <div className="dashboard-top-row-card-content">
+                  <div className="dashboard-top-row-card-header">
+                    <div className="dashboard-top-row-title-group">
+                      <NovaDashboardTopIcon icon={MonitorCog} tone="accent" />
+                      <div>
+                        <h2 className="dashboard-top-row-label">System Detection</h2>
+                        <p className="dashboard-top-row-subtitle">Hardware snapshot</p>
+                      </div>
+                    </div>
+                    <button type="button" className="ui-btn ui-btn-secondary ui-btn-sm dashboard-top-row-rescan-button">
+                      <RefreshCw {...NOVA_ICON_PROPS} aria-hidden="true" />
+                      <span>Rescan</span>
+                    </button>
+                  </div>
+                  <div className="dashboard-top-row-hardware-grid">
+                    {novaDashboardHardwareCards.map((card) => (
+                      <NovaHardwareStatusTile key={card.key} card={card} />
+                    ))}
+                  </div>
+                </div>
+              </article>
+            </section>
+
+            <div className="dashboard-main-row">
+              <div className="dashboard-performance-column">
+                <section className="dashboard-performance-card ui-card">
+                  <div className="dashboard-performance-head">
+                    <div>
+                      <NovaDashboardSectionTitle icon={Activity} title="Performance Overview" />
+                      <p className="dashboard-performance-subtitle">@ AMD Ryzen 7 7800X3D</p>
+                    </div>
+                    <div className="ui-select-shell dashboard-performance-select">
+                      <select defaultValue="cpu" aria-label="Metric" className="ui-select">
+                        <option value="cpu">CPU</option>
+                        <option value="gpu">GPU</option>
+                      </select>
+                      <ChevronDown {...NOVA_ICON_PROPS} aria-hidden="true" />
+                    </div>
+                  </div>
+                  <NovaPerformanceChart />
+                  <div className="dashboard-metric-grid">
+                    {novaDashboardMetrics.map((metric) => (
+                      <NovaOverviewMetricCard key={metric.label} {...metric} />
+                    ))}
+                  </div>
+                </section>
+              </div>
+
+              <aside className="dashboard-side-panel">
+                <section className="dashboard-quick-actions-card ui-card">
+                  <NovaDashboardSectionTitle icon={Sparkles} title="Quick Actions" />
+                  <div className="dashboard-quick-action-list">
+                    <button type="button" className="ui-btn ui-btn-primary">
+                      <Rocket {...NOVA_ICON_PROPS} aria-hidden="true" />
+                      <span>Apply Powerplan</span>
+                    </button>
+                    <button type="button" className="ui-btn ui-btn-secondary">
+                      <Trash2 {...NOVA_ICON_PROPS} aria-hidden="true" />
+                      <span>Clean Temporary Files</span>
+                    </button>
+                    <button type="button" className="ui-btn ui-btn-secondary">
+                      <LayoutGrid {...NOVA_ICON_PROPS} aria-hidden="true" />
+                      <span>Manage Startup Apps</span>
+                    </button>
+                    <button type="button" className="ui-btn ui-btn-secondary">
+                      <MousePointer2 {...NOVA_ICON_PROPS} aria-hidden="true" />
+                      <span>Reduce Input Delay</span>
+                    </button>
+                  </div>
+                </section>
+
+                <section className="dashboard-recent-activity-card ui-card">
+                  <NovaDashboardSectionTitle icon={History} title="Recent Activity" />
+                  <div className="dashboard-recent-activity-list">
+                    {novaDashboardActivities.map(([label, time, color]) => (
+                      <div className="dashboard-recent-activity-item" key={label}>
+                        <span style={{ background: color }} aria-hidden="true" />
+                        <p>{label}</p>
+                        <time>{time}</time>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </aside>
+            </div>
+          </main>
+        </div>
+      </div>
     </div>
   );
 }
@@ -491,20 +921,20 @@ function Hero() {
       <div className="energy-lines" />
       <div className="section-inner hero-inner">
         <div className="hero-copy reveal">
-          <div className="badge"><ShieldCheck size={14} />Windows tuning with clear safety checks</div>
+          <div className="badge"><ShieldCheck size={14} />Nova Tweaks for Windows 10 / 11</div>
           <h1 className="hero-title">
-            <span>Tune Windows.</span>
-            <span>Stay in control.</span>
+            <span>Boost your PC's Gaming </span>
+            <span>Performance</span>
           </h1>
-          <p>Nova Tweaks helps you reduce background load, improve responsiveness, and understand each system change before you apply it. No vague promises, just clear controls, restore options, and readable feedback.</p>
+          <p>Increase stability, reduce input delay, clean background friction, and tune Windows for smoother gaming sessions with one clear app.</p>
           <div className="hero-actions">
-            <ButtonLink href="#download" icon={Download}>Download Now</ButtonLink>
-            <ButtonLink href="#features" variant="secondary" icon={LayoutGrid}>View Features</ButtonLink>
+            <ButtonLink href="#download" icon={Download}>Download for free</ButtonLink>
+            <ButtonLink href="#nova-premium" variant="secondary" icon={Gem}>View Premium</ButtonLink>
           </div>
-          <div className="trust-row">
-            <span><ListChecks size={17} /><b>150+</b> focused tweaks</span>
-            <span><Radar size={17} /><b>Checked state</b> before action</span>
-            <span><MonitorCheck size={17} /><b>Windows 10/11</b> supported</span>
+          <div className="hero-download-row" aria-label="Nova Tweaks launch signals">
+            <span><Download size={15} />Free Windows beta</span>
+            <span><ShieldCheck size={15} />Reversible workflows</span>
+            <span><Activity size={15} />Animated performance examples</span>
           </div>
         </div>
         <div className="hero-visual reveal delay-1"><DashboardMockup /></div>
@@ -515,16 +945,23 @@ function Hero() {
 
 function Benefits() {
   const items = [
-    [Timer, 'Lower latency', 'Reduce background friction before you play.'],
-    [Clock3, 'Checked states', 'Nova checks before showing actions.'],
-    [FileText, 'Readable details', 'Understand what each change does.'],
-    [DatabaseBackup, 'Restore options', 'Keep restore points and config saves nearby.']
+    [Timer, 'Lower latency', 'Reduce background friction before you play.', 'Signal stable'],
+    [Clock3, 'Checked states', 'Nova checks before showing actions.', 'Scan complete'],
+    [FileText, 'Readable details', 'Understand what each change does.', 'Trace visible'],
+    [DatabaseBackup, 'Restore options', 'Keep restore points and config saves nearby.', 'Fallback armed']
   ];
   return (
     <section className="benefit-section">
       <div className="section-inner benefit-strip">
-        {items.map(([Icon, title, copy]) => (
-          <article className="benefit-item" key={title}><Icon size={21} /><div><h3>{title}</h3><p>{copy}</p></div></article>
+        {items.map(([Icon, title, copy, status], index) => (
+          <article className="benefit-item" style={{ '--signal-delay': `${index * 220}ms` }} key={title}>
+            <span className="benefit-signal" aria-hidden="true"><Icon size={21} /></span>
+            <div>
+              <span className="benefit-status">{status}</span>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </div>
+          </article>
         ))}
       </div>
     </section>
@@ -540,9 +977,13 @@ function Features() {
           <h2>Clear controls for people who care about their PC.</h2>
         </div>
         <div className="feature-grid">
-          {features.map(([title, copy, Icon], index) => (
+          {features.map(([title, copy, Icon, status], index) => (
             <article className="feature-card reveal" style={{ transitionDelay: `${index * 55}ms` }} key={title}>
-              <Icon size={24} />
+              <span className="feature-card-glow" aria-hidden="true" />
+              <span className="feature-card-top">
+                <Icon size={24} />
+                <b>{status}</b>
+              </span>
               <h3>{title}</h3>
               <p>{copy}</p>
             </article>
@@ -844,7 +1285,7 @@ function PremiumFeaturesSection({ onUpgrade }) {
   }
 
   return (
-    <section className="section premium-features-section" id="nova-premium">
+    <section className="section premium-features-section" id="premium-showcase">
       <div className="section-inner">
         <div className="feature-showcase-head reveal">
           <div>
@@ -1187,8 +1628,8 @@ function Performance() {
       <div className="section-inner">
         <div className="section-heading reveal">
           <span className="eyebrow"><Activity size={14} />Performance</span>
-          <h2>Focused on smoother sessions, not inflated claims.</h2>
-          <p>Better sessions come from stability, fewer interruptions, and less background interference. Nova Tweaks keeps those goals visible.</p>
+          <h2>Boost FPS stability and eliminate avoidable stutters.</h2>
+          <p>Nova focuses on the system conditions that make sessions feel consistent: cleaner background load, steadier frame pacing, and visible performance context before changes are applied.</p>
         </div>
         <div className="performance-layout">
           <div className={`graph-card reveal ${active ? 'revealed' : ''}`}>
@@ -1206,6 +1647,121 @@ function Performance() {
             <CinematicOptimizationVisual active={active} />
           </div>
           <div className="stats-grid">{stats.map((stat) => <AnimatedStat key={stat.label} stat={stat} active={active} />)}</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PingDotTrack({ optimized = false }) {
+  return (
+    <div className={`ping-dot-track ${optimized ? 'ping-dot-track-optimized' : ''}`} aria-hidden="true">
+      {Array.from({ length: optimized ? 16 : 6 }).map((_, index) => (
+        <span style={{ '--dot-index': index }} key={index} />
+      ))}
+    </div>
+  );
+}
+
+function InputLagGraph() {
+  return (
+    <div className="input-lag-graph" aria-label="Animated input lag comparison">
+      <div className="lag-legend">
+        <span><i className="legend-dot red" />Before <b>13 ms</b></span>
+        <span><i className="legend-dot blue" />After <b>2 ms</b></span>
+      </div>
+      <svg viewBox="0 0 760 360" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="lagBeforeFill" x1="0" y1="70" x2="0" y2="330" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#ff5968" stopOpacity="0.28" />
+            <stop offset="1" stopColor="#ff5968" stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="lagAfterFill" x1="0" y1="190" x2="0" y2="330" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#7c8cff" stopOpacity="0.3" />
+            <stop offset="1" stopColor="#7c8cff" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <g className="lag-grid">
+          <path d="M24 70H736M24 150H736M24 230H736M24 310H736" />
+        </g>
+        <path className="lag-before-area" d="M24 142 98 196 174 126 252 74 348 112 424 80 492 188 566 78 642 34 716 82 760 58 760 330 24 330Z" />
+        <path className="lag-after-area" d="M24 250 174 250 252 216 348 216 424 190 520 190 596 222 680 222 760 244 760 330 24 330Z" />
+        <path className="lag-line lag-line-before" d="M24 142 98 196 174 126 252 74 348 112 424 80 492 188 566 78 642 34 716 82 760 58" />
+        <path className="lag-line lag-line-after" d="M24 250 174 250 252 216 348 216 424 190 520 190 596 222 680 222 760 244" />
+        <circle className="lag-dot lag-dot-before" cx="716" cy="82" r="6" />
+        <circle className="lag-dot lag-dot-after" cx="680" cy="222" r="6" />
+      </svg>
+    </div>
+  );
+}
+
+function LatencyShowcase() {
+  return (
+    <section className="section latency-section" id="latency">
+      <div className="section-inner latency-grid">
+        <article className="latency-panel latency-panel-ping reveal">
+          <div className="latency-copy">
+            <span className="eyebrow"><Wifi size={14} />Network response</span>
+            <h2>Improve ping and bufferbloat.</h2>
+            <p>Reduce background traffic and network friction so inputs stay responsive during real sessions.</p>
+          </div>
+          <div className="ping-demo">
+            <div className="ping-watermark">A+</div>
+            <div className="ping-row">
+              <span>Without Nova</span>
+              <PingDotTrack />
+              <b>64 ms</b>
+            </div>
+            <div className="ping-row">
+              <span>With Nova</span>
+              <PingDotTrack optimized />
+              <b>3 ms</b>
+            </div>
+          </div>
+        </article>
+        <article className="latency-panel reveal delay-1">
+          <div className="latency-copy">
+            <span className="eyebrow"><MousePointer2 size={14} />System latency</span>
+            <h2>Reduce input lag and background load.</h2>
+            <p>Disable unnecessary work, prioritize game sessions, and keep the PC focused while you play.</p>
+          </div>
+          <InputLagGraph />
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function LandingFeatureGrid({ id, eyebrow, title, copy, features: cards, premium = false, onUpgrade }) {
+  return (
+    <section className={`section landing-feature-section ${premium ? 'landing-feature-section-premium' : ''}`} id={id}>
+      <div className="section-inner">
+        <div className="feature-showcase-head reveal">
+          <div>
+            <span className="eyebrow">{premium ? <Gem size={14} /> : <Sparkles size={14} />}{eyebrow}</span>
+            <h2>{title}</h2>
+            <p>{copy}</p>
+          </div>
+          {premium ? (
+            <button className="btn btn-primary" type="button" onClick={onUpgrade}><Gem size={17} />Upgrade to Premium</button>
+          ) : (
+            <a className="btn btn-secondary" href="#download"><Download size={17} />Download Free</a>
+          )}
+        </div>
+        <div className="landing-feature-grid">
+          {cards.map(({ title: cardTitle, copy: cardCopy, image, icon: Icon }, index) => (
+            <article className={`landing-feature-card reveal ${index === 0 ? 'landing-feature-card-large' : ''}`} style={{ transitionDelay: `${index * 70}ms` }} key={cardTitle}>
+              <div className="landing-feature-media">
+                <img src={image} alt={`${cardTitle} preview`} loading="lazy" />
+                <span className="landing-feature-scan" aria-hidden="true" />
+              </div>
+              <div className="landing-feature-copy">
+                <span><Icon size={17} />{premium ? 'Premium' : 'Free'}</span>
+                <h3>{cardTitle}</h3>
+                <p>{cardCopy}</p>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>
@@ -1475,7 +2031,7 @@ function LegalNotice() {
             <article id="privacy">
               <ShieldCheck size={20} />
               <h3>Privacy policy</h3>
-              <p>Account data, device identifiers, support diagnostics, logs, and payment provider IDs are processed only for product access, security, billing, and support. Diagnostics should be shared only after a deliberate user action.</p>
+              <p>Account data, device identifiers, support diagnostics, logs, and payment provider IDs are processed only for product access, security, billing, and support. <a href="/privacy">Read the full privacy policy</a>.</p>
             </article>
             <article id="terms">
               <FileText size={20} />
@@ -1557,22 +2113,22 @@ function FinalCTA({ onSignIn, onUpgrade }) {
 function Footer() {
   const columns = [
     ['Product', [
-      ['Features', '#features'],
-      ['Performance', '#performance'],
-      ['Pricing', '#pricing'],
-      ['Download', '#download']
+      ['Features', '/#features'],
+      ['Performance', '/#performance'],
+      ['Pricing', '/#pricing'],
+      ['Download', '/#download']
     ]],
     ['Resources', [
-      ['Documentation', '#faq'],
+      ['Documentation', '/#faq'],
       ['Support', `mailto:${SUPPORT_EMAIL}`],
-      ['Changelog', '#top'],
-      ['Status', '#top']
+      ['Changelog', '/#top'],
+      ['Status', '/#top']
     ]],
       ['Company', [
-        ['Imprint', '#imprint'],
+        ['Imprint', '/#imprint'],
         ['Contact', `mailto:${CONTACT_EMAIL}`],
-        ['Privacy', '#privacy'],
-        ['Terms', '#terms']
+        ['Privacy', '/privacy'],
+        ['Terms', '/#terms']
       ]],
     ['Community', [
       ['Discord', DISCORD_URL],
@@ -1616,6 +2172,16 @@ function formatAuthError(code = '') {
 function App() {
   if (window.location.pathname === '/reset-password') {
     return <ResetPasswordPage />;
+  }
+
+  if (window.location.pathname === '/privacy' || window.location.pathname === '/datenschutz') {
+    return (
+      <>
+        <Nav showAccount={false} />
+        <PrivacyPolicyPage />
+        <Footer />
+      </>
+    );
   }
 
   const [authOpen, setAuthOpen] = useState(false);
@@ -1687,12 +2253,7 @@ function App() {
       />
       {notice ? <button className="site-notice" type="button" onClick={() => setNotice('')}>{notice}<X size={15} /></button> : null}
       <main>
-        <Hero />
-        <Benefits />
-        <Features />
-        <ProductShowcase />
-        <PremiumFeaturesSection onUpgrade={handleUpgrade} />
-        <Performance />
+        <HomePage onUpgrade={handleUpgrade} />
         <Pricing account={account} onRequireAuth={() => setAuthOpen(true)} onUpgrade={handleUpgrade} />
         <Testimonials />
         <FAQ />
