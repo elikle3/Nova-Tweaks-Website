@@ -113,13 +113,14 @@ const navItems = [
 ];
 
 const novaAppNavItems = [
-  ['Dashboard', LayoutGrid, true],
-  ['Tweaks', SlidersHorizontal],
-  ['Game Mode', PlayCircle],
-  ['Performance', Activity],
-  ['Backup', DatabaseBackup],
-  ['Apps', Rocket],
-  ['Settings', Settings2]
+  { label: 'Game Mode', icon: PlayCircle, eyebrow: 'Premium Runtime', detail: 'Premium game tuning', feature: true },
+  { label: 'Nova AI Assistant', icon: Sparkles, eyebrow: 'Assistant', detail: 'Tweak guidance', feature: true },
+  { label: 'Dashboard', icon: LayoutGrid, active: true },
+  { label: 'Tweaks', icon: SlidersHorizontal },
+  { label: 'Performance', icon: Activity },
+  { label: 'Backup', icon: DatabaseBackup },
+  { label: 'Apps', icon: Rocket },
+  { label: 'Settings', icon: Settings2 }
 ];
 
 const novaDashboardHardwareCards = [
@@ -199,22 +200,22 @@ const premiumLandingFeatures = [
     icon: PlayCircle
   },
   {
-    title: 'Timer Resolution Control',
-    copy: 'Use advanced timer workflows for latency-focused setups with clearer selection states.',
+    title: 'Runtime Tuning',
+    copy: 'Adjust priority, affinity, fullscreen behavior, and active-session controls while a game is running.',
+    image: WEBSITE_PICTURE_TIMER_RESOLUTION_SELECTION_SRC,
+    icon: MousePointer2
+  },
+  {
+    title: 'Session Recording',
+    copy: 'Review FPS, 1% lows, frametime, and session data after a game run.',
+    image: WEBSITE_PICTURE_PERFORMANCE_SRC,
+    icon: Activity
+  },
+  {
+    title: 'Advanced Tweaks',
+    copy: 'Use deeper latency, timer, and responsiveness controls for focused performance work.',
     image: WEBSITE_PICTURE_TIMER_RESOLUTION_SELECTION_SRC,
     icon: Timer
-  },
-  {
-    title: 'Future Premium Updates',
-    copy: 'Keep access to new premium workflows as Nova adds deeper performance tooling.',
-    image: WEBSITE_PICTURE_FUTURE_PREMIUM_UPDATES_SRC,
-    icon: Sparkles
-  },
-  {
-    title: 'Priority Support',
-    copy: 'Get help faster for setup, licensing, and PC tuning questions through the Nova support flow.',
-    image: WEBSITE_PICTURE_PRIORITY_SUPPORT_SRC,
-    icon: BadgeCheck
   }
 ];
 
@@ -387,11 +388,18 @@ const premiumFeatureCards = [
     image: WEBSITE_PICTURE_GAMEMODE_SRC
   },
   {
-    title: 'Future Premium Updates',
-    copy: 'Keep access to upcoming Premium features as Nova Tweaks grows with new workflows and tuning options.',
+    title: 'Runtime Tuning',
+    copy: 'Adjust priority, affinity, fullscreen behavior, and active-session controls while a game is running.',
     frame: 'compact',
-    label: 'Updates',
-    image: WEBSITE_PICTURE_FUTURE_PREMIUM_UPDATES_SRC
+    label: 'Runtime',
+    image: WEBSITE_PICTURE_TIMER_RESOLUTION_SELECTION_SRC
+  },
+  {
+    title: 'Session Recording',
+    copy: 'Review FPS, 1% lows, frametime, and session data after a game run.',
+    frame: 'wide',
+    label: 'Recording',
+    image: WEBSITE_PICTURE_PERFORMANCE_SRC
   }
 ];
 
@@ -416,7 +424,7 @@ const faqs = [
   ['Does it work on Windows 10 and 11?', 'Nova Tweaks is built for modern Windows systems and supports Windows 10 and Windows 11 workflows.'],
   ['Do I need admin rights?', 'Most system-level optimizations require administrator privileges because Windows protects those settings.'],
   ['Will it increase my FPS?', 'Nova Tweaks focuses on cleaner system behavior, smoother frame pacing, lower input delay, and fewer background interruptions rather than unrealistic FPS promises.'],
-  ['What is included in Premium?', 'Premium includes everything in Free plus advanced tweaks, Nova Game Mode, and future Premium updates.']
+  ['What is included in Premium?', 'Premium includes everything in Free plus Nova Game Mode, Runtime Tuning, Session Recording, and Advanced Tweaks.']
 ];
 
 function Logo() {
@@ -567,9 +575,6 @@ function Nav({ onSignIn, onOpenProfile, onUpgrade, onLogout, account, accountLoa
     <header className="nav-shell">
       <nav className="nav">
         <Logo />
-        <button className="mobile-menu" type="button" onClick={() => setOpen((value) => !value)} aria-label="Toggle navigation">
-          {open ? <X size={20} /> : <Menu size={20} />}
-        </button>
         <div className={`nav-links ${open ? 'nav-links-open' : ''}`}>
           {navItems.map(([label, href, Icon]) => (
             <a key={label} href={!isHomePage && href.startsWith('#') ? `/${href}` : href} onClick={() => setOpen(false)}>
@@ -582,6 +587,9 @@ function Nav({ onSignIn, onOpenProfile, onUpgrade, onLogout, account, accountLoa
           {showAccount ? (
             <ProfileMenu account={account} accountLoading={accountLoading} onSignIn={onSignIn} onOpenProfile={onOpenProfile} onUpgrade={onUpgrade} onLogout={onLogout} />
           ) : null}
+          <button className="mobile-menu" type="button" onClick={() => setOpen((value) => !value)} aria-label="Toggle navigation">
+            {open ? <X size={20} /> : <Menu size={20} />}
+          </button>
           <a className="btn btn-small btn-primary" href="/#download"><Download size={16} />Download Now</a>
         </div>
       </nav>
@@ -761,10 +769,14 @@ function DashboardMockup() {
               <b>Nova Tweaks</b>
             </div>
             <nav aria-label="Nova Tweaks app navigation">
-              {novaAppNavItems.map(([label, Icon, active]) => (
-                <span className={active ? 'is-active' : ''} key={label}>
+              {novaAppNavItems.map(({ label, icon: Icon, active, eyebrow, detail, feature }) => (
+                <span className={`${active ? 'is-active' : ''}${feature ? ' is-feature' : ''}`} key={label}>
                   <Icon {...NOVA_ICON_PROPS} aria-hidden="true" />
-                  {label}
+                  <span className="nova-real-sidebar-copy">
+                    {eyebrow ? <small>{eyebrow}</small> : null}
+                    <b>{label}</b>
+                    {detail ? <em>{detail}</em> : null}
+                  </span>
                 </span>
               ))}
             </nav>
@@ -1291,7 +1303,7 @@ function PremiumFeaturesSection({ onUpgrade }) {
           <div>
             <span className="eyebrow"><Gem size={14} />Premium</span>
             <h2>Go deeper without losing clarity.</h2>
-            <p>Premium keeps the same careful product flow and adds advanced tuning paths, Nova Game Mode, priority help, and future Premium updates.</p>
+            <p>Premium keeps the same careful product flow and adds Nova Game Mode, Runtime Tuning, Session Recording, and Advanced Tweaks.</p>
           </div>
           <button className="btn btn-primary" type="button" onClick={onUpgrade}><Gem size={17} />Upgrade to Premium</button>
         </div>
@@ -1784,7 +1796,7 @@ function Pricing({ account, onRequireAuth, onUpgrade }) {
             <div className="popular"><Star size={13} />Most chosen</div>
             <h3>Premium</h3>
             <div className="price">{PREMIUM_PRICE_LABEL} <span>/ lifetime access</span></div>
-            {['Advanced tuning options', 'Nova Game Mode', 'Future Premium updates'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
+            {['Nova Game Mode', 'Runtime Tuning', 'Session Recording', 'Advanced Tweaks'].map((item) => <p key={item}><Check size={16} />{item}</p>)}
             <p>Final price, VAT handling, digital-content withdrawal information, and license terms are shown during checkout and must be reviewed before purchase.</p>
             <button className="btn btn-primary full" type="button" onClick={() => (account ? onUpgrade() : onRequireAuth())}><Gem size={17} /><span>Get Premium</span></button>
           </article>
@@ -2205,6 +2217,14 @@ function App() {
   useEffect(() => {
     loadAccount();
   }, []);
+
+  useEffect(() => {
+    const modalOpen = authOpen || profileOpen;
+    document.body.classList.toggle('modal-open', modalOpen);
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [authOpen, profileOpen]);
 
   useEffect(() => {
     const elements = document.querySelectorAll('.reveal');

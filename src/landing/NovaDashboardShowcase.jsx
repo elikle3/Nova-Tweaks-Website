@@ -87,14 +87,6 @@ function NovaDashboardShowcase() {
   return (
     <section className="section nova-dashboard-section" id="dashboard-showcase">
       <div className="section-inner">
-        <div className="nova-section-head reveal">
-          <span className="nova-kicker">Real Nova Tweaks Dashboard</span>
-          <h2>The actual desktop command center, staged for the web.</h2>
-          <p>
-            This showcase uses the Nova Tweaks dashboard component with website mock telemetry, so the landing page reflects the product instead of a generic mockup.
-          </p>
-        </div>
-
         <div className="dashboard-cinema-stage reveal">
           <div className="dashboard-cinema-orbit" aria-hidden="true" />
           <div className="dashboard-cinema-frame">

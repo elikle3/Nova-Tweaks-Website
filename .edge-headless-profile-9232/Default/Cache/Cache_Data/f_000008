@@ -1,0 +1,770 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/landing/HomePage.jsx");import __vite__cjsImport0_react_jsxDevRuntime from "/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=d45e5d50"; const Fragment = __vite__cjsImport0_react_jsxDevRuntime["Fragment"]; const jsxDEV = __vite__cjsImport0_react_jsxDevRuntime["jsxDEV"];
+import * as RefreshRuntime from "/@react-refresh";
+const inWebWorker = typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope;
+let prevRefreshReg;
+let prevRefreshSig;
+if (import.meta.hot && !inWebWorker) {
+  if (!window.$RefreshReg$) {
+    throw new Error(
+      "@vitejs/plugin-react can't detect preamble. Something is wrong."
+    );
+  }
+  prevRefreshReg = window.$RefreshReg$;
+  prevRefreshSig = window.$RefreshSig$;
+  window.$RefreshReg$ = RefreshRuntime.getRefreshReg("C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx");
+  window.$RefreshSig$ = RefreshRuntime.createSignatureFunctionForTransform;
+}
+var _s = $RefreshSig$();
+import __vite__cjsImport3_react from "/node_modules/.vite/deps/react.js?v=d45e5d50"; const React = __vite__cjsImport3_react.__esModule ? __vite__cjsImport3_react.default : __vite__cjsImport3_react; const useRef = __vite__cjsImport3_react["useRef"];
+import {
+  Activity,
+  ArrowRight,
+  BadgeCheck,
+  Clock,
+  DatabaseBackup,
+  Download,
+  Gamepad2,
+  Gauge,
+  Gem,
+  HardDrive,
+  LayoutGrid,
+  Lock,
+  MonitorCheck,
+  MousePointer2,
+  PlayCircle,
+  Radar,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCw,
+  Rocket,
+  Settings2,
+  ShieldCheck,
+  Sparkles,
+  Timer,
+  Wifi,
+  Wrench
+} from "/node_modules/.vite/deps/lucide-react.js?v=d45e5d50";
+import NovaDashboardShowcase from "/src/landing/NovaDashboardShowcase.jsx";
+const heroProductImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/Dashboard Overview 2.png", import.meta.url).href;
+const overviewTabImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/Overview Tab.png", import.meta.url).href;
+const freeTweaksImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/111+ Free Tweaks.png", import.meta.url).href;
+const statusDetectionImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/111+ Free Tweaks 2.png", import.meta.url).href;
+const backupsRestoreImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/Backups and Restore.png", import.meta.url).href;
+const appsStartupImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/Apps and Startup.png", import.meta.url).href;
+const settingsDataToolsImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/Settings and Data Tools.png", import.meta.url).href;
+const novaGameModeImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/Nova Game Mod.png", import.meta.url).href;
+const runtimeTuningImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/Runtime Tuning.png", import.meta.url).href;
+const sessionRecordingImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/Session Recording.png", import.meta.url).href;
+const perGameProfilesImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/Per-Game Profiles.png", import.meta.url).href;
+const latencyToolingImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/Latency Tooling.png", import.meta.url).href;
+const futurePremiumUpdatesImage = new URL("/src/assets/Nova_Tweaks_Website_Pictures/future_premium_updates.png", import.meta.url).href;
+const freeHighlights = [
+  { icon: LayoutGrid, title: "Overview", copy: "Free system info and readable status for hardware, storage, Windows state, and monitoring at a glance.", image: overviewTabImage },
+  { icon: Wrench, title: "111+ Free Tweaks", copy: "Current tweak configs are free: power, cleanup, network, privacy, services, and Windows behavior.", image: freeTweaksImage },
+  { icon: Radar, title: "Status Detection", copy: "Check current state before changing settings so users do not apply tweaks blindly.", image: statusDetectionImage },
+  { icon: DatabaseBackup, title: "Backups and Restore", copy: "Create Nova config saves and Windows restore points before larger optimization passes.", image: backupsRestoreImage },
+  { icon: Rocket, title: "Apps and Startup", copy: "Review installed apps, startup entries, and cleanup actions in one practical workflow.", image: appsStartupImage },
+  { icon: Settings2, title: "Settings and Data Tools", copy: "Theme, language, startup behavior, cache cleanup, import/export, and backup location controls.", image: settingsDataToolsImage }
+];
+const premiumHighlights = [
+  { icon: Gamepad2, title: "Nova Game Mode", copy: "Premium game-session workspace for detected games and focused tuning controls.", image: novaGameModeImage },
+  { icon: MousePointer2, title: "Runtime Tuning", copy: "Priority, affinity, fullscreen optimization, and session behavior controls while a game is active.", image: runtimeTuningImage },
+  { icon: Activity, title: "Session Recording", copy: "Capture FPS, 1% low, frametime, and session state for later review.", image: sessionRecordingImage },
+  { icon: Gauge, title: "Per-Game Profiles", copy: "Premium profiles keep tuning choices attached to individual games.", image: perGameProfilesImage },
+  { icon: Timer, title: "Latency Tooling", copy: "Advanced timer and responsiveness workflows built around deliberate Premium controls.", image: latencyToolingImage },
+  { icon: Sparkles, title: "Future Premium Updates", copy: "Access upcoming premium workflows as Nova expands its performance toolset.", image: futurePremiumUpdatesImage }
+];
+const proofStats = [
+  ["Frame pacing", "Stable trace", Activity],
+  ["Input delay", "Lower friction", MousePointer2],
+  ["Background load", "Cleaner sessions", Gauge],
+  ["Rollback safety", "Always visible", ShieldCheck]
+];
+function PlaceholderFrame({ label, tall = false }) {
+  return /* @__PURE__ */ jsxDEV("div", { className: `nova-placeholder-frame ${tall ? "nova-placeholder-tall" : ""}`, "aria-label": `${label} final screenshot placeholder`, children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "nova-placeholder-top", children: [
+      /* @__PURE__ */ jsxDEV("span", {}, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 94,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("span", {}, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 95,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("span", {}, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 96,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("b", { children: label }, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 97,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 93,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "nova-placeholder-screen", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-placeholder-grid", "aria-hidden": "true" }, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 100,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-placeholder-module primary", children: [
+        /* @__PURE__ */ jsxDEV("i", {}, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 102,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV("strong", { children: "Final screenshot slot" }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 103,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV("small", { children: label }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 104,
+          columnNumber: 11
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 101,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-placeholder-row", children: [
+        /* @__PURE__ */ jsxDEV("span", {}, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 106,
+          columnNumber: 47
+        }, this),
+        /* @__PURE__ */ jsxDEV("span", {}, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 106,
+          columnNumber: 55
+        }, this),
+        /* @__PURE__ */ jsxDEV("span", {}, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 106,
+          columnNumber: 63
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 106,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-placeholder-row short", children: [
+        /* @__PURE__ */ jsxDEV("span", {}, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 107,
+          columnNumber: 53
+        }, this),
+        /* @__PURE__ */ jsxDEV("span", {}, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 107,
+          columnNumber: 61
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 107,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-placeholder-scan", "aria-hidden": "true" }, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 108,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 99,
+      columnNumber: 7
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+    lineNumber: 92,
+    columnNumber: 5
+  }, this);
+}
+_c = PlaceholderFrame;
+function HeroSection() {
+  return /* @__PURE__ */ jsxDEV("section", { className: "section nova-hero", id: "top", children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "nova-stars", "aria-hidden": "true" }, void 0, false, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 117,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "section-inner nova-hero-inner", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-hero-copy reveal", children: [
+        /* @__PURE__ */ jsxDEV("span", { className: "nova-kicker", children: [
+          /* @__PURE__ */ jsxDEV(ShieldCheck, { size: 14 }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 120,
+            columnNumber: 41
+          }, this),
+          "Nova Tweaks for Windows"
+        ] }, void 0, true, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 120,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV("h1", { children: "Optimize your PC for gaming" }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 121,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV("p", { children: "Nova Tweaks brings Windows optimization, rollback safety, monitoring, and Premium game-session tooling into one modern desktop app." }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 122,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV("div", { className: "nova-hero-actions", children: [
+          /* @__PURE__ */ jsxDEV("a", { className: "btn btn-primary", href: "#download", children: [
+            /* @__PURE__ */ jsxDEV(Download, { size: 17 }, void 0, false, {
+              fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+              lineNumber: 126,
+              columnNumber: 61
+            }, this),
+            "Download for free"
+          ] }, void 0, true, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 126,
+            columnNumber: 13
+          }, this),
+          /* @__PURE__ */ jsxDEV("a", { className: "btn btn-secondary", href: "#dashboard-showcase", children: [
+            /* @__PURE__ */ jsxDEV(MonitorCheck, { size: 17 }, void 0, false, {
+              fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+              lineNumber: 127,
+              columnNumber: 73
+            }, this),
+            "View dashboard"
+          ] }, void 0, true, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 127,
+            columnNumber: 13
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 125,
+          columnNumber: 11
+        }, this),
+        /* @__PURE__ */ jsxDEV("div", { className: "nova-hero-pills", "aria-label": "Nova Tweaks product signals", children: [
+          /* @__PURE__ */ jsxDEV("span", { children: [
+            /* @__PURE__ */ jsxDEV(BadgeCheck, { size: 15 }, void 0, false, {
+              fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+              lineNumber: 130,
+              columnNumber: 19
+            }, this),
+            "Free tweak library"
+          ] }, void 0, true, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 130,
+            columnNumber: 13
+          }, this),
+          /* @__PURE__ */ jsxDEV("span", { children: [
+            /* @__PURE__ */ jsxDEV(Gem, { size: 15 }, void 0, false, {
+              fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+              lineNumber: 131,
+              columnNumber: 19
+            }, this),
+            "Premium Game Mode"
+          ] }, void 0, true, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 131,
+            columnNumber: 13
+          }, this),
+          /* @__PURE__ */ jsxDEV("span", { children: [
+            /* @__PURE__ */ jsxDEV(Lock, { size: 15 }, void 0, false, {
+              fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+              lineNumber: 132,
+              columnNumber: 19
+            }, this),
+            "No tracking embeds"
+          ] }, void 0, true, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 132,
+            columnNumber: 13
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 129,
+          columnNumber: 11
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 119,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-hero-visual reveal delay-1", children: /* @__PURE__ */ jsxDEV(
+        "a",
+        {
+          className: "nova-hero-image-frame nova-placeholder-tall",
+          href: heroProductImage,
+          target: "_blank",
+          rel: "noreferrer",
+          "aria-label": "Open Nova Tweaks dashboard screenshot",
+          children: /* @__PURE__ */ jsxDEV("img", { src: heroProductImage, alt: "Nova Tweaks dashboard screenshot" }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 143,
+            columnNumber: 13
+          }, this)
+        },
+        void 0,
+        false,
+        {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 136,
+          columnNumber: 11
+        },
+        this
+      ) }, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 135,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 118,
+      columnNumber: 7
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+    lineNumber: 116,
+    columnNumber: 5
+  }, this);
+}
+_c2 = HeroSection;
+function ProofSection() {
+  return /* @__PURE__ */ jsxDEV("section", { className: "section nova-proof-section", id: "performance", children: /* @__PURE__ */ jsxDEV("div", { className: "section-inner nova-proof-grid", children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "nova-section-head reveal", children: [
+      /* @__PURE__ */ jsxDEV("span", { className: "nova-kicker", children: [
+        /* @__PURE__ */ jsxDEV(Activity, { size: 14 }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 156,
+          columnNumber: 41
+        }, this),
+        "Performance proof layout"
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 156,
+        columnNumber: 11
+      }, this),
+      /* @__PURE__ */ jsxDEV("h2", { children: "Animated examples that feel like a tuning tool, not a template." }, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 157,
+        columnNumber: 11
+      }, this),
+      /* @__PURE__ */ jsxDEV("p", { children: "These modules stay as designed placeholders until final captures are produced, while the motion and section rhythm are already production-ready." }, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 158,
+        columnNumber: 11
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 155,
+      columnNumber: 9
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "nova-proof-visual reveal delay-1", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-trace-chart", "aria-hidden": "true", children: /* @__PURE__ */ jsxDEV("svg", { viewBox: "0 0 900 360", preserveAspectRatio: "none", children: [
+        /* @__PURE__ */ jsxDEV("path", { className: "nova-trace-grid", d: "M20 70H880M20 140H880M20 210H880M20 280H880" }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 163,
+          columnNumber: 15
+        }, this),
+        /* @__PURE__ */ jsxDEV("path", { className: "nova-trace-before", d: "M20 230 80 180 130 260 190 150 250 250 310 130 380 210 450 110 520 220 590 120 670 190 740 90 820 160 880 120" }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 164,
+          columnNumber: 15
+        }, this),
+        /* @__PURE__ */ jsxDEV("path", { className: "nova-trace-after", d: "M20 178 100 166 180 170 260 154 340 162 420 150 500 158 580 148 660 152 740 145 820 148 880 142" }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 165,
+          columnNumber: 15
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 162,
+        columnNumber: 13
+      }, this) }, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 161,
+        columnNumber: 11
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-proof-stats", children: proofStats.map(
+        ([label, value, Icon]) => /* @__PURE__ */ jsxDEV("article", { children: [
+          /* @__PURE__ */ jsxDEV(Icon, { size: 18 }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 171,
+            columnNumber: 17
+          }, this),
+          /* @__PURE__ */ jsxDEV("span", { children: label }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 172,
+            columnNumber: 17
+          }, this),
+          /* @__PURE__ */ jsxDEV("b", { children: value }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 173,
+            columnNumber: 17
+          }, this)
+        ] }, label, true, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 170,
+          columnNumber: 13
+        }, this)
+      ) }, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 168,
+        columnNumber: 11
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 160,
+      columnNumber: 9
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+    lineNumber: 154,
+    columnNumber: 7
+  }, this) }, void 0, false, {
+    fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+    lineNumber: 153,
+    columnNumber: 5
+  }, this);
+}
+_c3 = ProofSection;
+function FeatureGrid({ id, title, copy, items, premium = false, onUpgrade }) {
+  _s();
+  const carouselRef = useRef(null);
+  const scrollFeatures = (direction) => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+    carousel.scrollBy({
+      left: direction * Math.min(carousel.clientWidth * 0.86, 520),
+      behavior: "smooth"
+    });
+  };
+  return /* @__PURE__ */ jsxDEV("section", { className: `section nova-feature-section ${premium ? "is-premium" : ""}`, id, children: /* @__PURE__ */ jsxDEV("div", { className: "section-inner", children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "nova-feature-header", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-section-head reveal", children: [
+        /* @__PURE__ */ jsxDEV("span", { className: "nova-kicker", children: [
+          premium ? /* @__PURE__ */ jsxDEV(Gem, { size: 14 }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 201,
+            columnNumber: 54
+          }, this) : /* @__PURE__ */ jsxDEV(Sparkles, { size: 14 }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 201,
+            columnNumber: 74
+          }, this),
+          premium ? "Premium" : "Free"
+        ] }, void 0, true, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 201,
+          columnNumber: 13
+        }, this),
+        /* @__PURE__ */ jsxDEV("h2", { children: title }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 202,
+          columnNumber: 13
+        }, this),
+        /* @__PURE__ */ jsxDEV("p", { children: copy }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 203,
+          columnNumber: 13
+        }, this),
+        premium ? /* @__PURE__ */ jsxDEV("button", { className: "btn btn-primary", type: "button", onClick: onUpgrade, children: [
+          /* @__PURE__ */ jsxDEV(Gem, { size: 17 }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 205,
+            columnNumber: 83
+          }, this),
+          "Unlock Premium"
+        ] }, void 0, true, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 205,
+          columnNumber: 13
+        }, this) : /* @__PURE__ */ jsxDEV("a", { className: "btn btn-secondary", href: "#download", children: [
+          /* @__PURE__ */ jsxDEV(Download, { size: 17 }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 207,
+            columnNumber: 63
+          }, this),
+          "Start free"
+        ] }, void 0, true, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 207,
+          columnNumber: 13
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 200,
+        columnNumber: 11
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "nova-feature-carousel-actions reveal delay-1", "aria-label": `${premium ? "Premium" : "Free"} feature carousel controls`, children: [
+        /* @__PURE__ */ jsxDEV("button", { type: "button", onClick: () => scrollFeatures(-1), "aria-label": "Scroll feature cards left", children: /* @__PURE__ */ jsxDEV(ChevronLeft, { size: 19 }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 212,
+          columnNumber: 15
+        }, this) }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 211,
+          columnNumber: 13
+        }, this),
+        /* @__PURE__ */ jsxDEV("button", { type: "button", onClick: () => scrollFeatures(1), "aria-label": "Scroll feature cards right", children: /* @__PURE__ */ jsxDEV(ChevronRight, { size: 19 }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 215,
+          columnNumber: 15
+        }, this) }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 214,
+          columnNumber: 13
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 210,
+        columnNumber: 11
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 199,
+      columnNumber: 9
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "nova-feature-grid", ref: carouselRef, tabIndex: 0, "aria-label": `${premium ? "Premium" : "Free"} feature screenshots`, children: items.map(
+      ({ icon: Icon, title: itemTitle, copy: itemCopy, image }, index) => /* @__PURE__ */ jsxDEV("article", { className: "nova-feature-card reveal", style: { transitionDelay: `${index * 60}ms` }, children: [
+        /* @__PURE__ */ jsxDEV("div", { className: "nova-feature-icon", children: /* @__PURE__ */ jsxDEV(Icon, { size: 20 }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 222,
+          columnNumber: 50
+        }, this) }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 222,
+          columnNumber: 15
+        }, this),
+        image ? /* @__PURE__ */ jsxDEV(
+          "a",
+          {
+            className: "nova-feature-image-frame",
+            href: image,
+            target: "_blank",
+            rel: "noreferrer",
+            "aria-label": `Open ${itemTitle} screenshot`,
+            children: /* @__PURE__ */ jsxDEV("img", { src: image, alt: `${itemTitle} tab screenshot`, loading: "lazy" }, void 0, false, {
+              fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+              lineNumber: 231,
+              columnNumber: 19
+            }, this)
+          },
+          void 0,
+          false,
+          {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 224,
+            columnNumber: 13
+          },
+          this
+        ) : /* @__PURE__ */ jsxDEV(PlaceholderFrame, { label: itemTitle }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 234,
+          columnNumber: 13
+        }, this),
+        /* @__PURE__ */ jsxDEV("div", { className: "nova-feature-copy", children: [
+          /* @__PURE__ */ jsxDEV("h3", { children: itemTitle }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 237,
+            columnNumber: 17
+          }, this),
+          /* @__PURE__ */ jsxDEV("p", { children: itemCopy }, void 0, false, {
+            fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+            lineNumber: 238,
+            columnNumber: 17
+          }, this)
+        ] }, void 0, true, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 236,
+          columnNumber: 15
+        }, this)
+      ] }, itemTitle, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 221,
+        columnNumber: 11
+      }, this)
+    ) }, void 0, false, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 219,
+      columnNumber: 9
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+    lineNumber: 198,
+    columnNumber: 7
+  }, this) }, void 0, false, {
+    fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+    lineNumber: 197,
+    columnNumber: 5
+  }, this);
+}
+_s(FeatureGrid, "tFDqjupRFhy2WgqEeSf1lC9Fk5g=");
+_c4 = FeatureGrid;
+function ConversionBridge({ onUpgrade }) {
+  return /* @__PURE__ */ jsxDEV("section", { className: "section nova-bridge-section", children: /* @__PURE__ */ jsxDEV("div", { className: "section-inner nova-bridge-panel reveal", children: [
+    /* @__PURE__ */ jsxDEV("div", { children: [
+      /* @__PURE__ */ jsxDEV("span", { className: "nova-kicker", children: [
+        /* @__PURE__ */ jsxDEV(RefreshCw, { size: 14 }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 253,
+          columnNumber: 41
+        }, this),
+        "Ready for final captures"
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 253,
+        columnNumber: 11
+      }, this),
+      /* @__PURE__ */ jsxDEV("h2", { children: "The layout is built for your future screenshots." }, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 254,
+        columnNumber: 11
+      }, this),
+      /* @__PURE__ */ jsxDEV("p", { children: "Every placeholder is intentionally framed as a final asset slot, so replacing it later means swapping content, not redesigning the page." }, void 0, false, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 255,
+        columnNumber: 11
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 252,
+      columnNumber: 9
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "nova-bridge-actions", children: [
+      /* @__PURE__ */ jsxDEV("a", { className: "btn btn-primary", href: "#download", children: [
+        /* @__PURE__ */ jsxDEV(Download, { size: 17 }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 258,
+          columnNumber: 59
+        }, this),
+        "Download free"
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 258,
+        columnNumber: 11
+      }, this),
+      /* @__PURE__ */ jsxDEV("button", { className: "btn btn-secondary", type: "button", onClick: onUpgrade, children: [
+        "Premium checkout",
+        /* @__PURE__ */ jsxDEV(ArrowRight, { size: 17 }, void 0, false, {
+          fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+          lineNumber: 259,
+          columnNumber: 99
+        }, this)
+      ] }, void 0, true, {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 259,
+        columnNumber: 11
+      }, this)
+    ] }, void 0, true, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 257,
+      columnNumber: 9
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+    lineNumber: 251,
+    columnNumber: 7
+  }, this) }, void 0, false, {
+    fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+    lineNumber: 250,
+    columnNumber: 5
+  }, this);
+}
+_c5 = ConversionBridge;
+function HomePage({ onUpgrade }) {
+  return /* @__PURE__ */ jsxDEV(Fragment, { children: [
+    /* @__PURE__ */ jsxDEV(HeroSection, {}, void 0, false, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 269,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ jsxDEV(NovaDashboardShowcase, {}, void 0, false, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 270,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ jsxDEV(ProofSection, {}, void 0, false, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 271,
+      columnNumber: 7
+    }, this),
+    /* @__PURE__ */ jsxDEV(
+      FeatureGrid,
+      {
+        id: "nova-free",
+        title: "Everything most users need starts free.",
+        copy: "The current tweak configs are not Premium-gated. The free story should feel honest: powerful baseline tuning, readable status, backups, apps, settings, and monitoring.",
+        items: freeHighlights
+      },
+      void 0,
+      false,
+      {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 272,
+        columnNumber: 7
+      },
+      this
+    ),
+    /* @__PURE__ */ jsxDEV(
+      FeatureGrid,
+      {
+        id: "nova-premium",
+        title: "Premium is the game-session layer.",
+        copy: "Premium is positioned around actual locked desktop functionality: Game Mode, runtime tuning, session recording, per-game profiles, telemetry, and future Premium updates.",
+        items: premiumHighlights,
+        premium: true,
+        onUpgrade
+      },
+      void 0,
+      false,
+      {
+        fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+        lineNumber: 278,
+        columnNumber: 7
+      },
+      this
+    ),
+    /* @__PURE__ */ jsxDEV(ConversionBridge, { onUpgrade }, void 0, false, {
+      fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+      lineNumber: 286,
+      columnNumber: 7
+    }, this)
+  ] }, void 0, true, {
+    fileName: "C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx",
+    lineNumber: 268,
+    columnNumber: 5
+  }, this);
+}
+_c6 = HomePage;
+export default HomePage;
+var _c, _c2, _c3, _c4, _c5, _c6;
+$RefreshReg$(_c, "PlaceholderFrame");
+$RefreshReg$(_c2, "HeroSection");
+$RefreshReg$(_c3, "ProofSection");
+$RefreshReg$(_c4, "FeatureGrid");
+$RefreshReg$(_c5, "ConversionBridge");
+$RefreshReg$(_c6, "HomePage");
+if (import.meta.hot && !inWebWorker) {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+if (import.meta.hot && !inWebWorker) {
+  RefreshRuntime.__hmr_import(import.meta.url).then((currentExports) => {
+    RefreshRuntime.registerExportsForReactRefresh("C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx", currentExports);
+    import.meta.hot.accept((nextExports) => {
+      if (!nextExports) return;
+      const invalidateMessage = RefreshRuntime.validateRefreshBoundaryAndEnqueueUpdate("C:/dev/Nova-Tweaks-Website/src/landing/HomePage.jsx", currentExports, nextExports);
+      if (invalidateMessage) import.meta.hot.invalidate(invalidateMessage);
+    });
+  });
+}
+
+//# sourceMappingURL=data:application/json;base64,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QUNOLE1BQUs7QUFBQSxRQUNMLE9BQU90QjtBQUFBQTtBQUFBQSxNQUpUO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQSxJQUl3QjtBQUFBLElBRXhCO0FBQUEsTUFBQztBQUFBO0FBQUEsUUFDQyxJQUFHO0FBQUEsUUFDSCxPQUFNO0FBQUEsUUFDTixNQUFLO0FBQUEsUUFDTCxPQUFPSztBQUFBQSxRQUNQO0FBQUEsUUFDQTtBQUFBO0FBQUEsTUFORjtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUEsSUFNdUI7QUFBQSxJQUV2Qix1QkFBQyxvQkFBaUIsYUFBbEI7QUFBQTtBQUFBO0FBQUE7QUFBQSxXQUF1QztBQUFBLE9BbEJ6QztBQUFBO0FBQUE7QUFBQTtBQUFBLFNBbUJBO0FBRUo7QUFBQ3FDLE1BdkJRRDtBQXlCVCxlQUFlQTtBQUFTLElBQUEvQixJQUFBRSxLQUFBSyxLQUFBMEIsS0FBQUgsS0FBQUU7QUFBQSxhQUFBaEMsSUFBQTtBQUFBLGFBQUFFLEtBQUE7QUFBQSxhQUFBSyxLQUFBO0FBQUEsYUFBQTBCLEtBQUE7QUFBQSxhQUFBSCxLQUFBO0FBQUEsYUFBQUUsS0FBQSIsIm5hbWVzIjpbIlJlYWN0IiwidXNlUmVmIiwiQWN0aXZpdHkiLCJBcnJvd1JpZ2h0IiwiQmFkZ2VDaGVjayIsIkNsb2NrIiwiRGF0YWJhc2VCYWNrdXAiLCJEb3dubG9hZCIsIkdhbWVwYWQyIiwiR2F1Z2UiLCJHZW0iLCJIYXJkRHJpdmUiLCJMYXlvdXRHcmlkIiwiTG9jayIsIk1vbml0b3JDaGVjayIsIk1vdXNlUG9pbnRlcjIiLCJQbGF5Q2lyY2xlIiwiUmFkYXIiLCJDaGV2cm9uTGVmdCIsIkNoZXZyb25SaWdodCIsIlJlZnJlc2hDdyIsIlJvY2tldCIsIlNldHRpbmdzMiIsIlNoaWVsZENoZWNrIiwiU3BhcmtsZXMiLCJUaW1lciIsIldpZmkiLCJXcmVuY2giLCJOb3ZhRGFzaGJvYXJkU2hvd2Nhc2UiLCJoZXJvUHJvZHVjdEltYWdlIiwiVVJMIiwiaW1wb3J0IiwidXJsIiwiaHJlZiIsIm92ZXJ2aWV3VGFiSW1hZ2UiLCJmcmVlVHdlYWtzSW1hZ2UiLCJzdGF0dXNEZXRlY3Rpb25JbWFnZSIsImJhY2t1cHNSZXN0b3JlSW1hZ2UiLCJhcHBzU3RhcnR1cEltYWdlIiwic2V0dGluZ3NEYXRhVG9vbHNJbWFnZSIsIm5vdmFHYW1lTW9kZUltYWdlIiwicnVudGltZVR1bmluZ0ltYWdlIiwic2Vzc2lvblJlY29yZGluZ0ltYWdlIiwicGVyR2FtZVByb2ZpbGVzSW1hZ2UiLCJsYXRlbmN5VG9vbGluZ0ltYWdlIiwiZnV0dXJlUHJlbWl1bVVwZGF0ZXNJbWFnZSIsImZyZWVIaWdobGlnaHRzIiwiaWNvbiIsInRpdGxlIiwiY29weSIsImltYWdlIiwicHJlbWl1bUhpZ2hsaWdodHMiLCJwcm9vZlN0YXRzIiwiUGxhY2Vob2xkZXJGcmFtZSIsImxhYmVsIiwidGFsbCIsIl9jIiwiSGVyb1NlY3Rpb24iLCJfYzIiLCJQcm9vZlNlY3Rpb24iLCJtYXAiLCJ2YWx1ZSIsIkljb24iLCJfYzMiLCJGZWF0dXJlR3JpZCIsImlkIiwiaXRlbXMiLCJwcmVtaXVtIiwib25VcGdyYWRlIiwiX3MiLCJjYXJvdXNlbFJlZiIsInNjcm9sbEZlYXR1cmVzIiwiZGlyZWN0aW9uIiwiY2Fyb3VzZWwiLCJjdXJyZW50Iiwic2Nyb2xsQnkiLCJsZWZ0IiwiTWF0aCIsIm1pbiIsImNsaWVudFdpZHRoIiwiYmVoYXZpb3IiLCJpdGVtVGl0bGUiLCJpdGVtQ29weSIsImluZGV4IiwidHJhbnNpdGlvbkRlbGF5IiwiQ29udmVyc2lvbkJyaWRnZSIsIl9jNSIsIkhvbWVQYWdlIiwiX2M2IiwiX2M0Il0sImlnbm9yZUxpc3QiOltdLCJzb3VyY2VzIjpbIkhvbWVQYWdlLmpzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgUmVhY3QsIHsgdXNlUmVmIH0gZnJvbSAncmVhY3QnO1xuaW1wb3J0IHtcclxuICBBY3Rpdml0eSxcclxuICBBcnJvd1JpZ2h0LFxyXG4gIEJhZGdlQ2hlY2ssXHJcbiAgQ2xvY2ssXHJcbiAgRGF0YWJhc2VCYWNrdXAsXHJcbiAgRG93bmxvYWQsXHJcbiAgR2FtZXBhZDIsXHJcbiAgR2F1Z2UsXHJcbiAgR2VtLFxyXG4gIEhhcmREcml2ZSxcclxuICBMYXlvdXRHcmlkLFxyXG4gIExvY2ssXHJcbiAgTW9uaXRvckNoZWNrLFxyXG4gIE1vdXNlUG9pbnRlcjIsXHJcbiAgUGxheUNpcmNsZSxcbiAgUmFkYXIsXG4gIENoZXZyb25MZWZ0LFxuICBDaGV2cm9uUmlnaHQsXG4gIFJlZnJlc2hDdyxcbiAgUm9ja2V0LFxyXG4gIFNldHRpbmdzMixcclxuICBTaGllbGRDaGVjayxcclxuICBTcGFya2xlcyxcclxuICBUaW1lcixcclxuICBXaWZpLFxyXG4gIFdyZW5jaFxyXG59IGZyb20gJ2x1Y2lkZS1yZWFjdCc7XHJcbmltcG9ydCBOb3ZhRGFzaGJvYXJkU2hvd2Nhc2UgZnJvbSAnLi9Ob3ZhRGFzaGJvYXJkU2hvd2Nhc2UnO1xuXG5jb25zdCBoZXJvUHJvZHVjdEltYWdlID0gbmV3IFVSTCgnLi4vYXNzZXRzL05vdmFfVHdlYWtzX1dlYnNpdGVfUGljdHVyZXMvRGFzaGJvYXJkIE92ZXJ2aWV3IDIucG5nJywgaW1wb3J0Lm1ldGEudXJsKS5ocmVmO1xuY29uc3Qgb3ZlcnZpZXdUYWJJbWFnZSA9IG5ldyBVUkwoJy4uL2Fzc2V0cy9Ob3ZhX1R3ZWFrc19XZWJzaXRlX1BpY3R1cmVzL092ZXJ2aWV3IFRhYi5wbmcnLCBpbXBvcnQubWV0YS51cmwpLmhyZWY7XG5jb25zdCBmcmVlVHdlYWtzSW1hZ2UgPSBuZXcgVVJMKCcuLi9hc3NldHMvTm92YV9Ud2Vha3NfV2Vic2l0ZV9QaWN0dXJlcy8xMTErIEZyZWUgVHdlYWtzLnBuZycsIGltcG9ydC5tZXRhLnVybCkuaHJlZjtcbmNvbnN0IHN0YXR1c0RldGVjdGlvbkltYWdlID0gbmV3IFVSTCgnLi4vYXNzZXRzL05vdmFfVHdlYWtzX1dlYnNpdGVfUGljdHVyZXMvMTExKyBGcmVlIFR3ZWFrcyAyLnBuZycsIGltcG9ydC5tZXRhLnVybCkuaHJlZjtcbmNvbnN0IGJhY2t1cHNSZXN0b3JlSW1hZ2UgPSBuZXcgVVJMKCcuLi9hc3NldHMvTm92YV9Ud2Vha3NfV2Vic2l0ZV9QaWN0dXJlcy9CYWNrdXBzIGFuZCBSZXN0b3JlLnBuZycsIGltcG9ydC5tZXRhLnVybCkuaHJlZjtcbmNvbnN0IGFwcHNTdGFydHVwSW1hZ2UgPSBuZXcgVVJMKCcuLi9hc3NldHMvTm92YV9Ud2Vha3NfV2Vic2l0ZV9QaWN0dXJlcy9BcHBzIGFuZCBTdGFydHVwLnBuZycsIGltcG9ydC5tZXRhLnVybCkuaHJlZjtcbmNvbnN0IHNldHRpbmdzRGF0YVRvb2xzSW1hZ2UgPSBuZXcgVVJMKCcuLi9hc3NldHMvTm92YV9Ud2Vha3NfV2Vic2l0ZV9QaWN0dXJlcy9TZXR0aW5ncyBhbmQgRGF0YSBUb29scy5wbmcnLCBpbXBvcnQubWV0YS51cmwpLmhyZWY7XG5jb25zdCBub3ZhR2FtZU1vZGVJbWFnZSA9IG5ldyBVUkwoJy4uL2Fzc2V0cy9Ob3ZhX1R3ZWFrc19XZWJzaXRlX1BpY3R1cmVzL05vdmEgR2FtZSBNb2QucG5nJywgaW1wb3J0Lm1ldGEudXJsKS5ocmVmO1xuY29uc3QgcnVudGltZVR1bmluZ0ltYWdlID0gbmV3IFVSTCgnLi4vYXNzZXRzL05vdmFfVHdlYWtzX1dlYnNpdGVfUGljdHVyZXMvUnVudGltZSBUdW5pbmcucG5nJywgaW1wb3J0Lm1ldGEudXJsKS5ocmVmO1xuY29uc3Qgc2Vzc2lvblJlY29yZGluZ0ltYWdlID0gbmV3IFVSTCgnLi4vYXNzZXRzL05vdmFfVHdlYWtzX1dlYnNpdGVfUGljdHVyZXMvU2Vzc2lvbiBSZWNvcmRpbmcucG5nJywgaW1wb3J0Lm1ldGEudXJsKS5ocmVmO1xuY29uc3QgcGVyR2FtZVByb2ZpbGVzSW1hZ2UgPSBuZXcgVVJMKCcuLi9hc3NldHMvTm92YV9Ud2Vha3NfV2Vic2l0ZV9QaWN0dXJlcy9QZXItR2FtZSBQcm9maWxlcy5wbmcnLCBpbXBvcnQubWV0YS51cmwpLmhyZWY7XG5jb25zdCBsYXRlbmN5VG9vbGluZ0ltYWdlID0gbmV3IFVSTCgnLi4vYXNzZXRzL05vdmFfVHdlYWtzX1dlYnNpdGVfUGljdHVyZXMvTGF0ZW5jeSBUb29saW5nLnBuZycsIGltcG9ydC5tZXRhLnVybCkuaHJlZjtcbmNvbnN0IGZ1dHVyZVByZW1pdW1VcGRhdGVzSW1hZ2UgPSBuZXcgVVJMKCcuLi9hc3NldHMvTm92YV9Ud2Vha3NfV2Vic2l0ZV9QaWN0dXJlcy9mdXR1cmVfcHJlbWl1bV91cGRhdGVzLnBuZycsIGltcG9ydC5tZXRhLnVybCkuaHJlZjtcblxuY29uc3QgZnJlZUhpZ2hsaWdodHMgPSBbXG4gIHsgaWNvbjogTGF5b3V0R3JpZCwgdGl0bGU6ICdPdmVydmlldycsIGNvcHk6ICdGcmVlIHN5c3RlbSBpbmZvIGFuZCByZWFkYWJsZSBzdGF0dXMgZm9yIGhhcmR3YXJlLCBzdG9yYWdlLCBXaW5kb3dzIHN0YXRlLCBhbmQgbW9uaXRvcmluZyBhdCBhIGdsYW5jZS4nLCBpbWFnZTogb3ZlcnZpZXdUYWJJbWFnZSB9LFxuICB7IGljb246IFdyZW5jaCwgdGl0bGU6ICcxMTErIEZyZWUgVHdlYWtzJywgY29weTogJ0N1cnJlbnQgdHdlYWsgY29uZmlncyBhcmUgZnJlZTogcG93ZXIsIGNsZWFudXAsIG5ldHdvcmssIHByaXZhY3ksIHNlcnZpY2VzLCBhbmQgV2luZG93cyBiZWhhdmlvci4nLCBpbWFnZTogZnJlZVR3ZWFrc0ltYWdlIH0sXG4gIHsgaWNvbjogUmFkYXIsIHRpdGxlOiAnU3RhdHVzIERldGVjdGlvbicsIGNvcHk6ICdDaGVjayBjdXJyZW50IHN0YXRlIGJlZm9yZSBjaGFuZ2luZyBzZXR0aW5ncyBzbyB1c2VycyBkbyBub3QgYXBwbHkgdHdlYWtzIGJsaW5kbHkuJywgaW1hZ2U6IHN0YXR1c0RldGVjdGlvbkltYWdlIH0sXG4gIHsgaWNvbjogRGF0YWJhc2VCYWNrdXAsIHRpdGxlOiAnQmFja3VwcyBhbmQgUmVzdG9yZScsIGNvcHk6ICdDcmVhdGUgTm92YSBjb25maWcgc2F2ZXMgYW5kIFdpbmRvd3MgcmVzdG9yZSBwb2ludHMgYmVmb3JlIGxhcmdlciBvcHRpbWl6YXRpb24gcGFzc2VzLicsIGltYWdlOiBiYWNrdXBzUmVzdG9yZUltYWdlIH0sXG4gIHsgaWNvbjogUm9ja2V0LCB0aXRsZTogJ0FwcHMgYW5kIFN0YXJ0dXAnLCBjb3B5OiAnUmV2aWV3IGluc3RhbGxlZCBhcHBzLCBzdGFydHVwIGVudHJpZXMsIGFuZCBjbGVhbnVwIGFjdGlvbnMgaW4gb25lIHByYWN0aWNhbCB3b3JrZmxvdy4nLCBpbWFnZTogYXBwc1N0YXJ0dXBJbWFnZSB9LFxuICB7IGljb246IFNldHRpbmdzMiwgdGl0bGU6ICdTZXR0aW5ncyBhbmQgRGF0YSBUb29scycsIGNvcHk6ICdUaGVtZSwgbGFuZ3VhZ2UsIHN0YXJ0dXAgYmVoYXZpb3IsIGNhY2hlIGNsZWFudXAsIGltcG9ydC9leHBvcnQsIGFuZCBiYWNrdXAgbG9jYXRpb24gY29udHJvbHMuJywgaW1hZ2U6IHNldHRpbmdzRGF0YVRvb2xzSW1hZ2UgfVxuXTtcblxuY29uc3QgcHJlbWl1bUhpZ2hsaWdodHMgPSBbXG4gIHsgaWNvbjogR2FtZXBhZDIsIHRpdGxlOiAnTm92YSBHYW1lIE1vZGUnLCBjb3B5OiAnUHJlbWl1bSBnYW1lLXNlc3Npb24gd29ya3NwYWNlIGZvciBkZXRlY3RlZCBnYW1lcyBhbmQgZm9jdXNlZCB0dW5pbmcgY29udHJvbHMuJywgaW1hZ2U6IG5vdmFHYW1lTW9kZUltYWdlIH0sXG4gIHsgaWNvbjogTW91c2VQb2ludGVyMiwgdGl0bGU6ICdSdW50aW1lIFR1bmluZycsIGNvcHk6ICdQcmlvcml0eSwgYWZmaW5pdHksIGZ1bGxzY3JlZW4gb3B0aW1pemF0aW9uLCBhbmQgc2Vzc2lvbiBiZWhhdmlvciBjb250cm9scyB3aGlsZSBhIGdhbWUgaXMgYWN0aXZlLicsIGltYWdlOiBydW50aW1lVHVuaW5nSW1hZ2UgfSxcbiAgeyBpY29uOiBBY3Rpdml0eSwgdGl0bGU6ICdTZXNzaW9uIFJlY29yZGluZycsIGNvcHk6ICdDYXB0dXJlIEZQUywgMSUgbG93LCBmcmFtZXRpbWUsIGFuZCBzZXNzaW9uIHN0YXRlIGZvciBsYXRlciByZXZpZXcuJywgaW1hZ2U6IHNlc3Npb25SZWNvcmRpbmdJbWFnZSB9LFxuICB7IGljb246IEdhdWdlLCB0aXRsZTogJ1Blci1HYW1lIFByb2ZpbGVzJywgY29weTogJ1ByZW1pdW0gcHJvZmlsZXMga2VlcCB0dW5pbmcgY2hvaWNlcyBhdHRhY2hlZCB0byBpbmRpdmlkdWFsIGdhbWVzLicsIGltYWdlOiBwZXJHYW1lUHJvZmlsZXNJbWFnZSB9LFxuICB7IGljb246IFRpbWVyLCB0aXRsZTogJ0xhdGVuY3kgVG9vbGluZycsIGNvcHk6ICdBZHZhbmNlZCB0aW1lciBhbmQgcmVzcG9uc2l2ZW5lc3Mgd29ya2Zsb3dzIGJ1aWx0IGFyb3VuZCBkZWxpYmVyYXRlIFByZW1pdW0gY29udHJvbHMuJywgaW1hZ2U6IGxhdGVuY3lUb29saW5nSW1hZ2UgfSxcbiAgeyBpY29uOiBTcGFya2xlcywgdGl0bGU6ICdGdXR1cmUgUHJlbWl1bSBVcGRhdGVzJywgY29weTogJ0FjY2VzcyB1cGNvbWluZyBwcmVtaXVtIHdvcmtmbG93cyBhcyBOb3ZhIGV4cGFuZHMgaXRzIHBlcmZvcm1hbmNlIHRvb2xzZXQuJywgaW1hZ2U6IGZ1dHVyZVByZW1pdW1VcGRhdGVzSW1hZ2UgfVxuXTtcblxyXG5jb25zdCBwcm9vZlN0YXRzID0gW1xyXG4gIFsnRnJhbWUgcGFjaW5nJywgJ1N0YWJsZSB0cmFjZScsIEFjdGl2aXR5XSxcclxuICBbJ0lucHV0IGRlbGF5JywgJ0xvd2VyIGZyaWN0aW9uJywgTW91c2VQb2ludGVyMl0sXHJcbiAgWydCYWNrZ3JvdW5kIGxvYWQnLCAnQ2xlYW5lciBzZXNzaW9ucycsIEdhdWdlXSxcclxuICBbJ1JvbGxiYWNrIHNhZmV0eScsICdBbHdheXMgdmlzaWJsZScsIFNoaWVsZENoZWNrXVxyXG5dO1xyXG5cclxuZnVuY3Rpb24gUGxhY2Vob2xkZXJGcmFtZSh7IGxhYmVsLCB0YWxsID0gZmFsc2UgfSkge1xyXG4gIHJldHVybiAoXHJcbiAgICA8ZGl2IGNsYXNzTmFtZT17YG5vdmEtcGxhY2Vob2xkZXItZnJhbWUgJHt0YWxsID8gJ25vdmEtcGxhY2Vob2xkZXItdGFsbCcgOiAnJ31gfSBhcmlhLWxhYmVsPXtgJHtsYWJlbH0gZmluYWwgc2NyZWVuc2hvdCBwbGFjZWhvbGRlcmB9PlxyXG4gICAgICA8ZGl2IGNsYXNzTmFtZT1cIm5vdmEtcGxhY2Vob2xkZXItdG9wXCI+XHJcbiAgICAgICAgPHNwYW4gLz5cclxuICAgICAgICA8c3BhbiAvPlxyXG4gICAgICAgIDxzcGFuIC8+XHJcbiAgICAgICAgPGI+e2xhYmVsfTwvYj5cclxuICAgICAgPC9kaXY+XHJcbiAgICAgIDxkaXYgY2xhc3NOYW1lPVwibm92YS1wbGFjZWhvbGRlci1zY3JlZW5cIj5cclxuICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm5vdmEtcGxhY2Vob2xkZXItZ3JpZFwiIGFyaWEtaGlkZGVuPVwidHJ1ZVwiIC8+XHJcbiAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJub3ZhLXBsYWNlaG9sZGVyLW1vZHVsZSBwcmltYXJ5XCI+XHJcbiAgICAgICAgICA8aSAvPlxyXG4gICAgICAgICAgPHN0cm9uZz5GaW5hbCBzY3JlZW5zaG90IHNsb3Q8L3N0cm9uZz5cclxuICAgICAgICAgIDxzbWFsbD57bGFiZWx9PC9zbWFsbD5cclxuICAgICAgICA8L2Rpdj5cclxuICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm5vdmEtcGxhY2Vob2xkZXItcm93XCI+PHNwYW4gLz48c3BhbiAvPjxzcGFuIC8+PC9kaXY+XHJcbiAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJub3ZhLXBsYWNlaG9sZGVyLXJvdyBzaG9ydFwiPjxzcGFuIC8+PHNwYW4gLz48L2Rpdj5cclxuICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm5vdmEtcGxhY2Vob2xkZXItc2NhblwiIGFyaWEtaGlkZGVuPVwidHJ1ZVwiIC8+XHJcbiAgICAgIDwvZGl2PlxyXG4gICAgPC9kaXY+XHJcbiAgKTtcclxufVxyXG5cclxuZnVuY3Rpb24gSGVyb1NlY3Rpb24oKSB7XHJcbiAgcmV0dXJuIChcclxuICAgIDxzZWN0aW9uIGNsYXNzTmFtZT1cInNlY3Rpb24gbm92YS1oZXJvXCIgaWQ9XCJ0b3BcIj5cclxuICAgICAgPGRpdiBjbGFzc05hbWU9XCJub3ZhLXN0YXJzXCIgYXJpYS1oaWRkZW49XCJ0cnVlXCIgLz5cclxuICAgICAgPGRpdiBjbGFzc05hbWU9XCJzZWN0aW9uLWlubmVyIG5vdmEtaGVyby1pbm5lclwiPlxyXG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibm92YS1oZXJvLWNvcHkgcmV2ZWFsXCI+XHJcbiAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9XCJub3ZhLWtpY2tlclwiPjxTaGllbGRDaGVjayBzaXplPXsxNH0gLz5Ob3ZhIFR3ZWFrcyBmb3IgV2luZG93czwvc3Bhbj5cclxuICAgICAgICAgIDxoMT5PcHRpbWl6ZSB5b3VyIFBDIGZvciBnYW1pbmc8L2gxPlxyXG4gICAgICAgICAgPHA+XHJcbiAgICAgICAgICAgIE5vdmEgVHdlYWtzIGJyaW5ncyBXaW5kb3dzIG9wdGltaXphdGlvbiwgcm9sbGJhY2sgc2FmZXR5LCBtb25pdG9yaW5nLCBhbmQgUHJlbWl1bSBnYW1lLXNlc3Npb24gdG9vbGluZyBpbnRvIG9uZSBtb2Rlcm4gZGVza3RvcCBhcHAuXHJcbiAgICAgICAgICA8L3A+XHJcbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm5vdmEtaGVyby1hY3Rpb25zXCI+XHJcbiAgICAgICAgICAgIDxhIGNsYXNzTmFtZT1cImJ0biBidG4tcHJpbWFyeVwiIGhyZWY9XCIjZG93bmxvYWRcIj48RG93bmxvYWQgc2l6ZT17MTd9IC8+RG93bmxvYWQgZm9yIGZyZWU8L2E+XHJcbiAgICAgICAgICAgIDxhIGNsYXNzTmFtZT1cImJ0biBidG4tc2Vjb25kYXJ5XCIgaHJlZj1cIiNkYXNoYm9hcmQtc2hvd2Nhc2VcIj48TW9uaXRvckNoZWNrIHNpemU9ezE3fSAvPlZpZXcgZGFzaGJvYXJkPC9hPlxyXG4gICAgICAgICAgPC9kaXY+XHJcbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm5vdmEtaGVyby1waWxsc1wiIGFyaWEtbGFiZWw9XCJOb3ZhIFR3ZWFrcyBwcm9kdWN0IHNpZ25hbHNcIj5cclxuICAgICAgICAgICAgPHNwYW4+PEJhZGdlQ2hlY2sgc2l6ZT17MTV9IC8+RnJlZSB0d2VhayBsaWJyYXJ5PC9zcGFuPlxyXG4gICAgICAgICAgICA8c3Bhbj48R2VtIHNpemU9ezE1fSAvPlByZW1pdW0gR2FtZSBNb2RlPC9zcGFuPlxyXG4gICAgICAgICAgICA8c3Bhbj48TG9jayBzaXplPXsxNX0gLz5ObyB0cmFja2luZyBlbWJlZHM8L3NwYW4+XHJcbiAgICAgICAgICA8L2Rpdj5cclxuICAgICAgICA8L2Rpdj5cbiAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJub3ZhLWhlcm8tdmlzdWFsIHJldmVhbCBkZWxheS0xXCI+XG4gICAgICAgICAgPGFcbiAgICAgICAgICAgIGNsYXNzTmFtZT1cIm5vdmEtaGVyby1pbWFnZS1mcmFtZSBub3ZhLXBsYWNlaG9sZGVyLXRhbGxcIlxuICAgICAgICAgICAgaHJlZj17aGVyb1Byb2R1Y3RJbWFnZX1cbiAgICAgICAgICAgIHRhcmdldD1cIl9ibGFua1wiXG4gICAgICAgICAgICByZWw9XCJub3JlZmVycmVyXCJcbiAgICAgICAgICAgIGFyaWEtbGFiZWw9XCJPcGVuIE5vdmEgVHdlYWtzIGRhc2hib2FyZCBzY3JlZW5zaG90XCJcbiAgICAgICAgICA+XG4gICAgICAgICAgICA8aW1nIHNyYz17aGVyb1Byb2R1Y3RJbWFnZX0gYWx0PVwiTm92YSBUd2Vha3MgZGFzaGJvYXJkIHNjcmVlbnNob3RcIiAvPlxuICAgICAgICAgIDwvYT5cbiAgICAgICAgPC9kaXY+XG4gICAgICA8L2Rpdj5cbiAgICA8L3NlY3Rpb24+XG4gICk7XHJcbn1cclxuXHJcbmZ1bmN0aW9uIFByb29mU2VjdGlvbigpIHtcclxuICByZXR1cm4gKFxyXG4gICAgPHNlY3Rpb24gY2xhc3NOYW1lPVwic2VjdGlvbiBub3ZhLXByb29mLXNlY3Rpb25cIiBpZD1cInBlcmZvcm1hbmNlXCI+XHJcbiAgICAgIDxkaXYgY2xhc3NOYW1lPVwic2VjdGlvbi1pbm5lciBub3ZhLXByb29mLWdyaWRcIj5cclxuICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm5vdmEtc2VjdGlvbi1oZWFkIHJldmVhbFwiPlxyXG4gICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibm92YS1raWNrZXJcIj48QWN0aXZpdHkgc2l6ZT17MTR9IC8+UGVyZm9ybWFuY2UgcHJvb2YgbGF5b3V0PC9zcGFuPlxyXG4gICAgICAgICAgPGgyPkFuaW1hdGVkIGV4YW1wbGVzIHRoYXQgZmVlbCBsaWtlIGEgdHVuaW5nIHRvb2wsIG5vdCBhIHRlbXBsYXRlLjwvaDI+XHJcbiAgICAgICAgICA8cD5UaGVzZSBtb2R1bGVzIHN0YXkgYXMgZGVzaWduZWQgcGxhY2Vob2xkZXJzIHVudGlsIGZpbmFsIGNhcHR1cmVzIGFyZSBwcm9kdWNlZCwgd2hpbGUgdGhlIG1vdGlvbiBhbmQgc2VjdGlvbiByaHl0aG0gYXJlIGFscmVhZHkgcHJvZHVjdGlvbi1yZWFkeS48L3A+XHJcbiAgICAgICAgPC9kaXY+XHJcbiAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJub3ZhLXByb29mLXZpc3VhbCByZXZlYWwgZGVsYXktMVwiPlxyXG4gICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJub3ZhLXRyYWNlLWNoYXJ0XCIgYXJpYS1oaWRkZW49XCJ0cnVlXCI+XHJcbiAgICAgICAgICAgIDxzdmcgdmlld0JveD1cIjAgMCA5MDAgMzYwXCIgcHJlc2VydmVBc3BlY3RSYXRpbz1cIm5vbmVcIj5cclxuICAgICAgICAgICAgICA8cGF0aCBjbGFzc05hbWU9XCJub3ZhLXRyYWNlLWdyaWRcIiBkPVwiTTIwIDcwSDg4ME0yMCAxNDBIODgwTTIwIDIxMEg4ODBNMjAgMjgwSDg4MFwiIC8+XHJcbiAgICAgICAgICAgICAgPHBhdGggY2xhc3NOYW1lPVwibm92YS10cmFjZS1iZWZvcmVcIiBkPVwiTTIwIDIzMCA4MCAxODAgMTMwIDI2MCAxOTAgMTUwIDI1MCAyNTAgMzEwIDEzMCAzODAgMjEwIDQ1MCAxMTAgNTIwIDIyMCA1OTAgMTIwIDY3MCAxOTAgNzQwIDkwIDgyMCAxNjAgODgwIDEyMFwiIC8+XHJcbiAgICAgICAgICAgICAgPHBhdGggY2xhc3NOYW1lPVwibm92YS10cmFjZS1hZnRlclwiIGQ9XCJNMjAgMTc4IDEwMCAxNjYgMTgwIDE3MCAyNjAgMTU0IDM0MCAxNjIgNDIwIDE1MCA1MDAgMTU4IDU4MCAxNDggNjYwIDE1MiA3NDAgMTQ1IDgyMCAxNDggODgwIDE0MlwiIC8+XHJcbiAgICAgICAgICAgIDwvc3ZnPlxyXG4gICAgICAgICAgPC9kaXY+XHJcbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm5vdmEtcHJvb2Ytc3RhdHNcIj5cclxuICAgICAgICAgICAge3Byb29mU3RhdHMubWFwKChbbGFiZWwsIHZhbHVlLCBJY29uXSkgPT4gKFxyXG4gICAgICAgICAgICAgIDxhcnRpY2xlIGtleT17bGFiZWx9PlxyXG4gICAgICAgICAgICAgICAgPEljb24gc2l6ZT17MTh9IC8+XHJcbiAgICAgICAgICAgICAgICA8c3Bhbj57bGFiZWx9PC9zcGFuPlxyXG4gICAgICAgICAgICAgICAgPGI+e3ZhbHVlfTwvYj5cclxuICAgICAgICAgICAgICA8L2FydGljbGU+XHJcbiAgICAgICAgICAgICkpfVxyXG4gICAgICAgICAgPC9kaXY+XHJcbiAgICAgICAgPC9kaXY+XHJcbiAgICAgIDwvZGl2PlxyXG4gICAgPC9zZWN0aW9uPlxyXG4gICk7XHJcbn1cclxuXHJcbmZ1bmN0aW9uIEZlYXR1cmVHcmlkKHsgaWQsIHRpdGxlLCBjb3B5LCBpdGVtcywgcHJlbWl1bSA9IGZhbHNlLCBvblVwZ3JhZGUgfSkge1xuICBjb25zdCBjYXJvdXNlbFJlZiA9IHVzZVJlZihudWxsKTtcblxuICBjb25zdCBzY3JvbGxGZWF0dXJlcyA9IChkaXJlY3Rpb24pID0+IHtcbiAgICBjb25zdCBjYXJvdXNlbCA9IGNhcm91c2VsUmVmLmN1cnJlbnQ7XG4gICAgaWYgKCFjYXJvdXNlbCkgcmV0dXJuO1xuXG4gICAgY2Fyb3VzZWwuc2Nyb2xsQnkoe1xuICAgICAgbGVmdDogZGlyZWN0aW9uICogTWF0aC5taW4oY2Fyb3VzZWwuY2xpZW50V2lkdGggKiAwLjg2LCA1MjApLFxuICAgICAgYmVoYXZpb3I6ICdzbW9vdGgnXG4gICAgfSk7XG4gIH07XG5cbiAgcmV0dXJuIChcbiAgICA8c2VjdGlvbiBjbGFzc05hbWU9e2BzZWN0aW9uIG5vdmEtZmVhdHVyZS1zZWN0aW9uICR7cHJlbWl1bSA/ICdpcy1wcmVtaXVtJyA6ICcnfWB9IGlkPXtpZH0+XG4gICAgICA8ZGl2IGNsYXNzTmFtZT1cInNlY3Rpb24taW5uZXJcIj5cbiAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJub3ZhLWZlYXR1cmUtaGVhZGVyXCI+XG4gICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJub3ZhLXNlY3Rpb24taGVhZCByZXZlYWxcIj5cbiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cIm5vdmEta2lja2VyXCI+e3ByZW1pdW0gPyA8R2VtIHNpemU9ezE0fSAvPiA6IDxTcGFya2xlcyBzaXplPXsxNH0gLz59e3ByZW1pdW0gPyAnUHJlbWl1bScgOiAnRnJlZSd9PC9zcGFuPlxuICAgICAgICAgICAgPGgyPnt0aXRsZX08L2gyPlxuICAgICAgICAgICAgPHA+e2NvcHl9PC9wPlxuICAgICAgICAgICAge3ByZW1pdW0gPyAoXG4gICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPVwiYnRuIGJ0bi1wcmltYXJ5XCIgdHlwZT1cImJ1dHRvblwiIG9uQ2xpY2s9e29uVXBncmFkZX0+PEdlbSBzaXplPXsxN30gLz5VbmxvY2sgUHJlbWl1bTwvYnV0dG9uPlxuICAgICAgICAgICAgKSA6IChcbiAgICAgICAgICAgICAgPGEgY2xhc3NOYW1lPVwiYnRuIGJ0bi1zZWNvbmRhcnlcIiBocmVmPVwiI2Rvd25sb2FkXCI+PERvd25sb2FkIHNpemU9ezE3fSAvPlN0YXJ0IGZyZWU8L2E+XG4gICAgICAgICAgICApfVxuICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibm92YS1mZWF0dXJlLWNhcm91c2VsLWFjdGlvbnMgcmV2ZWFsIGRlbGF5LTFcIiBhcmlhLWxhYmVsPXtgJHtwcmVtaXVtID8gJ1ByZW1pdW0nIDogJ0ZyZWUnfSBmZWF0dXJlIGNhcm91c2VsIGNvbnRyb2xzYH0+XG4gICAgICAgICAgICA8YnV0dG9uIHR5cGU9XCJidXR0b25cIiBvbkNsaWNrPXsoKSA9PiBzY3JvbGxGZWF0dXJlcygtMSl9IGFyaWEtbGFiZWw9XCJTY3JvbGwgZmVhdHVyZSBjYXJkcyBsZWZ0XCI+XG4gICAgICAgICAgICAgIDxDaGV2cm9uTGVmdCBzaXplPXsxOX0gLz5cbiAgICAgICAgICAgIDwvYnV0dG9uPlxuICAgICAgICAgICAgPGJ1dHRvbiB0eXBlPVwiYnV0dG9uXCIgb25DbGljaz17KCkgPT4gc2Nyb2xsRmVhdHVyZXMoMSl9IGFyaWEtbGFiZWw9XCJTY3JvbGwgZmVhdHVyZSBjYXJkcyByaWdodFwiPlxuICAgICAgICAgICAgICA8Q2hldnJvblJpZ2h0IHNpemU9ezE5fSAvPlxuICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgPC9kaXY+XG4gICAgICAgIDwvZGl2PlxuICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm5vdmEtZmVhdHVyZS1ncmlkXCIgcmVmPXtjYXJvdXNlbFJlZn0gdGFiSW5kZXg9ezB9IGFyaWEtbGFiZWw9e2Ake3ByZW1pdW0gPyAnUHJlbWl1bScgOiAnRnJlZSd9IGZlYXR1cmUgc2NyZWVuc2hvdHNgfT5cbiAgICAgICAgICB7aXRlbXMubWFwKCh7IGljb246IEljb24sIHRpdGxlOiBpdGVtVGl0bGUsIGNvcHk6IGl0ZW1Db3B5LCBpbWFnZSB9LCBpbmRleCkgPT4gKFxuICAgICAgICAgICAgPGFydGljbGUgY2xhc3NOYW1lPVwibm92YS1mZWF0dXJlLWNhcmQgcmV2ZWFsXCIgc3R5bGU9e3sgdHJhbnNpdGlvbkRlbGF5OiBgJHtpbmRleCAqIDYwfW1zYCB9fSBrZXk9e2l0ZW1UaXRsZX0+XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibm92YS1mZWF0dXJlLWljb25cIj48SWNvbiBzaXplPXsyMH0gLz48L2Rpdj5cbiAgICAgICAgICAgICAge2ltYWdlID8gKFxuICAgICAgICAgICAgICAgIDxhXG4gICAgICAgICAgICAgICAgICBjbGFzc05hbWU9XCJub3ZhLWZlYXR1cmUtaW1hZ2UtZnJhbWVcIlxuICAgICAgICAgICAgICAgICAgaHJlZj17aW1hZ2V9XG4gICAgICAgICAgICAgICAgICB0YXJnZXQ9XCJfYmxhbmtcIlxuICAgICAgICAgICAgICAgICAgcmVsPVwibm9yZWZlcnJlclwiXG4gICAgICAgICAgICAgICAgICBhcmlhLWxhYmVsPXtgT3BlbiAke2l0ZW1UaXRsZX0gc2NyZWVuc2hvdGB9XG4gICAgICAgICAgICAgICAgPlxuICAgICAgICAgICAgICAgICAgPGltZyBzcmM9e2ltYWdlfSBhbHQ9e2Ake2l0ZW1UaXRsZX0gdGFiIHNjcmVlbnNob3RgfSBsb2FkaW5nPVwibGF6eVwiIC8+XG4gICAgICAgICAgICAgICAgPC9hPlxuICAgICAgICAgICAgICApIDogKFxuICAgICAgICAgICAgICAgIDxQbGFjZWhvbGRlckZyYW1lIGxhYmVsPXtpdGVtVGl0bGV9IC8+XG4gICAgICAgICAgICAgICl9XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibm92YS1mZWF0dXJlLWNvcHlcIj5cbiAgICAgICAgICAgICAgICA8aDM+e2l0ZW1UaXRsZX08L2gzPlxuICAgICAgICAgICAgICAgIDxwPntpdGVtQ29weX08L3A+XG4gICAgICAgICAgICAgIDwvZGl2PlxyXG4gICAgICAgICAgICA8L2FydGljbGU+XHJcbiAgICAgICAgICApKX1cclxuICAgICAgICA8L2Rpdj5cclxuICAgICAgPC9kaXY+XHJcbiAgICA8L3NlY3Rpb24+XHJcbiAgKTtcclxufVxyXG5cclxuZnVuY3Rpb24gQ29udmVyc2lvbkJyaWRnZSh7IG9uVXBncmFkZSB9KSB7XHJcbiAgcmV0dXJuIChcclxuICAgIDxzZWN0aW9uIGNsYXNzTmFtZT1cInNlY3Rpb24gbm92YS1icmlkZ2Utc2VjdGlvblwiPlxyXG4gICAgICA8ZGl2IGNsYXNzTmFtZT1cInNlY3Rpb24taW5uZXIgbm92YS1icmlkZ2UtcGFuZWwgcmV2ZWFsXCI+XHJcbiAgICAgICAgPGRpdj5cclxuICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cIm5vdmEta2lja2VyXCI+PFJlZnJlc2hDdyBzaXplPXsxNH0gLz5SZWFkeSBmb3IgZmluYWwgY2FwdHVyZXM8L3NwYW4+XHJcbiAgICAgICAgICA8aDI+VGhlIGxheW91dCBpcyBidWlsdCBmb3IgeW91ciBmdXR1cmUgc2NyZWVuc2hvdHMuPC9oMj5cclxuICAgICAgICAgIDxwPkV2ZXJ5IHBsYWNlaG9sZGVyIGlzIGludGVudGlvbmFsbHkgZnJhbWVkIGFzIGEgZmluYWwgYXNzZXQgc2xvdCwgc28gcmVwbGFjaW5nIGl0IGxhdGVyIG1lYW5zIHN3YXBwaW5nIGNvbnRlbnQsIG5vdCByZWRlc2lnbmluZyB0aGUgcGFnZS48L3A+XHJcbiAgICAgICAgPC9kaXY+XHJcbiAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJub3ZhLWJyaWRnZS1hY3Rpb25zXCI+XHJcbiAgICAgICAgICA8YSBjbGFzc05hbWU9XCJidG4gYnRuLXByaW1hcnlcIiBocmVmPVwiI2Rvd25sb2FkXCI+PERvd25sb2FkIHNpemU9ezE3fSAvPkRvd25sb2FkIGZyZWU8L2E+XHJcbiAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT1cImJ0biBidG4tc2Vjb25kYXJ5XCIgdHlwZT1cImJ1dHRvblwiIG9uQ2xpY2s9e29uVXBncmFkZX0+UHJlbWl1bSBjaGVja291dDxBcnJvd1JpZ2h0IHNpemU9ezE3fSAvPjwvYnV0dG9uPlxyXG4gICAgICAgIDwvZGl2PlxyXG4gICAgICA8L2Rpdj5cclxuICAgIDwvc2VjdGlvbj5cclxuICApO1xyXG59XHJcblxyXG5mdW5jdGlvbiBIb21lUGFnZSh7IG9uVXBncmFkZSB9KSB7XHJcbiAgcmV0dXJuIChcclxuICAgIDw+XHJcbiAgICAgIDxIZXJvU2VjdGlvbiAvPlxyXG4gICAgICA8Tm92YURhc2hib2FyZFNob3djYXNlIC8+XHJcbiAgICAgIDxQcm9vZlNlY3Rpb24gLz5cclxuICAgICAgPEZlYXR1cmVHcmlkXHJcbiAgICAgICAgaWQ9XCJub3ZhLWZyZWVcIlxyXG4gICAgICAgIHRpdGxlPVwiRXZlcnl0aGluZyBtb3N0IHVzZXJzIG5lZWQgc3RhcnRzIGZyZWUuXCJcclxuICAgICAgICBjb3B5PVwiVGhlIGN1cnJlbnQgdHdlYWsgY29uZmlncyBhcmUgbm90IFByZW1pdW0tZ2F0ZWQuIFRoZSBmcmVlIHN0b3J5IHNob3VsZCBmZWVsIGhvbmVzdDogcG93ZXJmdWwgYmFzZWxpbmUgdHVuaW5nLCByZWFkYWJsZSBzdGF0dXMsIGJhY2t1cHMsIGFwcHMsIHNldHRpbmdzLCBhbmQgbW9uaXRvcmluZy5cIlxyXG4gICAgICAgIGl0ZW1zPXtmcmVlSGlnaGxpZ2h0c31cclxuICAgICAgLz5cclxuICAgICAgPEZlYXR1cmVHcmlkXHJcbiAgICAgICAgaWQ9XCJub3ZhLXByZW1pdW1cIlxyXG4gICAgICAgIHRpdGxlPVwiUHJlbWl1bSBpcyB0aGUgZ2FtZS1zZXNzaW9uIGxheWVyLlwiXHJcbiAgICAgICAgY29weT1cIlByZW1pdW0gaXMgcG9zaXRpb25lZCBhcm91bmQgYWN0dWFsIGxvY2tlZCBkZXNrdG9wIGZ1bmN0aW9uYWxpdHk6IEdhbWUgTW9kZSwgcnVudGltZSB0dW5pbmcsIHNlc3Npb24gcmVjb3JkaW5nLCBwZXItZ2FtZSBwcm9maWxlcywgdGVsZW1ldHJ5LCBhbmQgZnV0dXJlIFByZW1pdW0gdXBkYXRlcy5cIlxyXG4gICAgICAgIGl0ZW1zPXtwcmVtaXVtSGlnaGxpZ2h0c31cclxuICAgICAgICBwcmVtaXVtXHJcbiAgICAgICAgb25VcGdyYWRlPXtvblVwZ3JhZGV9XHJcbiAgICAgIC8+XHJcbiAgICAgIDxDb252ZXJzaW9uQnJpZGdlIG9uVXBncmFkZT17b25VcGdyYWRlfSAvPlxyXG4gICAgPC8+XHJcbiAgKTtcclxufVxyXG5cclxuZXhwb3J0IGRlZmF1bHQgSG9tZVBhZ2U7XHJcbiJdLCJmaWxlIjoiQzovZGV2L05vdmEtVHdlYWtzLVdlYnNpdGUvc3JjL2xhbmRpbmcvSG9tZVBhZ2UuanN4In0=
