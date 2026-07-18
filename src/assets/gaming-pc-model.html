@@ -1,0 +1,2316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050509" />
+  <title>Procedural Flagship Gaming PC</title>
+  <style>
+    :root {
+      --bg: #050509;
+      --violet: #8f4cff;
+      --lavender: #c7a2ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: transparent !important;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    #app,
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    canvas {
+      outline: none;
+      touch-action: pan-y;
+    }
+
+    #loading,
+    #error {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      transition: opacity 600ms ease, visibility 600ms ease;
+    }
+
+    #loading.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    #loading {
+      display: none;
+    }
+
+    .loader-card {
+      display: grid;
+      justify-items: center;
+      gap: 14px;
+      color: rgba(242, 235, 255, 0.72);
+      font-size: 11px;
+      font-weight: 650;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-shadow: 0 0 24px rgba(143, 76, 255, 0.3);
+    }
+
+    .loader-ring {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(199, 162, 255, 0.14);
+      border-top-color: rgba(199, 162, 255, 0.95);
+      box-shadow: inset 0 0 18px rgba(124, 44, 255, 0.15), 0 0 24px rgba(124, 44, 255, 0.12);
+      animation: spin 1.1s linear infinite;
+    }
+
+    #error {
+      display: none;
+      padding: 28px;
+      pointer-events: auto;
+      background: radial-gradient(circle, rgba(31, 14, 50, 0.95), rgba(4, 4, 8, 0.98));
+      color: #eee8ff;
+      text-align: center;
+    }
+
+    #error.visible { display: grid; }
+
+    #error > div {
+      max-width: 560px;
+      padding: 26px 30px;
+      border: 1px solid rgba(199, 162, 255, 0.18);
+      border-radius: 16px;
+      background: rgba(12, 10, 18, 0.82);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+      line-height: 1.6;
+    }
+
+    #hint {
+      position: fixed;
+      left: 50%;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      z-index: 3;
+      transform: translateX(-50%);
+      color: rgba(226, 214, 248, 0.34);
+      font-size: 10px;
+      font-weight: 650;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      pointer-events: none;
+      user-select: none;
+      transition: opacity 500ms ease;
+      white-space: nowrap;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 680px) {
+      #hint { font-size: 9px; letter-spacing: 0.13em; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .loader-ring { animation-duration: 2.2s; }
+    }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.143.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.143.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <main id="app" aria-label="Interactive procedural flagship gaming PC render"></main>
+  <div id="loading" aria-live="polite">
+    <div class="loader-card">
+      <div class="loader-ring"></div>
+      <span>Building hardware</span>
+    </div>
+  </div>
+  <div id="error" role="alert"><div></div></div>
+  <div id="hint" hidden></div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+    import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+
+    const CONFIG = {
+      case: { width: 3.8, height: 7.0, depth: 6.4 },
+      camera: {
+        fov: 34,
+        near: 0.1,
+        far: 150,
+        target: new THREE.Vector3(0, 3.45, 0),
+        desktopDistance: 12.8,
+        mobileDistance: 15.2
+      },
+      quality: {
+        pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+        mobilePixelRatio: Math.min(window.devicePixelRatio || 1, 1),
+        shadowDesktop: 2048,
+        shadowMobile: 512,
+        particleDesktop: 170,
+        particleMobile: 70
+      },
+      rgb: {
+        deep: new THREE.Color('#4b168f'),
+        electric: new THREE.Color('#7c2cff'),
+        bright: new THREE.Color('#9c5cff'),
+        lavender: new THREE.Color('#c7a2ff'),
+        loopDuration: 8.5
+      },
+      animation: {
+        caseFanSpeed: 4.35,
+        radiatorFanSpeed: 5.35,
+        gpuFanSpeed: 3.15,
+        reducedScale: 0.34
+      }
+    };
+
+    // Authoritative case grid. Every structural dimension and repeated placement
+    // is derived from these values instead of being positioned by eye.
+    const CASE_WIDTH = CONFIG.case.width;
+    const CASE_HEIGHT = CONFIG.case.height;
+    const CASE_DEPTH = CONFIG.case.depth;
+    const FRAME_THICKNESS = 0.26;
+    const FRAME_RADIUS = 0.065;
+    const POST_INSET = FRAME_THICKNESS * 0.5;
+    const LOWER_FRAME_Y = 0.50;
+    const UPPER_FRAME_Y = CASE_HEIGHT - LOWER_FRAME_Y;
+    const PANEL_INSET = 0.22;
+    const PANEL_GAP = 0.08;
+    const GLASS_THICKNESS = 0.075;
+    const PANEL_BOTTOM_Y = LOWER_FRAME_Y + FRAME_THICKNESS * 0.5 + PANEL_GAP;
+    const PANEL_TOP_Y = UPPER_FRAME_Y - FRAME_THICKNESS * 0.5 - PANEL_GAP;
+    const PANEL_HEIGHT = PANEL_TOP_Y - PANEL_BOTTOM_Y;
+    const PANEL_CENTER_Y = (PANEL_TOP_Y + PANEL_BOTTOM_Y) * 0.5;
+    const FRONT_FAN_RADIUS = 0.69;
+    const FAN_GAP = 0.14;
+    const FRONT_FAN_PITCH = FRONT_FAN_RADIUS * 2 + FAN_GAP;
+    const FRONT_FAN_Z = CASE_DEPTH * 0.5 - 0.42;
+    const REAR_FAN_RADIUS = 0.63;
+    const REAR_FAN_CENTER = Object.freeze(new THREE.Vector3(0.55, 4.86, -CASE_DEPTH * 0.5 + 0.38));
+    const RADIATOR_CENTER = Object.freeze(new THREE.Vector3(0, UPPER_FRAME_Y - 0.20, -0.28));
+    const RADIATOR_FAN_RADIUS = 0.49;
+    const RADIATOR_FAN_PITCH = 1.03;
+
+    const app = document.getElementById('app');
+    const loading = document.getElementById('loading');
+    const errorPanel = document.getElementById('error');
+    const errorText = errorPanel.firstElementChild;
+    const hint = document.getElementById('hint');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.matchMedia('(max-width: 760px), (pointer: coarse)').matches;
+
+    const state = {
+      renderer: null,
+      scene: null,
+      camera: null,
+      composer: null,
+      bloomPass: null,
+      pc: new THREE.Group(),
+      clock: new THREE.Clock(),
+      elapsed: 0,
+      paused: false,
+      pointerTarget: new THREE.Vector2(),
+      pointer: new THREE.Vector2(),
+      pointerVelocity: new THREE.Vector2(),
+      scrollImpulse: 0,
+      scrollVelocity: 0,
+      fanRotors: [],
+      rgbRings: [],
+      ramLights: [],
+      shaderLights: [],
+      pulseMaterials: [],
+      particles: null,
+      interiorLights: [],
+      disposableTextures: [],
+      environmentRenderTarget: null,
+      originalCamera: new THREE.Vector3(),
+      resizeTimer: 0,
+      firstFrame: true,
+      modelVisible: true,
+      lastRenderTime: 0
+    };
+
+    const MAT = {};
+    const GEO = {};
+    const TEMP = {
+      v3a: new THREE.Vector3(),
+      v3b: new THREE.Vector3(),
+      colorA: new THREE.Color(),
+      colorB: new THREE.Color(),
+      matrix: new THREE.Matrix4(),
+      quaternion: new THREE.Quaternion(),
+      scale: new THREE.Vector3(1, 1, 1)
+    };
+
+    const clamp = THREE.MathUtils.clamp;
+    const lerp = THREE.MathUtils.lerp;
+    const dampAlpha = (lambda, dt) => 1 - Math.exp(-lambda * dt);
+    const smoothPulse = (phase) => {
+      const s = 0.5 + 0.5 * Math.sin(phase * Math.PI * 2);
+      return s * s * (3 - 2 * s);
+    };
+
+    function showError(message) {
+      loading.classList.add('hidden');
+      errorText.textContent = message;
+      errorPanel.classList.add('visible');
+    }
+
+    function supportsWebGL() {
+      try {
+        const canvas = document.createElement('canvas');
+        return Boolean(
+          window.WebGLRenderingContext &&
+          (canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+        );
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function makeNoiseTexture(size = 256, mode = 'grain') {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = size;
+      const ctx = canvas.getContext('2d', { alpha: false });
+      const image = ctx.createImageData(size, size);
+      const data = image.data;
+
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const i = (y * size + x) * 4;
+          let value;
+          if (mode === 'brush') {
+            const streak = Math.sin(y * 0.42) * 4 + Math.sin(y * 1.73) * 1.7;
+            value = 128 + streak + (Math.random() - 0.5) * 7;
+          } else if (mode === 'carbon') {
+            const cell = ((x >> 2) + (y >> 2)) % 2;
+            const diagonal = ((x + y) % 8) < 4 ? 8 : -8;
+            value = 116 + cell * 8 + diagonal + (Math.random() - 0.5) * 3;
+          } else if (mode === 'pcb') {
+            value = 116 + (Math.random() - 0.5) * 12;
+            if ((x % 31 < 2 && y % 11 > 2) || (y % 37 < 2 && x % 13 > 2)) value += 18;
+          } else {
+            value = 122 + (Math.random() - 0.5) * 18;
+          }
+          const v = clamp(value, 0, 255);
+          data[i] = data[i + 1] = data[i + 2] = v;
+          data[i + 3] = 255;
+        }
+      }
+
+      ctx.putImageData(image, 0, 0);
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.anisotropy = Math.min(8, state.renderer?.capabilities.getMaxAnisotropy?.() || 4);
+      state.disposableTextures.push(texture);
+      return texture;
+    }
+
+    function createMaterials() {
+      const brushed = makeNoiseTexture(256, 'brush');
+      brushed.repeat.set(2, 7);
+      const grain = makeNoiseTexture(256, 'grain');
+      grain.repeat.set(5, 5);
+      const carbon = makeNoiseTexture(256, 'carbon');
+      carbon.repeat.set(5, 5);
+      const pcbTexture = makeNoiseTexture(256, 'pcb');
+      pcbTexture.repeat.set(3, 4);
+
+      MAT.aluminum = new THREE.MeshStandardMaterial({
+        color: 0x111216,
+        metalness: 0.91,
+        roughness: 0.29,
+        roughnessMap: brushed,
+        envMapIntensity: 1.15
+      });
+      MAT.aluminumLight = new THREE.MeshStandardMaterial({
+        color: 0x282b31,
+        metalness: 0.94,
+        roughness: 0.24,
+        roughnessMap: brushed,
+        envMapIntensity: 1.25
+      });
+      MAT.powder = new THREE.MeshStandardMaterial({
+        color: 0x0a0b0e,
+        metalness: 0.18,
+        roughness: 0.69,
+        roughnessMap: grain,
+        envMapIntensity: 0.64
+      });
+      MAT.powder2 = new THREE.MeshStandardMaterial({
+        color: 0x15161a,
+        metalness: 0.28,
+        roughness: 0.58,
+        roughnessMap: grain,
+        envMapIntensity: 0.75
+      });
+      MAT.gunmetal = new THREE.MeshStandardMaterial({
+        color: 0x24272d,
+        metalness: 0.9,
+        roughness: 0.31,
+        roughnessMap: brushed,
+        envMapIntensity: 1.2
+      });
+      MAT.blackMetal = new THREE.MeshStandardMaterial({
+        color: 0x07080a,
+        metalness: 0.78,
+        roughness: 0.42,
+        envMapIntensity: 0.85
+      });
+      MAT.rubber = new THREE.MeshStandardMaterial({
+        color: 0x08090b,
+        metalness: 0.0,
+        roughness: 0.9,
+        envMapIntensity: 0.28
+      });
+      MAT.pcb = new THREE.MeshPhysicalMaterial({
+        color: 0x0c1211,
+        metalness: 0.08,
+        roughness: 0.54,
+        clearcoat: 0.22,
+        clearcoatRoughness: 0.65,
+        roughnessMap: pcbTexture,
+        envMapIntensity: 0.65
+      });
+      MAT.pcbDark = new THREE.MeshStandardMaterial({
+        color: 0x070a09,
+        metalness: 0.05,
+        roughness: 0.66,
+        envMapIntensity: 0.4
+      });
+      MAT.glass = new THREE.MeshPhysicalMaterial({
+        color: 0x13121a,
+        metalness: 0.0,
+        roughness: 0.20,
+        transmission: 0.62,
+        thickness: 0.10,
+        ior: 1.48,
+        transparent: true,
+        opacity: 0.22,
+        envMapIntensity: 0.86,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      MAT.glassEdge = new THREE.MeshPhysicalMaterial({
+        color: 0x3b3348,
+        metalness: 0.15,
+        roughness: 0.18,
+        transmission: 0.25,
+        transparent: true,
+        opacity: 0.5,
+        envMapIntensity: 1.45
+      });
+      MAT.copper = new THREE.MeshStandardMaterial({
+        color: 0x9f4e23,
+        metalness: 0.93,
+        roughness: 0.29,
+        envMapIntensity: 1.2
+      });
+      MAT.nickel = new THREE.MeshStandardMaterial({
+        color: 0xa8adb6,
+        metalness: 0.95,
+        roughness: 0.2,
+        envMapIntensity: 1.4
+      });
+      MAT.gold = new THREE.MeshStandardMaterial({
+        color: 0xb18435,
+        metalness: 0.91,
+        roughness: 0.28,
+        envMapIntensity: 1.15
+      });
+      MAT.heatsink = new THREE.MeshStandardMaterial({
+        color: 0x555b64,
+        metalness: 0.92,
+        roughness: 0.27,
+        envMapIntensity: 1.3
+      });
+      MAT.carbon = new THREE.MeshPhysicalMaterial({
+        color: 0x101115,
+        metalness: 0.46,
+        roughness: 0.45,
+        clearcoat: 0.45,
+        clearcoatRoughness: 0.35,
+        roughnessMap: carbon,
+        envMapIntensity: 0.9
+      });
+      MAT.screw = new THREE.MeshStandardMaterial({
+        color: 0x50545d,
+        metalness: 0.98,
+        roughness: 0.2,
+        envMapIntensity: 1.3
+      });
+      MAT.darkHole = new THREE.MeshBasicMaterial({ color: 0x020204 });
+      MAT.floor = new THREE.MeshStandardMaterial({
+        color: 0x08080b,
+        metalness: 0.18,
+        roughness: 0.64,
+        roughnessMap: grain,
+        envMapIntensity: 0.4
+      });
+      MAT.blade = new THREE.MeshPhysicalMaterial({
+        color: 0x11131a,
+        emissive: 0x7c2cff,
+        emissiveIntensity: 1.45,
+        metalness: 0.18,
+        roughness: 0.32,
+        clearcoat: 0.52,
+        clearcoatRoughness: 0.28,
+        envMapIntensity: 0.82
+      });
+      MAT.whitePlastic = new THREE.MeshStandardMaterial({
+        color: 0xc9cbd1,
+        metalness: 0.05,
+        roughness: 0.42
+      });
+    }
+
+    function prepareSharedGeometry() {
+      GEO.screw = new THREE.CylinderGeometry(0.055, 0.055, 0.026, 18, 1, false);
+      GEO.smallScrew = new THREE.CylinderGeometry(0.032, 0.032, 0.018, 14, 1, false);
+      GEO.capacitor = new THREE.CylinderGeometry(0.045, 0.045, 0.15, 12);
+      GEO.choke = new RoundedBoxGeometry(0.16, 0.16, 0.16, 2, 0.025);
+      GEO.fanHub = new THREE.CylinderGeometry(0.2, 0.22, 0.12, 32);
+      GEO.ventDot = new THREE.CylinderGeometry(0.025, 0.025, 0.012, 10);
+    }
+
+    function roundedMesh(w, h, d, radius, material, segments = 3) {
+      const mesh = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, segments, Math.min(radius, w * 0.25, h * 0.25, d * 0.25)), material);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      return mesh;
+    }
+
+    function boxMesh(w, h, d, material) {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      return mesh;
+    }
+
+    function addScrew(parent, position, axis = 'x', scale = 1, material = MAT.screw) {
+      const screw = new THREE.Mesh(GEO.screw, material);
+      screw.position.copy(position);
+      screw.scale.setScalar(scale);
+      if (axis === 'x') screw.rotation.z = Math.PI / 2;
+      else if (axis === 'z') screw.rotation.x = Math.PI / 2;
+      screw.castShadow = true;
+      parent.add(screw);
+
+      const slot = boxMesh(0.006, 0.012 * scale, 0.075 * scale, MAT.darkHole);
+      slot.castShadow = false;
+      slot.receiveShadow = false;
+      slot.position.copy(position);
+      if (axis === 'x') {
+        slot.rotation.z = Math.PI / 2;
+        slot.position.x += 0.015 * scale;
+      } else if (axis === 'y') {
+        slot.position.y += 0.015 * scale;
+      } else {
+        slot.rotation.x = Math.PI / 2;
+        slot.position.z += 0.015 * scale;
+      }
+      parent.add(slot);
+      return screw;
+    }
+
+    function createVentGrid(parent, options = {}) {
+      const {
+        cols = 12,
+        rows = 8,
+        spacingX = 0.16,
+        spacingY = 0.16,
+        position = new THREE.Vector3(),
+        orientation = 'z',
+        radius = 0.027,
+        stagger = true
+      } = options;
+
+      const geometry = radius === 0.027 ? GEO.ventDot : new THREE.CylinderGeometry(radius, radius, 0.012, 10);
+      const count = cols * rows;
+      const instanced = new THREE.InstancedMesh(geometry, MAT.darkHole, count);
+      instanced.castShadow = false;
+      instanced.receiveShadow = false;
+      let index = 0;
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const offset = stagger && row % 2 ? spacingX * 0.5 : 0;
+          const a = (col - (cols - 1) / 2) * spacingX + offset;
+          const b = (row - (rows - 1) / 2) * spacingY;
+          TEMP.v3a.copy(position);
+          TEMP.quaternion.identity();
+
+          if (orientation === 'z') {
+            TEMP.v3a.x += a;
+            TEMP.v3a.y += b;
+            TEMP.quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+          } else if (orientation === 'y') {
+            TEMP.v3a.x += a;
+            TEMP.v3a.z += b;
+          } else {
+            TEMP.v3a.z += a;
+            TEMP.v3a.y += b;
+            TEMP.quaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2);
+          }
+
+          TEMP.matrix.compose(TEMP.v3a, TEMP.quaternion, TEMP.scale);
+          instanced.setMatrixAt(index++, TEMP.matrix);
+        }
+      }
+      parent.add(instanced);
+      return instanced;
+    }
+
+    function createRGBMaterial(base = '#7c2cff', intensity = 2.2, opacity = 0.94) {
+      const color = new THREE.Color(base);
+      const material = new THREE.MeshStandardMaterial({
+        color: color.clone().multiplyScalar(0.45),
+        emissive: color,
+        emissiveIntensity: intensity,
+        metalness: 0.03,
+        roughness: 0.28,
+        transparent: true,
+        opacity,
+        depthWrite: false,
+        envMapIntensity: 0.55,
+        toneMapped: false
+      });
+      return material;
+    }
+
+    function createFlowShaderMaterial(phase = 0, axis = 'x', opacity = 0.92) {
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          uTime: { value: 0 },
+          uPhase: { value: phase },
+          uBoost: { value: 0 },
+          uPointer: { value: 0 },
+          uDeep: { value: CONFIG.rgb.deep.clone() },
+          uBright: { value: CONFIG.rgb.bright.clone() },
+          uLavender: { value: CONFIG.rgb.lavender.clone() }
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform float uTime;
+          uniform float uPhase;
+          uniform float uBoost;
+          uniform float uPointer;
+          uniform vec3 uDeep;
+          uniform vec3 uBright;
+          uniform vec3 uLavender;
+          varying vec2 vUv;
+
+          float gaussian(float x, float width) {
+            return exp(-(x * x) / max(0.001, width));
+          }
+
+          void main() {
+            float coord = ${axis === 'y' ? 'vUv.y' : 'vUv.x'};
+            float travel = fract(uTime * (0.105 + uBoost * 0.02) + uPhase + uPointer * 0.04);
+            float d = abs(coord - travel);
+            d = min(d, 1.0 - d);
+            float core = gaussian(d, 0.009);
+            float tail = gaussian(d, 0.055);
+            float breath = 0.72 + 0.18 * sin(uTime * 1.35 + uPhase * 6.2831);
+            vec3 col = mix(uDeep, uBright, 0.34 + tail * 0.44);
+            col = mix(col, uLavender, core * 0.92);
+            float energy = breath + tail * 1.5 + core * 2.5 + uBoost * 0.22;
+            float edge = smoothstep(0.0, 0.14, min(vUv.y, 1.0 - vUv.y));
+            gl_FragColor = vec4(col * energy, ${opacity.toFixed(3)} * edge);
+          }
+        `,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        toneMapped: false,
+        side: THREE.DoubleSide
+      });
+      state.shaderLights.push(material);
+      return material;
+    }
+
+    function createFlowStrip(w, h, d, position, phase = 0, axis = 'x') {
+      const material = createFlowShaderMaterial(phase, axis, 0.92);
+      const strip = roundedMesh(w, h, d, Math.min(h, d, w) * 0.34, material, 2);
+      strip.position.copy(position);
+      strip.castShadow = false;
+      strip.receiveShadow = false;
+      strip.renderOrder = 5;
+      return strip;
+    }
+
+    function createCasePost(parent, x, z) {
+      const height = UPPER_FRAME_Y - LOWER_FRAME_Y;
+      const post = roundedMesh(FRAME_THICKNESS, height, FRAME_THICKNESS, FRAME_RADIUS, MAT.aluminum, 4);
+      post.name = 'cornerPost';
+      post.position.set(x, CASE_HEIGHT * 0.5, z);
+      parent.add(post);
+      return post;
+    }
+
+    function createFrameRail(parent, axis, fixedCoordinate, y) {
+      const alongX = axis === 'x';
+      const rail = roundedMesh(
+        alongX ? CASE_WIDTH - FRAME_THICKNESS : FRAME_THICKNESS,
+        FRAME_THICKNESS,
+        alongX ? FRAME_THICKNESS : CASE_DEPTH - FRAME_THICKNESS,
+        FRAME_RADIUS,
+        MAT.aluminum,
+        3
+      );
+      rail.name = 'frameRail';
+      rail.position.set(alongX ? 0 : fixedCoordinate, y, alongX ? fixedCoordinate : 0);
+      parent.add(rail);
+      return rail;
+    }
+
+    function createMountingPlate(parent, size, position, material = MAT.powder, radius = 0.05) {
+      const plate = roundedMesh(size.x, size.y, size.z, radius, material, 3);
+      plate.position.copy(position);
+      parent.add(plate);
+      return plate;
+    }
+
+    function createGlassPanel(parent, { axis, center, span, height = PANEL_HEIGHT }) {
+      const isFront = axis === 'z';
+      const panel = roundedMesh(
+        isFront ? span : GLASS_THICKNESS,
+        height,
+        isFront ? GLASS_THICKNESS : span,
+        0.035,
+        MAT.glass,
+        4
+      );
+      panel.position.copy(center);
+      panel.castShadow = false;
+      panel.renderOrder = isFront ? 8 : 9;
+      parent.add(panel);
+      return panel;
+    }
+
+    function createPanelBorder(parent, { axis, center, span, height = PANEL_HEIGHT }) {
+      const border = 0.055;
+      const depth = GLASS_THICKNESS + 0.035;
+      if (axis === 'z') {
+        for (const x of [center.x - span * 0.5, center.x + span * 0.5]) {
+          createMountingPlate(parent, new THREE.Vector3(border, height, depth), new THREE.Vector3(x, center.y, center.z), MAT.glassEdge, 0.018);
+        }
+        for (const y of [center.y - height * 0.5, center.y + height * 0.5]) {
+          createMountingPlate(parent, new THREE.Vector3(span, border, depth), new THREE.Vector3(center.x, y, center.z), MAT.glassEdge, 0.018);
+        }
+      } else {
+        for (const z of [center.z - span * 0.5, center.z + span * 0.5]) {
+          createMountingPlate(parent, new THREE.Vector3(depth, height, border), new THREE.Vector3(center.x, center.y, z), MAT.glassEdge, 0.018);
+        }
+        for (const y of [center.y - height * 0.5, center.y + height * 0.5]) {
+          createMountingPlate(parent, new THREE.Vector3(depth, border, span), new THREE.Vector3(center.x, y, center.z), MAT.glassEdge, 0.018);
+        }
+      }
+    }
+
+    function addPanelScrews(parent, { axis, center, span, height = PANEL_HEIGHT }) {
+      const horizontalInset = 0.14;
+      const verticalInset = 0.16;
+      const aValues = [-span * 0.5 + horizontalInset, span * 0.5 - horizontalInset];
+      const yValues = [center.y - height * 0.5 + verticalInset, center.y + height * 0.5 - verticalInset];
+      for (const a of aValues) {
+        for (const y of yValues) {
+          const position = axis === 'z'
+            ? new THREE.Vector3(center.x + a, y, center.z + GLASS_THICKNESS * 0.62)
+            : new THREE.Vector3(center.x + GLASS_THICKNESS * 0.62, y, center.z + a);
+          addScrew(parent, position, axis, 1.15);
+        }
+      }
+    }
+
+
+    function createCase() {
+      const caseAssembly = new THREE.Group();
+      caseAssembly.name = 'caseAssembly';
+
+      const caseFrame = new THREE.Group();
+      caseFrame.name = 'caseFrame';
+      const glassPanels = new THREE.Group();
+      glassPanels.name = 'glassPanels';
+      const mountingPanels = new THREE.Group();
+      mountingPanels.name = 'mountingPanels';
+      caseAssembly.add(caseFrame, mountingPanels, glassPanels);
+
+      const postX = CASE_WIDTH * 0.5 - POST_INSET;
+      const postZ = CASE_DEPTH * 0.5 - POST_INSET;
+      for (const x of [-postX, postX]) {
+        for (const z of [-postZ, postZ]) createCasePost(caseFrame, x, z);
+      }
+      for (const y of [LOWER_FRAME_Y, UPPER_FRAME_Y]) {
+        createFrameRail(caseFrame, 'x', -postZ, y);
+        createFrameRail(caseFrame, 'x', postZ, y);
+        createFrameRail(caseFrame, 'z', -postX, y);
+        createFrameRail(caseFrame, 'z', postX, y);
+      }
+
+      const floor = createMountingPlate(
+        mountingPanels,
+        new THREE.Vector3(CASE_WIDTH - FRAME_THICKNESS * 1.6, 0.12, CASE_DEPTH - FRAME_THICKNESS * 1.7),
+        new THREE.Vector3(0, LOWER_FRAME_Y + FRAME_THICKNESS * 0.53, 0),
+        MAT.powder,
+        0.045
+      );
+      floor.name = 'floorPanel';
+      const ceiling = createMountingPlate(
+        mountingPanels,
+        new THREE.Vector3(CASE_WIDTH - FRAME_THICKNESS * 1.6, 0.12, CASE_DEPTH - FRAME_THICKNESS * 1.7),
+        new THREE.Vector3(0, UPPER_FRAME_Y - FRAME_THICKNESS * 0.53, 0),
+        MAT.powder2,
+        0.045
+      );
+      ceiling.name = 'ceilingPanel';
+      createVentGrid(mountingPanels, {
+        cols: 20,
+        rows: 19,
+        spacingX: 0.145,
+        spacingY: 0.17,
+        position: new THREE.Vector3(0, ceiling.position.y - 0.067, -0.15),
+        orientation: 'y',
+        radius: 0.026
+      });
+
+      const rearPanel = createMountingPlate(
+        mountingPanels,
+        new THREE.Vector3(CASE_WIDTH - PANEL_INSET * 2, PANEL_HEIGHT, 0.12),
+        new THREE.Vector3(0, PANEL_CENTER_Y, -CASE_DEPTH * 0.5 + 0.075),
+        MAT.powder,
+        0.045
+      );
+      rearPanel.name = 'rearPanel';
+      const motherboardTray = createMountingPlate(
+        mountingPanels,
+        new THREE.Vector3(0.12, PANEL_HEIGHT - 0.08, CASE_DEPTH - 1.46),
+        new THREE.Vector3(-CASE_WIDTH * 0.5 + 0.28, PANEL_CENTER_Y + 0.05, -0.15),
+        MAT.powder2,
+        0.04
+      );
+      motherboardTray.name = 'motherboardTray';
+      createVentGrid(mountingPanels, {
+        cols: 12,
+        rows: 12,
+        spacingX: 0.16,
+        spacingY: 0.16,
+        position: new THREE.Vector3(REAR_FAN_CENTER.x, REAR_FAN_CENTER.y, -CASE_DEPTH * 0.5 + 0.008),
+        orientation: 'z',
+        radius: 0.024
+      });
+
+      const frontSpan = CASE_WIDTH - PANEL_INSET * 2 - FRAME_THICKNESS;
+      const frontCenter = new THREE.Vector3(0, PANEL_CENTER_Y, CASE_DEPTH * 0.5 - GLASS_THICKNESS * 0.5);
+      createGlassPanel(glassPanels, { axis: 'z', center: frontCenter, span: frontSpan });
+      createPanelBorder(glassPanels, { axis: 'z', center: frontCenter, span: frontSpan });
+      addPanelScrews(glassPanels, { axis: 'z', center: frontCenter, span: frontSpan });
+
+      const sideSpan = CASE_DEPTH - PANEL_INSET * 2 - FRAME_THICKNESS;
+      const sideCenter = new THREE.Vector3(CASE_WIDTH * 0.5 - GLASS_THICKNESS * 0.5, PANEL_CENTER_Y, 0);
+      createGlassPanel(glassPanels, { axis: 'x', center: sideCenter, span: sideSpan });
+      createPanelBorder(glassPanels, { axis: 'x', center: sideCenter, span: sideSpan });
+      addPanelScrews(glassPanels, { axis: 'x', center: sideCenter, span: sideSpan });
+
+      const intakeFrame = new THREE.Group();
+      intakeFrame.name = 'frontFanMount';
+      const intakeZ = FRONT_FAN_Z + 0.13;
+      const intakeWidth = CASE_WIDTH - 0.92;
+      for (const x of [-intakeWidth * 0.5, intakeWidth * 0.5]) {
+        createMountingPlate(intakeFrame, new THREE.Vector3(0.16, PANEL_HEIGHT - 0.12, 0.15), new THREE.Vector3(x, PANEL_CENTER_Y, intakeZ), MAT.powder, 0.045);
+      }
+      for (const y of [PANEL_BOTTOM_Y + 0.08, PANEL_TOP_Y - 0.08]) {
+        createMountingPlate(intakeFrame, new THREE.Vector3(intakeWidth, 0.16, 0.15), new THREE.Vector3(0, y, intakeZ), MAT.powder, 0.045);
+      }
+      for (const y of [PANEL_CENTER_Y - FRONT_FAN_PITCH * 0.5, PANEL_CENTER_Y + FRONT_FAN_PITCH * 0.5]) {
+        createMountingPlate(intakeFrame, new THREE.Vector3(intakeWidth - 0.08, 0.075, 0.12), new THREE.Vector3(0, y, intakeZ - 0.006), MAT.powder2, 0.025);
+      }
+      createVentGrid(intakeFrame, {
+        cols: 17,
+        rows: 33,
+        spacingX: 0.17,
+        spacingY: 0.16,
+        position: new THREE.Vector3(0, PANEL_CENTER_Y, intakeZ + 0.065),
+        orientation: 'z',
+        radius: 0.018,
+        stagger: true
+      });
+      mountingPanels.add(intakeFrame);
+
+      const shroudHeight = 1.02;
+      const shroudCenterY = 1.14;
+      const psuShroud = createMountingPlate(
+        mountingPanels,
+        new THREE.Vector3(CASE_WIDTH - 0.46, shroudHeight, CASE_DEPTH - 0.75),
+        new THREE.Vector3(0, shroudCenterY, -0.12),
+        MAT.powder2,
+        0.075
+      );
+      psuShroud.name = 'psuShroud';
+      createMountingPlate(
+        mountingPanels,
+        new THREE.Vector3(2.10, 0.018, 2.55),
+        new THREE.Vector3(0.52, shroudCenterY + shroudHeight * 0.5 + 0.012, 0.35),
+        MAT.carbon,
+        0.025
+      );
+      createVentGrid(mountingPanels, {
+        cols: 11,
+        rows: 14,
+        spacingX: 0.145,
+        spacingY: 0.145,
+        position: new THREE.Vector3(-0.62, shroudCenterY + shroudHeight * 0.5 + 0.023, -0.8),
+        orientation: 'y',
+        radius: 0.021
+      });
+
+      caseAssembly.add(createFlowStrip(CASE_WIDTH - 0.68, 0.045, CASE_DEPTH - 0.98, new THREE.Vector3(0, LOWER_FRAME_Y - 0.08, 0), 0.0, 'x'));
+      caseAssembly.add(createFlowStrip(0.055, PANEL_HEIGHT - 0.12, 0.07, new THREE.Vector3(CASE_WIDTH * 0.5 - 0.22, PANEL_CENTER_Y, CASE_DEPTH * 0.5 - 0.26), 0.86, 'y'));
+
+      const footX = CASE_WIDTH * 0.5 - 0.48;
+      const footZ = CASE_DEPTH * 0.5 - 0.75;
+      for (const x of [-footX, footX]) {
+        for (const z of [-footZ, footZ]) {
+          const foot = roundedMesh(0.48, 0.28, 0.70, 0.09, MAT.rubber, 4);
+          foot.position.set(x, 0.22, z);
+          caseAssembly.add(foot);
+          const cap = roundedMesh(0.38, 0.045, 0.56, 0.04, MAT.gunmetal, 2);
+          cap.position.set(x, 0.38, z);
+          caseAssembly.add(cap);
+        }
+      }
+
+      state.pc.add(caseAssembly);
+      return caseAssembly;
+    }
+
+    function createMotherboard() {
+      const board = new THREE.Group();
+      board.name = 'motherboardAssembly';
+      const x = -1.50;
+
+      const pcb = roundedMesh(0.105, 4.82, 4.58, 0.055, MAT.pcb, 4);
+      pcb.position.set(x, 4.06, -0.2);
+      board.add(pcb);
+
+      const backplate = roundedMesh(0.025, 4.6, 4.36, 0.03, MAT.blackMetal, 2);
+      backplate.position.set(x - 0.065, 4.06, -0.2);
+      board.add(backplate);
+
+      const socketFrame = roundedMesh(0.12, 1.12, 1.18, 0.045, MAT.nickel, 3);
+      socketFrame.position.set(x + 0.105, 4.73, -0.62);
+      board.add(socketFrame);
+      const socketInner = roundedMesh(0.035, 0.88, 0.91, 0.03, MAT.pcbDark, 2);
+      socketInner.position.set(x + 0.182, 4.73, -0.62);
+      board.add(socketInner);
+      const retention = roundedMesh(0.035, 1.02, 0.13, 0.022, MAT.screw, 2);
+      retention.position.set(x + 0.205, 4.73, -1.16);
+      board.add(retention);
+
+      const vrmTop = roundedMesh(0.42, 0.5, 1.6, 0.055, MAT.gunmetal, 4);
+      vrmTop.position.set(x + 0.28, 5.62, -0.76);
+      board.add(vrmTop);
+      const vrmSide = roundedMesh(0.42, 1.58, 0.53, 0.055, MAT.gunmetal, 4);
+      vrmSide.position.set(x + 0.28, 4.72, -1.53);
+      board.add(vrmSide);
+
+      for (let i = 0; i < 9; i++) {
+        const fin = boxMesh(0.045, 0.42, 0.11, MAT.aluminumLight);
+        fin.position.set(x + 0.52, 5.62, -1.42 + i * 0.17);
+        fin.castShadow = false;
+        board.add(fin);
+      }
+      for (let i = 0; i < 8; i++) {
+        const fin = boxMesh(0.045, 0.13, 0.42, MAT.aluminumLight);
+        fin.position.set(x + 0.52, 4.08 + i * 0.19, -1.53);
+        fin.castShadow = false;
+        board.add(fin);
+      }
+
+      const ioShield = roundedMesh(0.28, 1.8, 0.75, 0.06, MAT.aluminumLight, 4);
+      ioShield.position.set(x + 0.24, 5.02, -2.05);
+      board.add(ioShield);
+      for (let i = 0; i < 4; i++) {
+        const port = roundedMesh(0.06, 0.18, 0.28, 0.025, MAT.darkHole, 2);
+        port.position.set(x + 0.405, 5.54 - i * 0.31, -2.07);
+        board.add(port);
+      }
+      const networkPort = roundedMesh(0.06, 0.32, 0.34, 0.025, MAT.darkHole, 2);
+      networkPort.position.set(x + 0.405, 4.22, -2.07);
+      board.add(networkPort);
+
+      const chipset = roundedMesh(0.33, 0.82, 1.25, 0.07, MAT.gunmetal, 4);
+      chipset.position.set(x + 0.24, 2.65, 0.68);
+      chipset.rotation.x = -0.12;
+      board.add(chipset);
+      const chipsetInset = roundedMesh(0.022, 0.48, 0.78, 0.04, MAT.carbon, 3);
+      chipsetInset.position.set(x + 0.414, 2.65, 0.68);
+      board.add(chipsetInset);
+
+      const m2a = roundedMesh(0.23, 0.31, 2.25, 0.045, MAT.aluminum, 3);
+      m2a.position.set(x + 0.20, 3.42, 0.56);
+      board.add(m2a);
+      const m2b = roundedMesh(0.23, 0.28, 1.8, 0.045, MAT.aluminum, 3);
+      m2b.position.set(x + 0.20, 2.05, 0.36);
+      board.add(m2b);
+
+      const pcieSlots = [3.05, 2.25, 1.8];
+      pcieSlots.forEach((y, index) => {
+        const slot = roundedMesh(0.18, 0.13, index === 0 ? 3.55 : 2.75, 0.03, index === 0 ? MAT.nickel : MAT.pcbDark, 2);
+        slot.position.set(x + 0.17, y, 0.02);
+        board.add(slot);
+        if (index === 0) {
+          const inner = roundedMesh(0.05, 0.055, 3.25, 0.018, MAT.darkHole, 2);
+          inner.position.set(x + 0.275, y, 0.02);
+          board.add(inner);
+        }
+      });
+
+      const sataBlock = roundedMesh(0.32, 0.72, 0.48, 0.04, MAT.pcbDark, 3);
+      sataBlock.position.set(x + 0.22, 2.05, 1.85);
+      board.add(sataBlock);
+      for (let i = 0; i < 4; i++) {
+        const port = roundedMesh(0.08, 0.13, 0.34, 0.02, MAT.darkHole, 2);
+        port.position.set(x + 0.405, 2.28 - i * 0.16, 1.85);
+        board.add(port);
+      }
+
+      const capPositions = [];
+      for (let i = 0; i < 16; i++) {
+        capPositions.push([4.08 + (i % 8) * 0.22, -1.22 + Math.floor(i / 8) * 0.38]);
+      }
+      for (let i = 0; i < 18; i++) {
+        capPositions.push([2.1 + (i % 6) * 0.25, -1.55 + Math.floor(i / 6) * 0.32]);
+      }
+      for (const [y, z] of capPositions) {
+        const cap = new THREE.Mesh(GEO.capacitor, MAT.powder2);
+        cap.rotation.z = Math.PI / 2;
+        cap.position.set(x + 0.19, y, z);
+        cap.castShadow = true;
+        board.add(cap);
+        const capTop = new THREE.Mesh(new THREE.CircleGeometry(0.043, 12), MAT.aluminumLight);
+        capTop.rotation.y = Math.PI / 2;
+        capTop.position.set(x + 0.272, y, z);
+        board.add(capTop);
+      }
+
+      for (let i = 0; i < 12; i++) {
+        const choke = new THREE.Mesh(GEO.choke, MAT.gunmetal);
+        choke.position.set(x + 0.2, 5.25 + (i % 6) * 0.18, -1.25 + Math.floor(i / 6) * 0.25);
+        board.add(choke);
+      }
+
+      for (let i = 0; i < 5; i++) {
+        const header = roundedMesh(0.13, 0.12, 0.3, 0.02, MAT.pcbDark, 2);
+        header.position.set(x + 0.19, 1.78, -1.4 + i * 0.62);
+        board.add(header);
+        for (let p = 0; p < 4; p++) {
+          const pin = boxMesh(0.08, 0.018, 0.018, MAT.gold);
+          pin.position.set(x + 0.29, 1.78, -1.49 + i * 0.62 + p * 0.06);
+          board.add(pin);
+        }
+      }
+
+      const power24 = roundedMesh(0.33, 1.02, 0.3, 0.04, MAT.pcbDark, 3);
+      power24.position.set(x + 0.23, 4.04, 2.0);
+      board.add(power24);
+      const cpuPower = roundedMesh(0.31, 0.55, 0.33, 0.04, MAT.pcbDark, 3);
+      cpuPower.position.set(x + 0.23, 5.94, -1.75);
+      board.add(cpuPower);
+
+      for (const [y, z] of [[1.82, -2.02], [1.82, 2.02], [6.18, -2.02], [6.18, 2.02], [4.0, -2.02], [4.0, 2.02]]) {
+        const standoff = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.1, 14), MAT.screw);
+        standoff.rotation.z = Math.PI / 2;
+        standoff.position.set(x + 0.11, y, z);
+        board.add(standoff);
+        addScrew(board, new THREE.Vector3(x + 0.18, y, z), 'x', 0.72);
+      }
+
+      const accent = createFlowStrip(0.035, 0.1, 2.45, new THREE.Vector3(x + 0.23, 1.89, 0.3), 0.42, 'x');
+      accent.rotation.y = Math.PI / 2;
+      board.add(accent);
+
+      const ledPositions = [[5.9, 1.75], [5.72, 1.75], [2.1, -1.75], [2.25, -1.75]];
+      for (let i = 0; i < ledPositions.length; i++) {
+        const ledMat = createRGBMaterial(i % 2 ? '#9c5cff' : '#7c2cff', 1.3, 0.92);
+        state.pulseMaterials.push({ material: ledMat, phase: 0.45 + i * 0.07, base: 1.1, amplitude: 0.75 });
+        const led = new THREE.Mesh(new THREE.SphereGeometry(0.035, 12, 8), ledMat);
+        led.position.set(x + 0.25, ledPositions[i][0], ledPositions[i][1]);
+        board.add(led);
+      }
+
+      state.pc.add(board);
+      return board;
+    }
+
+    function createRAMModule(index) {
+      const module = new THREE.Group();
+      const z = 0.44 + index * 0.31;
+      const x = -1.19;
+      const y = 4.75;
+
+      const slot = roundedMesh(0.23, 1.86, 0.12, 0.025, MAT.pcbDark, 2);
+      slot.position.set(-1.39, y, z);
+      module.add(slot);
+
+      const pcb = roundedMesh(0.15, 1.72, 0.075, 0.02, MAT.pcb, 2);
+      pcb.position.set(x, y, z);
+      module.add(pcb);
+
+      const spreaderA = roundedMesh(0.17, 1.52, 0.13, 0.035, MAT.gunmetal, 3);
+      spreaderA.position.set(x + 0.05, y - 0.03, z);
+      module.add(spreaderA);
+
+      const inset = roundedMesh(0.035, 0.94, 0.092, 0.02, index % 2 ? MAT.carbon : MAT.aluminum, 2);
+      inset.position.set(x + 0.145, y - 0.12, z);
+      module.add(inset);
+
+      for (let g = 0; g < 5; g++) {
+        const groove = boxMesh(0.015, 0.68, 0.012, MAT.darkHole);
+        groove.position.set(x + 0.171, y - 0.12, z - 0.035 + g * 0.018);
+        module.add(groove);
+      }
+
+      const diffuserMaterial = createRGBMaterial('#8f4cff', 1.8, 0.88);
+      const diffuser = roundedMesh(0.22, 1.69, 0.11, 0.045, diffuserMaterial, 4);
+      diffuser.position.set(x + 0.09, y + 0.03, z);
+      diffuser.castShadow = false;
+      diffuser.renderOrder = 6;
+      module.add(diffuser);
+      state.ramLights.push({ material: diffuserMaterial, phase: 0.23 + index * 0.075, index });
+
+      const goldContact = boxMesh(0.05, 1.48, 0.085, MAT.gold);
+      goldContact.position.set(x - 0.07, y - 0.83, z);
+      goldContact.scale.y = 0.055;
+      module.add(goldContact);
+
+      for (let c = 0; c < 14; c++) {
+        const chip = roundedMesh(0.025, 0.08, 0.058, 0.008, MAT.pcbDark, 1);
+        chip.position.set(x + 0.08, y - 0.62 + c * 0.095, z);
+        module.add(chip);
+      }
+
+      return module;
+    }
+
+    function createRAM() {
+      const group = new THREE.Group();
+      group.name = 'RAM';
+      for (let i = 0; i < 4; i++) group.add(createRAMModule(i));
+      state.pc.add(group);
+      return group;
+    }
+
+    function createPumpAndCooling() {
+      const cooling = new THREE.Group();
+      cooling.name = 'aioAssembly';
+
+      const pumpBody = new THREE.Mesh(new THREE.CylinderGeometry(0.66, 0.7, 0.38, 48, 1), MAT.powder2);
+      pumpBody.rotation.z = Math.PI / 2;
+      pumpBody.position.set(-1.02, 4.73, -0.62);
+      pumpBody.castShadow = true;
+      cooling.add(pumpBody);
+
+      const pumpFace = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.59, 0.08, 48), MAT.glass);
+      pumpFace.rotation.z = Math.PI / 2;
+      pumpFace.position.set(-0.79, 4.73, -0.62);
+      pumpFace.renderOrder = 7;
+      cooling.add(pumpFace);
+
+      const coldPlate = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.07, 48), MAT.nickel);
+      coldPlate.rotation.z = Math.PI / 2;
+      coldPlate.position.set(-1.24, 4.73, -0.62);
+      cooling.add(coldPlate);
+
+      const pumpRingMaterial = createRGBMaterial('#9c5cff', 2.4, 0.92);
+      const pumpRing = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.055, 12, 64), pumpRingMaterial);
+      pumpRing.rotation.y = Math.PI / 2;
+      pumpRing.position.set(-0.73, 4.73, -0.62);
+      pumpRing.renderOrder = 7;
+      cooling.add(pumpRing);
+      state.pulseMaterials.push({ material: pumpRingMaterial, phase: 0.55, base: 1.7, amplitude: 1.1 });
+
+      const pumpHighlightMat = createRGBMaterial('#c7a2ff', 4.2, 0.96);
+      const pumpHighlight = new THREE.Mesh(new THREE.TorusGeometry(0.525, 0.072, 10, 32, 0.78), pumpHighlightMat);
+      pumpHighlight.rotation.y = Math.PI / 2;
+      pumpHighlight.position.set(-0.715, 4.73, -0.62);
+      pumpHighlight.renderOrder = 8;
+      cooling.add(pumpHighlight);
+      state.rgbRings.push({ highlight: pumpHighlight, base: pumpRing, phase: 0.55, speed: 0.72, axis: 'x' });
+
+      for (const [y, z] of [[4.43, -0.2], [5.03, -0.2], [4.43, -1.04], [5.03, -1.04]]) {
+        addScrew(cooling, new THREE.Vector3(-0.69, y, z), 'x', 0.75);
+      }
+
+      const radiator = roundedMesh(3.2, 0.34, 1.74, 0.07, MAT.powder2, 4);
+      radiator.position.copy(RADIATOR_CENTER);
+      cooling.add(radiator);
+
+      const radiatorCore = boxMesh(2.92, 0.24, 1.5, MAT.darkHole);
+      radiatorCore.position.copy(RADIATOR_CENTER).add(new THREE.Vector3(0, -0.10, 0));
+      cooling.add(radiatorCore);
+
+      const radiatorFins = new THREE.InstancedMesh(new THREE.BoxGeometry(0.025, 0.25, 1.42), MAT.heatsink, 86);
+      for (let i = 0; i < 86; i++) {
+        TEMP.v3a.set(-1.43 + i * (2.86 / 85), RADIATOR_CENTER.y - 0.10, RADIATOR_CENTER.z);
+        TEMP.matrix.compose(TEMP.v3a, new THREE.Quaternion(), new THREE.Vector3(1, 1, 1));
+        radiatorFins.setMatrixAt(i, TEMP.matrix);
+      }
+      radiatorFins.castShadow = false;
+      cooling.add(radiatorFins);
+
+      const tankA = roundedMesh(0.35, 0.42, 1.7, 0.08, MAT.aluminum, 3);
+      tankA.position.set(-1.48, RADIATOR_CENTER.y, RADIATOR_CENTER.z);
+      cooling.add(tankA);
+      const tankB = tankA.clone();
+      tankB.position.x = 1.48;
+      cooling.add(tankB);
+
+      const fittingPositions = [
+        new THREE.Vector3(-0.86, 4.95, -0.63),
+        new THREE.Vector3(-0.86, 4.52, -0.63),
+        new THREE.Vector3(-1.3, 6.08, 0.18),
+        new THREE.Vector3(-0.95, 6.08, 0.18)
+      ];
+      for (const p of fittingPositions) {
+        const fitting = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.23, 24), MAT.nickel);
+        fitting.rotation.z = Math.PI / 2;
+        fitting.position.copy(p);
+        cooling.add(fitting);
+        const collar = new THREE.Mesh(new THREE.TorusGeometry(0.105, 0.025, 8, 24), MAT.gunmetal);
+        collar.rotation.y = Math.PI / 2;
+        collar.position.copy(p).add(new THREE.Vector3(0.12, 0, 0));
+        cooling.add(collar);
+      }
+
+      const tubeMat = new THREE.MeshPhysicalMaterial({
+        color: 0x08090c,
+        metalness: 0.0,
+        roughness: 0.68,
+        clearcoat: 0.24,
+        clearcoatRoughness: 0.4,
+        envMapIntensity: 0.72
+      });
+
+      const tubeCurves = [
+        new THREE.CatmullRomCurve3([
+          new THREE.Vector3(-0.76, 4.95, -0.63),
+          new THREE.Vector3(-0.34, 5.12, -0.34),
+          new THREE.Vector3(-0.18, 5.46, -0.05),
+          new THREE.Vector3(-0.42, 5.82, 0.14),
+          new THREE.Vector3(-0.95, 6.03, 0.18)
+        ]),
+        new THREE.CatmullRomCurve3([
+          new THREE.Vector3(-0.76, 4.52, -0.63),
+          new THREE.Vector3(-0.20, 4.72, -0.02),
+          new THREE.Vector3(0.02, 5.18, 0.27),
+          new THREE.Vector3(-0.45, 5.72, 0.32),
+          new THREE.Vector3(-1.30, 6.03, 0.18)
+        ])
+      ];
+
+      tubeCurves.forEach((curve, index) => {
+        curve.curveType = 'centripetal';
+        const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 72, 0.105, 12, false), tubeMat);
+        tube.castShadow = true;
+        cooling.add(tube);
+
+        const innerMat = createRGBMaterial(index ? '#4b168f' : '#7c2cff', 0.3, 0.08);
+        innerMat.depthWrite = false;
+        const innerTube = new THREE.Mesh(new THREE.TubeGeometry(curve, 72, 0.047, 8, false), innerMat);
+        innerTube.renderOrder = 4;
+        cooling.add(innerTube);
+        state.pulseMaterials.push({ material: innerMat, phase: 0.48 + index * 0.06, base: 0.12, amplitude: 0.16 });
+      });
+
+      state.pc.add(cooling);
+      return cooling;
+    }
+
+    function createFanBladeGeometry(radius) {
+      const shape = new THREE.Shape();
+      shape.moveTo(0.03, 0.0);
+      shape.bezierCurveTo(radius * 0.18, radius * 0.02, radius * 0.60, radius * 0.04, radius * 0.88, radius * 0.19);
+      shape.bezierCurveTo(radius * 0.98, radius * 0.26, radius * 0.96, radius * 0.36, radius * 0.85, radius * 0.40);
+      shape.bezierCurveTo(radius * 0.57, radius * 0.29, radius * 0.28, radius * 0.20, radius * 0.07, radius * 0.17);
+      shape.closePath();
+      const geometry = new THREE.ExtrudeGeometry(shape, {
+        depth: 0.055,
+        bevelEnabled: true,
+        bevelThickness: 0.015,
+        bevelSize: 0.014,
+        bevelSegments: 2,
+        curveSegments: 16
+      });
+      geometry.translate(0, 0, -0.0275);
+      return geometry;
+    }
+
+    function createFan(options = {}) {
+      const {
+        radius = 0.72,
+        depth = 0.22,
+        phase = 0,
+        speed = CONFIG.animation.caseFanSpeed,
+        orientation = 'front',
+        rgb = true,
+        rgbFaceOffset = 0,
+        forceVisibleRgb = false
+      } = options;
+
+      const fan = new THREE.Group();
+      fan.userData.orientation = orientation;
+
+      // Four-piece open fan frame instead of a solid plate, preserving real rotor depth.
+      const outer = radius * 2.18;
+      const bar = radius * 0.24;
+      const horizontal = roundedMesh(outer, bar, depth, radius * 0.08, MAT.powder2, 4);
+      horizontal.position.y = radius * 0.97;
+      fan.add(horizontal);
+      const horizontalBottom = horizontal.clone();
+      horizontalBottom.position.y *= -1;
+      fan.add(horizontalBottom);
+      const vertical = roundedMesh(bar, outer - bar * 1.45, depth, radius * 0.08, MAT.powder2, 4);
+      vertical.position.x = radius * 0.97;
+      fan.add(vertical);
+      const verticalLeft = vertical.clone();
+      verticalLeft.position.x *= -1;
+      fan.add(verticalLeft);
+
+      const rearCavity = new THREE.Mesh(
+        new THREE.TorusGeometry(radius * 0.82, radius * 0.12, 14, 64),
+        MAT.darkHole
+      );
+      rearCavity.position.z = -depth * 0.43;
+      fan.add(rearCavity);
+
+      const innerFrame = new THREE.Mesh(new THREE.TorusGeometry(radius * 0.86, radius * 0.055, 12, 64), MAT.aluminum);
+      innerFrame.position.z = depth * 0.08;
+      fan.add(innerFrame);
+
+      const corners = [
+        [-radius * 0.86, -radius * 0.86], [radius * 0.86, -radius * 0.86],
+        [-radius * 0.86, radius * 0.86], [radius * 0.86, radius * 0.86]
+      ];
+      for (const [x, y] of corners) {
+        const pad = roundedMesh(radius * 0.25, radius * 0.25, depth * 1.12, radius * 0.05, MAT.rubber, 3);
+        pad.position.set(x, y, 0);
+        fan.add(pad);
+        addScrew(fan, new THREE.Vector3(x, y, depth * 0.59), 'z', radius * 0.72);
+      }
+
+      const rotor = new THREE.Group();
+      rotor.position.z = depth * 0.1;
+      const bladeGeometry = createFanBladeGeometry(radius * 0.76);
+      const bladeCount = 9;
+      for (let i = 0; i < bladeCount; i++) {
+        const blade = new THREE.Mesh(bladeGeometry, MAT.blade);
+        blade.rotation.z = (i / bladeCount) * Math.PI * 2;
+        blade.rotation.x = -0.05;
+        blade.castShadow = false;
+        rotor.add(blade);
+      }
+      const hub = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.28, radius * 0.34, depth * 0.52, 40), MAT.gunmetal);
+      hub.rotation.x = Math.PI / 2;
+      hub.position.z = 0.01;
+      rotor.add(hub);
+      const hubCap = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.18, radius * 0.24, depth * 0.55, 40), MAT.carbon);
+      hubCap.rotation.x = Math.PI / 2;
+      hubCap.position.z = 0.035;
+      rotor.add(hubCap);
+      fan.add(rotor);
+
+      for (let i = 0; i < 4; i++) {
+        const strut = roundedMesh(radius * 0.72, radius * 0.07, depth * 0.12, radius * 0.025, MAT.powder, 2);
+        strut.position.z = -depth * 0.48;
+        strut.position.x = radius * 0.35;
+        strut.rotation.z = (i / 4) * Math.PI * 2 + 0.4;
+        fan.add(strut);
+      }
+
+      if (rgb) {
+        const rotorGlowMaterial = new THREE.MeshBasicMaterial({
+          color: 0x9c5cff,
+          transparent: true,
+          opacity: 0.34,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+          toneMapped: false
+        });
+        const rotorGlow = new THREE.Mesh(
+          new THREE.RingGeometry(radius * 0.34, radius * 0.78, 64),
+          rotorGlowMaterial
+        );
+        rotorGlow.position.z = depth * (0.34 + rgbFaceOffset);
+        rotorGlow.renderOrder = 5;
+        fan.add(rotorGlow);
+
+        const visibleRingMaterial = new THREE.MeshBasicMaterial({
+          color: 0x7c2cff,
+          transparent: true,
+          opacity: 0.82,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          toneMapped: false
+        });
+        const visibleRing = new THREE.Mesh(
+          new THREE.TorusGeometry(radius * 0.84, radius * 0.042, 10, 72),
+          visibleRingMaterial
+        );
+        visibleRing.position.z = depth * 0.72;
+        visibleRing.renderOrder = 7;
+        fan.add(visibleRing);
+        const visibleRingBack = visibleRing.clone();
+        visibleRingBack.position.z = -depth * 0.72;
+        fan.add(visibleRingBack);
+
+        const hubGlow = new THREE.Mesh(
+          new THREE.TorusGeometry(radius * 0.31, radius * 0.028, 10, 48),
+          visibleRingMaterial
+        );
+        hubGlow.position.z = depth * 0.74;
+        hubGlow.renderOrder = 7;
+        fan.add(hubGlow);
+        const hubGlowBack = hubGlow.clone();
+        hubGlowBack.position.z = -depth * 0.74;
+        fan.add(hubGlowBack);
+
+        if (forceVisibleRgb) {
+          const solidRgbMaterial = new THREE.MeshBasicMaterial({
+            color: 0x9c5cff,
+            side: THREE.DoubleSide,
+            toneMapped: false
+          });
+          const solidRing = new THREE.Mesh(
+            new THREE.TorusGeometry(radius * 0.84, radius * 0.042, 10, 72),
+            solidRgbMaterial
+          );
+          solidRing.position.z = depth * (0.82 + rgbFaceOffset);
+          solidRing.renderOrder = 8;
+          fan.add(solidRing);
+
+          const solidHubRing = new THREE.Mesh(
+            new THREE.TorusGeometry(radius * 0.31, radius * 0.025, 10, 48),
+            solidRgbMaterial
+          );
+          solidHubRing.position.z = depth * (0.84 + rgbFaceOffset);
+          solidHubRing.renderOrder = 8;
+          fan.add(solidHubRing);
+        }
+
+        const ringMaterial = createRGBMaterial('#9c5cff', 3.7, 0.96);
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(radius * 0.84, radius * 0.072, 12, 72), ringMaterial);
+        ring.position.z = depth * (0.58 + rgbFaceOffset);
+        ring.renderOrder = 6;
+        fan.add(ring);
+
+        const innerGlowMaterial = createRGBMaterial('#b77aff', 3.1, 0.82);
+        const innerGlow = new THREE.Mesh(new THREE.TorusGeometry(radius * 0.69, radius * 0.026, 10, 64), innerGlowMaterial);
+        innerGlow.position.z = depth * (0.59 + rgbFaceOffset);
+        innerGlow.renderOrder = 6;
+        fan.add(innerGlow);
+
+        const highlightMaterial = createRGBMaterial('#c58cff', 6.2, 0.99);
+        const highlight = new THREE.Mesh(new THREE.TorusGeometry(radius * 0.845, radius * 0.085, 10, 40, 0.92), highlightMaterial);
+        highlight.position.z = depth * (0.60 + rgbFaceOffset);
+        highlight.renderOrder = 7;
+        fan.add(highlight);
+        state.rgbRings.push({ highlight, base: ring, phase, speed: 0.95 + phase * 0.25, axis: 'z' });
+
+        state.pulseMaterials.push(
+          { material: ringMaterial, phase, base: 2.6, amplitude: 1.15 },
+          { material: innerGlowMaterial, phase: phase + 0.08, base: 1.8, amplitude: 0.8 }
+        );
+      }
+
+      state.fanRotors.push({ rotor, speed, phase, orientation });
+      return fan;
+    }
+
+    function orientFan(fan, axis) {
+      if (axis === 'y') fan.rotation.x = -Math.PI / 2;
+      else if (axis === 'x') fan.rotation.y = Math.PI / 2;
+      return fan;
+    }
+
+    function createCaseFans() {
+      const group = new THREE.Group();
+      group.name = 'fanAssembly';
+
+      [-1, 0, 1].forEach((row, index) => {
+        const fan = createFan({ radius: FRONT_FAN_RADIUS, depth: 0.22, phase: 0.08 + index * 0.055, speed: CONFIG.animation.caseFanSpeed * (0.94 + index * 0.045) });
+        fan.name = `frontFan-${index}`;
+        fan.position.set(0, PANEL_CENTER_Y + row * FRONT_FAN_PITCH, FRONT_FAN_Z);
+        fan.rotation.y = Math.PI;
+        group.add(fan);
+      });
+
+      [-1, 0, 1].forEach((column, index) => {
+        const fan = createFan({ radius: RADIATOR_FAN_RADIUS, depth: 0.18, phase: 0.72 + index * 0.047, speed: CONFIG.animation.radiatorFanSpeed * (0.95 + index * 0.04) });
+        fan.name = `radiatorFan-${index}`;
+        orientFan(fan, 'y');
+        fan.position.set(column * RADIATOR_FAN_PITCH, RADIATOR_CENTER.y - 0.24, RADIATOR_CENTER.z);
+        group.add(fan);
+      });
+
+      const rear = createFan({ radius: REAR_FAN_RADIUS, depth: 0.2, phase: 0.62, speed: CONFIG.animation.caseFanSpeed * 1.05, rgbFaceOffset: 0.55, forceVisibleRgb: true });
+      rear.name = 'rearFan';
+      rear.position.copy(REAR_FAN_CENTER);
+      group.add(rear);
+
+      state.pc.add(group);
+      return group;
+    }
+
+    function createGPU() {
+      const gpu = new THREE.Group();
+      gpu.name = 'gpuAssembly';
+      const x = -0.58;
+      const y = 2.42;
+      const z = 0.15;
+
+      const pcb = roundedMesh(0.16, 0.9, 4.58, 0.035, MAT.pcb, 3);
+      pcb.position.set(x - 0.35, y, z);
+      gpu.add(pcb);
+
+      const backplate = roundedMesh(0.16, 1.22, 4.72, 0.065, MAT.gunmetal, 4);
+      backplate.position.set(x - 0.52, y + 0.05, z);
+      gpu.add(backplate);
+
+      const backInset = roundedMesh(0.025, 0.72, 3.42, 0.045, MAT.carbon, 3);
+      backInset.position.set(x - 0.615, y + 0.05, z - 0.06);
+      gpu.add(backInset);
+
+      const heatsinkCore = roundedMesh(0.52, 1.13, 4.46, 0.055, MAT.heatsink, 3);
+      heatsinkCore.position.set(x - 0.05, y, z);
+      gpu.add(heatsinkCore);
+
+      const finGeometry = new THREE.BoxGeometry(0.44, 0.86, 0.025);
+      const fins = new THREE.InstancedMesh(finGeometry, MAT.heatsink, 96);
+      for (let i = 0; i < 96; i++) {
+        TEMP.v3a.set(x + 0.02, y, z - 2.12 + i * (4.24 / 95));
+        TEMP.matrix.compose(TEMP.v3a, new THREE.Quaternion(), new THREE.Vector3(1, 1, 1));
+        fins.setMatrixAt(i, TEMP.matrix);
+      }
+      fins.castShadow = false;
+      gpu.add(fins);
+
+      for (let i = 0; i < 5; i++) {
+        const points = [
+          new THREE.Vector3(x - 0.32, y - 0.35 + i * 0.16, -1.72),
+          new THREE.Vector3(x + 0.08, y - 0.44 + i * 0.16, -1.0),
+          new THREE.Vector3(x + 0.12, y - 0.42 + i * 0.16, 0.75),
+          new THREE.Vector3(x - 0.22, y - 0.28 + i * 0.16, 1.82)
+        ];
+        const curve = new THREE.CatmullRomCurve3(points);
+        const pipe = new THREE.Mesh(new THREE.TubeGeometry(curve, 60, 0.045, 9, false), MAT.copper);
+        pipe.castShadow = true;
+        gpu.add(pipe);
+      }
+
+      const shroudMain = roundedMesh(0.62, 1.36, 4.82, 0.11, MAT.powder2, 5);
+      shroudMain.position.set(x + 0.34, y, z);
+      gpu.add(shroudMain);
+
+      const centerPanel = roundedMesh(0.12, 0.77, 3.93, 0.075, MAT.carbon, 4);
+      centerPanel.position.set(x + 0.68, y, z);
+      gpu.add(centerPanel);
+
+      const topRail = roundedMesh(0.68, 0.23, 4.72, 0.06, MAT.aluminumLight, 4);
+      topRail.position.set(x + 0.34, y + 0.66, z);
+      gpu.add(topRail);
+      const bottomRail = roundedMesh(0.68, 0.19, 4.72, 0.055, MAT.aluminum, 4);
+      bottomRail.position.set(x + 0.34, y - 0.66, z);
+      gpu.add(bottomRail);
+
+      const angularPanels = [
+        [-1.78, -0.42, 0.62], [-0.68, 0.42, -0.42],
+        [0.65, -0.42, 0.42], [1.72, 0.42, -0.62]
+      ];
+      for (const [pz, py, rot] of angularPanels) {
+        const panel = roundedMesh(0.13, 0.36, 0.96, 0.06, MAT.gunmetal, 3);
+        panel.position.set(x + 0.73, y + py, z + pz);
+        panel.rotation.x = rot;
+        gpu.add(panel);
+      }
+
+      [-1.52, 0, 1.52].forEach((fanZ, index) => {
+        const fan = createFan({ radius: 0.55, depth: 0.18, phase: 0.38 + index * 0.055, speed: CONFIG.animation.gpuFanSpeed * (0.94 + index * 0.06), rgbFaceOffset: 0.55, forceVisibleRgb: true });
+        fan.name = `gpuFan-${index}`;
+        orientFan(fan, 'x');
+        fan.position.set(x + 0.74, y, z + fanZ);
+        gpu.add(fan);
+      });
+
+      const accentA = createFlowStrip(0.075, 0.075, 0.72, new THREE.Vector3(x + 0.73, y - 0.59, z - 1.66), 0.52, 'x');
+      accentA.rotation.y = Math.PI / 2;
+      gpu.add(accentA);
+      const accentB = accentA.clone();
+      accentB.material = createFlowShaderMaterial(0.58, 'x', 0.9);
+      accentB.position.z = z + 1.66;
+      gpu.add(accentB);
+
+      const bracket = roundedMesh(0.2, 1.3, 0.22, 0.035, MAT.nickel, 3);
+      bracket.position.set(x - 0.25, y, -2.32);
+      gpu.add(bracket);
+      for (let i = 0; i < 4; i++) {
+        const vent = roundedMesh(0.14, 0.12, 0.035, 0.02, MAT.darkHole, 2);
+        vent.position.set(x - 0.12, y - 0.42 + i * 0.28, -2.45);
+        gpu.add(vent);
+      }
+      addScrew(gpu, new THREE.Vector3(x - 0.11, y + 0.5, -2.44), 'z', 0.8);
+      addScrew(gpu, new THREE.Vector3(x - 0.11, y - 0.5, -2.44), 'z', 0.8);
+
+      const pcieContacts = boxMesh(0.22, 0.055, 2.25, MAT.gold);
+      pcieContacts.position.set(x - 0.36, 3.02, 0.3);
+      gpu.add(pcieContacts);
+
+      const powerBlock = roundedMesh(0.38, 0.3, 0.72, 0.04, MAT.pcbDark, 3);
+      powerBlock.position.set(x - 0.1, y + 0.75, 1.2);
+      gpu.add(powerBlock);
+      for (let i = 0; i < 8; i++) {
+        const pin = boxMesh(0.07, 0.055, 0.055, MAT.darkHole);
+        pin.position.set(x + 0.11, y + 0.79, 0.96 + i * 0.07);
+        gpu.add(pin);
+      }
+
+      const support = roundedMesh(0.18, 0.2, 0.22, 0.045, MAT.gunmetal, 3);
+      support.position.set(0.76, 1.78, 1.68);
+      gpu.add(support);
+      const supportFoot = roundedMesh(0.52, 0.08, 0.5, 0.04, MAT.rubber, 3);
+      supportFoot.position.set(0.76, 1.69, 1.68);
+      gpu.add(supportFoot);
+      const supportPad = roundedMesh(0.35, 0.07, 0.28, 0.03, MAT.rubber, 3);
+      supportPad.position.set(0.76, 1.88, 1.68);
+      gpu.add(supportPad);
+
+      state.pc.add(gpu);
+      return gpu;
+    }
+
+    function createPSU() {
+      const psu = new THREE.Group();
+      psu.name = 'PSU';
+
+      const body = roundedMesh(2.65, 0.78, 2.32, 0.06, MAT.blackMetal, 4);
+      body.position.set(-0.05, 0.95, -1.45);
+      psu.add(body);
+
+      const rear = roundedMesh(2.5, 0.66, 0.08, 0.03, MAT.powder2, 2);
+      rear.position.set(-0.05, 0.95, -2.64);
+      psu.add(rear);
+      createVentGrid(psu, {
+        cols: 12,
+        rows: 4,
+        spacingX: 0.16,
+        spacingY: 0.15,
+        position: new THREE.Vector3(-0.38, 0.95, -2.69),
+        orientation: 'z',
+        radius: 0.025
+      });
+
+      const socket = roundedMesh(0.12, 0.28, 0.4, 0.03, MAT.darkHole, 2);
+      socket.position.set(0.79, 1.02, -2.70);
+      psu.add(socket);
+      const switchBody = roundedMesh(0.13, 0.23, 0.32, 0.025, MAT.pcbDark, 2);
+      switchBody.position.set(1.03, 0.82, -2.70);
+      psu.add(switchBody);
+      for (const [x, y] of [[-1.12, 0.66], [1.12, 0.66], [-1.12, 1.24], [1.12, 1.24]]) {
+        addScrew(psu, new THREE.Vector3(x, y, -2.71), 'z', 0.72);
+      }
+
+      state.pc.add(psu);
+      return psu;
+    }
+
+    function createCable(points, radius = 0.045, material = MAT.rubber, tubularSegments = 52) {
+      const curve = new THREE.CatmullRomCurve3(points);
+      curve.curveType = 'centripetal';
+      const cable = new THREE.Mesh(new THREE.TubeGeometry(curve, tubularSegments, radius, 9, false), material);
+      cable.castShadow = true;
+      cable.receiveShadow = true;
+      return cable;
+    }
+
+    function createCableBundle(basePoints, count, spacing, radius, material, axis = 'z') {
+      const group = new THREE.Group();
+      for (let i = 0; i < count; i++) {
+        const offset = (i - (count - 1) / 2) * spacing;
+        const points = basePoints.map((p) => {
+          const q = p.clone();
+          q[axis] += offset;
+          return q;
+        });
+        group.add(createCable(points, radius, material));
+      }
+      return group;
+    }
+
+    function createCables() {
+      const cables = new THREE.Group();
+      cables.name = 'Cables';
+      const braidMat = new THREE.MeshPhysicalMaterial({
+        color: 0x08090c,
+        metalness: 0.05,
+        roughness: 0.72,
+        clearcoat: 0.13,
+        clearcoatRoughness: 0.58,
+        envMapIntensity: 0.52
+      });
+
+      const gpuBundle = createCableBundle([
+        new THREE.Vector3(-0.6, 3.18, 1.18),
+        new THREE.Vector3(0.15, 3.42, 1.52),
+        new THREE.Vector3(0.95, 3.32, 1.82),
+        new THREE.Vector3(1.18, 2.86, 1.95)
+      ], 8, 0.055, 0.026, braidMat, 'z');
+      cables.add(gpuBundle);
+
+      for (let i = 0; i < 3; i++) {
+        const comb = roundedMesh(0.14, 0.15, 0.58, 0.025, i === 1 ? MAT.aluminumLight : MAT.gunmetal, 2);
+        comb.position.set(0.34 + i * 0.34, 3.7 - i * 0.14, 1.7 + i * 0.06);
+        comb.rotation.z = -0.16;
+        cables.add(comb);
+        for (let s = 0; s < 8; s++) {
+          const slot = boxMesh(0.16, 0.025, 0.025, MAT.darkHole);
+          slot.position.set(comb.position.x + 0.075, comb.position.y, comb.position.z - 0.19 + s * 0.055);
+          slot.rotation.z = comb.rotation.z;
+          cables.add(slot);
+        }
+      }
+
+      const power24 = createCableBundle([
+        new THREE.Vector3(-1.24, 4.08, 2.02),
+        new THREE.Vector3(-0.72, 4.02, 2.24),
+        new THREE.Vector3(0.35, 3.5, 2.45),
+        new THREE.Vector3(1.45, 2.3, 2.45),
+        new THREE.Vector3(1.18, 1.67, 2.1)
+      ], 12, 0.038, 0.019, braidMat, 'y');
+      cables.add(power24);
+
+      const cpuPower = createCableBundle([
+        new THREE.Vector3(-1.24, 5.95, -1.75),
+        new THREE.Vector3(-0.7, 6.08, -2.06),
+        new THREE.Vector3(0.75, 6.12, -2.35),
+        new THREE.Vector3(1.35, 5.6, -2.54)
+      ], 6, 0.043, 0.021, braidMat, 'y');
+      cables.add(cpuPower);
+
+      const smallCableCurves = [
+        [[-1.18, 5.42, 0.22], [-0.65, 5.65, 0.46], [0.25, 5.95, 0.72], [0.85, 6.02, 0.9]],
+        [[0.0, 2.1, 2.68], [0.35, 2.0, 2.4], [0.8, 1.8, 2.2], [1.18, 1.67, 1.85]]
+      ];
+      smallCableCurves.forEach((array, i) => {
+        const cable = createCable(array.map(([x, y, z]) => new THREE.Vector3(x, y, z)), i === 1 ? 0.025 : 0.03, MAT.rubber, 40);
+        cables.add(cable);
+      });
+
+      const grommets = [
+        [1.48, 4.05, 2.22, 0.18, 0.8, 0.42],
+        [1.48, 2.42, 2.22, 0.18, 0.65, 0.42],
+        [1.48, 5.7, -2.15, 0.18, 0.55, 0.48]
+      ];
+      for (const [x, y, z, w, h, d] of grommets) {
+        const grommet = roundedMesh(w, h, d, 0.07, MAT.rubber, 4);
+        grommet.position.set(x, y, z);
+        cables.add(grommet);
+        const slit = roundedMesh(w + 0.01, h * 0.64, 0.035, 0.02, MAT.darkHole, 2);
+        slit.position.set(x + 0.1, y, z);
+        slit.rotation.y = Math.PI / 2;
+        cables.add(slit);
+      }
+
+      state.pc.add(cables);
+      return cables;
+    }
+
+    function createExpansionSlotsAndRearDetails() {
+      const group = new THREE.Group();
+      group.name = 'RearDetails';
+      for (let i = 0; i < 7; i++) {
+        const cover = roundedMesh(2.15, 0.14, 0.09, 0.025, MAT.powder2, 2);
+        cover.position.set(-0.35, 2.62 - i * 0.19, -3.08);
+        group.add(cover);
+        createVentGrid(group, {
+          cols: 12,
+          rows: 1,
+          spacingX: 0.145,
+          spacingY: 0.1,
+          position: new THREE.Vector3(-0.35, 2.62 - i * 0.19, -3.132),
+          orientation: 'z',
+          radius: 0.017,
+          stagger: false
+        });
+        addScrew(group, new THREE.Vector3(-1.47, 2.62 - i * 0.19, -3.14), 'z', 0.5);
+      }
+      state.pc.add(group);
+    }
+
+    function createMicroDetails() {
+      const micro = new THREE.Group();
+      micro.name = 'MicroDetails';
+
+      const labelPlates = [
+        [1.48, 5.85, 2.58, 0.18, 0.72, 0.08],
+        [1.48, 4.65, 2.58, 0.18, 0.54, 0.08],
+        [1.48, 3.7, 2.58, 0.18, 0.42, 0.08]
+      ];
+      for (const [x, y, z, w, h, d] of labelPlates) {
+        const plate = roundedMesh(w, h, d, 0.025, MAT.aluminumLight, 2);
+        plate.position.set(x, y, z);
+        micro.add(plate);
+      }
+
+      for (let i = 0; i < 18; i++) {
+        const screw = new THREE.Mesh(GEO.smallScrew, MAT.screw);
+        screw.rotation.z = Math.PI / 2;
+        screw.position.set(-1.3 + (i % 3) * 1.3, 0.62 + Math.floor(i / 3) * 1.03, -3.12);
+        screw.castShadow = false;
+        micro.add(screw);
+      }
+
+      const topFilterFrame = roundedMesh(3.35, 0.035, 4.1, 0.055, MAT.rubber, 3);
+      topFilterFrame.position.set(0, 6.69, -0.1);
+      topFilterFrame.castShadow = false;
+      micro.add(topFilterFrame);
+
+      const frontIO = roundedMesh(1.55, 0.16, 0.42, 0.05, MAT.aluminumLight, 3);
+      frontIO.position.set(0.55, 6.67, 2.38);
+      micro.add(frontIO);
+      const powerButton = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.055, 32), MAT.gunmetal);
+      powerButton.position.set(1.08, 6.77, 2.38);
+      micro.add(powerButton);
+      const powerRingMat = createRGBMaterial('#7c2cff', 1.6, 0.9);
+      const powerRing = new THREE.Mesh(new THREE.TorusGeometry(0.115, 0.018, 8, 32), powerRingMat);
+      powerRing.rotation.x = Math.PI / 2;
+      powerRing.position.set(1.08, 6.802, 2.38);
+      micro.add(powerRing);
+      state.pulseMaterials.push({ material: powerRingMat, phase: 0.9, base: 1.1, amplitude: 0.55 });
+
+      for (let i = 0; i < 2; i++) {
+        const usb = roundedMesh(0.24, 0.03, 0.11, 0.015, MAT.darkHole, 2);
+        usb.position.set(0.58 - i * 0.34, 6.765, 2.38);
+        micro.add(usb);
+      }
+      const audio = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.048, 0.04, 18), MAT.darkHole);
+      audio.position.set(-0.03, 6.765, 2.38);
+      micro.add(audio);
+
+      state.pc.add(micro);
+    }
+
+    function initRenderer() {
+      const renderer = new THREE.WebGLRenderer({
+        antialias: !isMobile,
+        alpha: true,
+        powerPreference: 'high-performance',
+        stencil: false,
+        depth: true
+      });
+      renderer.setPixelRatio(isMobile ? CONFIG.quality.mobilePixelRatio : CONFIG.quality.pixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight, false);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.04;
+      renderer.physicallyCorrectLights = true;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.setClearColor(0x030305, 0);
+      renderer.domElement.setAttribute('aria-label', 'Interactive three-dimensional flagship gaming computer');
+      app.appendChild(renderer.domElement);
+      state.renderer = renderer;
+    }
+
+    function initScene() {
+      const scene = new THREE.Scene();
+      scene.background = null;
+      scene.fog = new THREE.FogExp2(0x08060d, 0.025);
+      state.scene = scene;
+
+      const pmrem = new THREE.PMREMGenerator(state.renderer);
+      pmrem.compileEquirectangularShader();
+      const envScene = new RoomEnvironment();
+      const envRenderTarget = pmrem.fromScene(envScene, 0.035);
+      scene.environment = envRenderTarget.texture;
+      state.environmentRenderTarget = envRenderTarget;
+
+      // RoomEnvironment is a THREE.Scene in r143 and has no dispose() method.
+      // Release the temporary scene resources explicitly after PMREM generation.
+      envScene.traverse((object) => {
+        object.geometry?.dispose?.();
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        materials.filter(Boolean).forEach((material) => material.dispose?.());
+      });
+      pmrem.dispose();
+    }
+
+    function initCamera() {
+      const camera = new THREE.PerspectiveCamera(CONFIG.camera.fov, window.innerWidth / window.innerHeight, CONFIG.camera.near, CONFIG.camera.far);
+      const distance = isMobile ? CONFIG.camera.mobileDistance : CONFIG.camera.desktopDistance;
+      // A nearly level optical axis keeps the vertical case members visually parallel.
+      camera.position.set(distance * 0.56, 4.22, distance * 0.82);
+      camera.lookAt(CONFIG.camera.target);
+      state.originalCamera.copy(camera.position);
+      state.camera = camera;
+    }
+
+    function createEnvironment() {}
+
+    function createLighting() {
+      const hemi = new THREE.HemisphereLight(0x9ba4be, 0x120a1d, 0.42);
+      state.scene.add(hemi);
+
+      const key = new THREE.SpotLight(0xf3f5ff, 780, 28, Math.PI * 0.23, 0.64, 1.65);
+      key.position.set(7.5, 12.5, 8.0);
+      key.target.position.set(0, 3.2, 0);
+      key.castShadow = true;
+      key.shadow.mapSize.set(isMobile ? CONFIG.quality.shadowMobile : CONFIG.quality.shadowDesktop, isMobile ? CONFIG.quality.shadowMobile : CONFIG.quality.shadowDesktop);
+      key.shadow.camera.near = 2;
+      key.shadow.camera.far = 28;
+      key.shadow.bias = -0.00018;
+      state.scene.add(key, key.target);
+
+      const rim = new THREE.SpotLight(0xbca9ff, 560, 24, Math.PI * 0.22, 0.7, 1.7);
+      rim.position.set(-7.0, 9.0, -8.2);
+      rim.target.position.set(0, 3.8, 0);
+      state.scene.add(rim, rim.target);
+
+      const frontFill = new THREE.SpotLight(0xd7e0ff, 260, 20, Math.PI * 0.26, 0.75, 1.9);
+      frontFill.position.set(1.0, 7.0, 9.5);
+      frontFill.target.position.set(0, 3.4, 0.4);
+      state.scene.add(frontFill, frontFill.target);
+
+      const purpleAccent = new THREE.PointLight(0x7c2cff, 68, 8.5, 2);
+      purpleAccent.position.set(2.2, 2.3, 2.8);
+      state.scene.add(purpleAccent);
+
+      const internalFill = new THREE.PointLight(0x7f6e98, 34, 6.5, 2);
+      internalFill.position.set(0.7, 4.1, 0.2);
+      state.scene.add(internalFill);
+
+      const gpuFill = new THREE.PointLight(0x8750d9, 25, 4.8, 2);
+      gpuFill.position.set(1.1, 3.0, 0.4);
+      state.scene.add(gpuFill);
+
+      const underglowLight = new THREE.PointLight(0x6d25d6, 48, 5.2, 2);
+      underglowLight.position.set(0.3, 0.45, 0.6);
+      state.scene.add(underglowLight);
+
+      state.interiorLights.push(
+        { light: purpleAccent, base: 52, phase: 0.15 },
+        { light: gpuFill, base: 19, phase: 0.52 },
+        { light: underglowLight, base: 35, phase: 0.02 }
+      );
+    }
+
+    function createParticles() {
+      const count = isMobile ? CONFIG.quality.particleMobile : CONFIG.quality.particleDesktop;
+      const positions = new Float32Array(count * 3);
+      const phases = new Float32Array(count);
+      const sizes = new Float32Array(count);
+      for (let i = 0; i < count; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 12;
+        positions[i * 3 + 1] = Math.random() * 9;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 12;
+        phases[i] = Math.random() * Math.PI * 2;
+        sizes[i] = 0.55 + Math.random() * 1.4;
+      }
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
+      geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
+
+      const material = new THREE.ShaderMaterial({
+        uniforms: { uTime: { value: 0 }, uPixelRatio: { value: state.renderer.getPixelRatio() } },
+        vertexShader: `
+          uniform float uTime;
+          uniform float uPixelRatio;
+          attribute float aPhase;
+          attribute float aSize;
+          varying float vAlpha;
+          void main(){
+            vec3 p=position;
+            p.y += sin(uTime*0.16+aPhase)*0.18;
+            p.x += cos(uTime*0.11+aPhase*1.7)*0.08;
+            vec4 mv=modelViewMatrix*vec4(p,1.0);
+            gl_Position=projectionMatrix*mv;
+            gl_PointSize=aSize*uPixelRatio*(24.0/max(1.0,-mv.z));
+            vAlpha=0.16+0.18*(0.5+0.5*sin(uTime*0.65+aPhase));
+          }
+        `,
+        fragmentShader: `
+          varying float vAlpha;
+          void main(){
+            vec2 p=gl_PointCoord-0.5;
+            float d=dot(p,p);
+            float a=smoothstep(0.25,0.0,d)*vAlpha;
+            gl_FragColor=vec4(vec3(0.77,0.70,0.92)*a,a);
+          }
+        `,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        toneMapped: false
+      });
+      const particles = new THREE.Points(geometry, material);
+      particles.frustumCulled = false;
+      state.scene.add(particles);
+      state.particles = particles;
+    }
+
+    function initPostProcessing() {
+      const composer = new EffectComposer(state.renderer);
+      composer.setPixelRatio(state.renderer.getPixelRatio());
+      composer.setSize(window.innerWidth, window.innerHeight);
+
+      const renderPass = new RenderPass(state.scene, state.camera);
+      composer.addPass(renderPass);
+
+      const bloom = new UnrealBloomPass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        isMobile ? 0.52 : 0.62,
+        0.44,
+        0.78
+      );
+      bloom.threshold = 0.72;
+      bloom.strength = isMobile ? 0.48 : 0.62;
+      bloom.radius = 0.42;
+      composer.addPass(bloom);
+
+      const gradeShader = {
+        uniforms: {
+          tDiffuse: { value: null },
+          uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+          uVignette: { value: isMobile ? 0.25 : 0.31 },
+          uContrast: { value: 1.055 }
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}
+        `,
+        fragmentShader: `
+          uniform sampler2D tDiffuse;
+          uniform vec2 uResolution;
+          uniform float uVignette;
+          uniform float uContrast;
+          varying vec2 vUv;
+          void main(){
+            vec4 c=texture2D(tDiffuse,vUv);
+            c.rgb=(c.rgb-0.5)*uContrast+0.5;
+            float d=distance(vUv,vec2(0.5));
+            float vignette=1.0-smoothstep(0.35,0.82,d)*uVignette;
+            c.rgb*=vignette;
+            c.rgb+=vec3(0.012,0.006,0.018)*(1.0-vignette);
+            gl_FragColor=c;
+          }
+        `
+      };
+      const gradePass = new ShaderPass(gradeShader);
+      gradePass.renderToScreen = true;
+      composer.addPass(gradePass);
+
+      state.composer = composer;
+      state.bloomPass = bloom;
+      state.gradePass = gradePass;
+    }
+
+    function initInteraction() {
+      const onPointerMove = (event) => {
+        const nx = (event.clientX / window.innerWidth) * 2 - 1;
+        const ny = (event.clientY / window.innerHeight) * 2 - 1;
+        const next = new THREE.Vector2(nx, ny);
+        state.pointerVelocity.lerp(next.clone().sub(state.pointerTarget), 0.6);
+        state.pointerTarget.copy(next);
+      };
+
+      const onPointerLeave = () => state.pointerTarget.set(0, 0);
+      const onWheel = (event) => {
+        const impulse = clamp(event.deltaY * 0.0012, -1.4, 1.4);
+        state.scrollVelocity = clamp(state.scrollVelocity + impulse, -2.2, 2.2);
+        state.scrollImpulse = clamp(Math.abs(state.scrollVelocity), 0, 2.2);
+        hint.style.opacity = '0';
+      };
+
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('pointerleave', onPointerLeave, { passive: true });
+      window.addEventListener('wheel', onWheel, { passive: true });
+      window.addEventListener('resize', onResize, { passive: true });
+      const syncPausedState = () => {
+        const wasPaused = state.paused;
+        state.paused = document.hidden || !state.modelVisible;
+        if (wasPaused && !state.paused) {
+          state.clock.getDelta();
+          state.lastRenderTime = 0;
+        }
+      };
+      document.addEventListener('visibilitychange', syncPausedState);
+      window.addEventListener('message', (event) => {
+        if (event.data?.type !== 'nova-model-visibility') return;
+        state.modelVisible = event.data.visible !== false;
+        syncPausedState();
+      });
+
+      window.addEventListener('beforeunload', disposeScene, { once: true });
+    }
+
+    function onResize() {
+      clearTimeout(state.resizeTimer);
+      state.resizeTimer = window.setTimeout(() => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        state.camera.aspect = width / height;
+        state.camera.updateProjectionMatrix();
+        state.renderer.setPixelRatio(isMobile ? CONFIG.quality.mobilePixelRatio : CONFIG.quality.pixelRatio);
+        state.renderer.setSize(width, height, false);
+        state.composer?.setPixelRatio(state.renderer.getPixelRatio());
+        state.composer?.setSize(width, height);
+        if (state.gradePass) state.gradePass.uniforms.uResolution.value.set(width, height);
+        if (state.particles) state.particles.material.uniforms.uPixelRatio.value = state.renderer.getPixelRatio();
+      }, 60);
+    }
+
+    function animateRGB(dt, time) {
+      const interaction = clamp(state.pointer.length() * 0.32 + state.scrollImpulse * 0.35, 0, 1.25);
+      const masterTime = time * (reducedMotion ? 0.45 : 1.0) + state.scrollImpulse * 0.16;
+
+      for (const material of state.shaderLights) {
+        if (material.uniforms?.uTime) material.uniforms.uTime.value = masterTime;
+        if (material.uniforms?.uBoost) material.uniforms.uBoost.value = state.scrollImpulse;
+        if (material.uniforms?.uPointer) material.uniforms.uPointer.value = state.pointer.x;
+      }
+
+      state.ramLights.forEach(({ material, phase, index }) => {
+        const travel = masterTime / CONFIG.rgb.loopDuration + phase;
+        const wave = 0.5 + 0.5 * Math.sin(travel * Math.PI * 2 - index * 0.56);
+        const soft = 0.52 + wave * 1.55 + interaction * 0.2;
+        material.emissiveIntensity = soft;
+        material.color.copy(CONFIG.rgb.deep).lerp(CONFIG.rgb.lavender, wave * 0.55).multiplyScalar(0.42);
+        material.emissive.copy(CONFIG.rgb.electric).lerp(CONFIG.rgb.lavender, wave * 0.72);
+      });
+
+      state.pulseMaterials.forEach(({ material, phase, base, amplitude }) => {
+        const p = smoothPulse(masterTime / 4.2 + phase);
+        material.emissiveIntensity = base + amplitude * p + interaction * 0.16;
+      });
+
+      state.rgbRings.forEach(({ highlight, phase, speed, axis }) => {
+        const rotation = masterTime * speed + phase * Math.PI * 2 + state.pointer.x * 0.18;
+        if (axis === 'x') highlight.rotation.x = rotation;
+        else if (axis === 'y') highlight.rotation.y = rotation;
+        else highlight.rotation.z = rotation;
+      });
+
+      state.interiorLights.forEach(({ light, base, phase }) => {
+        light.intensity = base * (0.82 + 0.22 * smoothPulse(masterTime / CONFIG.rgb.loopDuration + phase)) + interaction * 5;
+      });
+
+      if (state.bloomPass) {
+        const targetBloom = (isMobile ? 0.48 : 0.62) + state.scrollImpulse * 0.045 + state.pointer.length() * 0.014;
+        state.bloomPass.strength = lerp(state.bloomPass.strength, targetBloom, dampAlpha(3.2, dt));
+      }
+    }
+
+    function animateFans(dt) {
+      const motionScale = reducedMotion ? CONFIG.animation.reducedScale : 1;
+      const boost = 1 + state.scrollImpulse * 0.26 + state.pointerVelocity.length() * 0.22;
+      for (const fan of state.fanRotors) {
+        const direction = fan.orientation === 'exhaust' ? -1 : 1;
+        fan.rotor.rotation.z -= fan.speed * boost * motionScale * dt * direction;
+      }
+    }
+
+    function animateCamera(dt, time) {
+      const pointerAlpha = dampAlpha(reducedMotion ? 2.4 : 5.5, dt);
+      state.pointer.lerp(state.pointerTarget, pointerAlpha);
+      state.pointerVelocity.multiplyScalar(Math.exp(-5.4 * dt));
+
+      state.scrollVelocity *= Math.exp(-3.0 * dt);
+      state.scrollImpulse = lerp(state.scrollImpulse, Math.abs(state.scrollVelocity), dampAlpha(5.0, dt));
+
+      const idleScale = reducedMotion ? 0.24 : 1;
+      const orbit = Math.sin(time * 0.27) * THREE.MathUtils.degToRad(5.8) * idleScale;
+      const rise = Math.sin(time * 0.21 + 1.2) * 0.13 * idleScale;
+      const pointerYaw = state.pointer.x * THREE.MathUtils.degToRad(3.8) * (reducedMotion ? 0.35 : 1);
+      const pointerPitch = -state.pointer.y * 0.22 * (reducedMotion ? 0.35 : 1);
+      const scrollPush = clamp(state.scrollVelocity, -1.4, 1.4) * 0.28 * (reducedMotion ? 0.25 : 1);
+
+      const distance = isMobile ? CONFIG.camera.mobileDistance : CONFIG.camera.desktopDistance;
+      const angle = Math.atan2(state.originalCamera.x, state.originalCamera.z) + orbit + pointerYaw;
+      const horizontalDistance = distance * (isMobile ? 0.98 : 0.93) - scrollPush;
+      const targetPosition = TEMP.v3a.set(
+        Math.sin(angle) * horizontalDistance,
+        state.originalCamera.y + rise + pointerPitch + scrollPush * 0.1,
+        Math.cos(angle) * horizontalDistance
+      );
+      const cameraAlpha = dampAlpha(reducedMotion ? 2.2 : 4.5, dt);
+      state.camera.position.lerp(targetPosition, cameraAlpha);
+
+      const target = TEMP.v3b.copy(CONFIG.camera.target);
+      target.x += state.pointer.x * 0.13;
+      target.y += state.pointer.y * 0.07;
+      target.z += scrollPush * 0.08;
+      state.camera.lookAt(target);
+
+      const pcTargetRotation = -0.065 + Math.sin(time * 0.18) * 0.018 * idleScale + state.pointer.x * 0.025;
+      state.pc.rotation.y = lerp(state.pc.rotation.y, pcTargetRotation, dampAlpha(2.2, dt));
+    }
+
+    function animateParticles(time) {
+      if (state.particles) state.particles.material.uniforms.uTime.value = time;
+    }
+
+    function renderFrame(frameTime = 0) {
+      requestAnimationFrame(renderFrame);
+      if (state.paused) return;
+      if (isMobile && frameTime - state.lastRenderTime < 1000 / 30) return;
+      state.lastRenderTime = frameTime;
+
+      const dt = Math.min(state.clock.getDelta(), 0.05);
+      state.elapsed += dt;
+      animateCamera(dt, state.elapsed);
+      animateFans(dt);
+      animateRGB(dt, state.elapsed);
+      animateParticles(state.elapsed);
+      state.renderer.render(state.scene, state.camera);
+
+      if (state.firstFrame) {
+        state.firstFrame = false;
+        requestAnimationFrame(() => loading.classList.add('hidden'));
+      }
+    }
+
+    function disposeScene() {
+      state.scene?.traverse((object) => {
+        if (object.geometry) object.geometry.dispose?.();
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        materials.filter(Boolean).forEach((material) => material.dispose?.());
+      });
+      state.disposableTextures.forEach((texture) => texture.dispose());
+      state.environmentRenderTarget?.dispose?.();
+      state.environmentRenderTarget = null;
+      state.composer?.dispose?.();
+      state.renderer?.dispose?.();
+      state.renderer?.forceContextLoss?.();
+    }
+
+    function buildPC() {
+      state.pc.name = 'ProceduralGamingPC';
+      state.pc.position.set(0, 0, 0);
+      state.pc.rotation.y = -0.065;
+      state.scene.add(state.pc);
+
+      createCase();
+      createMotherboard();
+      createRAM();
+      createPumpAndCooling();
+      createGPU();
+      createPSU();
+      createCaseFans();
+      createCables();
+      createExpansionSlotsAndRearDetails();
+      createMicroDetails();
+    }
+
+    function validateScene() {
+      const required = [state.renderer, state.scene, state.camera, state.pc];
+      if (required.some((item) => !item)) throw new Error('A required rendering subsystem was not initialized.');
+      if (state.fanRotors.length < 8) throw new Error('Fan system initialization was incomplete.');
+      if (state.ramLights.length !== 4) throw new Error('RAM lighting initialization was incomplete.');
+
+      const caseFrame = state.pc.getObjectByName('caseFrame');
+      const cornerPosts = caseFrame?.children.filter((child) => child.name === 'cornerPost') || [];
+      const frameRails = caseFrame?.children.filter((child) => child.name === 'frameRail') || [];
+      if (cornerPosts.length !== 4 || frameRails.length !== 8) {
+        throw new Error('The case frame is missing a structural post or rail.');
+      }
+      const invalidPost = cornerPosts.some((post) =>
+        Math.abs(post.position.y - CASE_HEIGHT * 0.5) > 1e-6 ||
+        Math.abs(post.rotation.x) > 1e-6 ||
+        Math.abs(post.rotation.y) > 1e-6 ||
+        Math.abs(post.rotation.z) > 1e-6 ||
+        Math.abs(post.scale.x - 1) > 1e-6 ||
+        Math.abs(post.scale.y - 1) > 1e-6 ||
+        Math.abs(post.scale.z - 1) > 1e-6
+      );
+      if (invalidPost) throw new Error('A case post is outside the shared Cartesian frame grid.');
+
+      const fanAssembly = state.pc.getObjectByName('fanAssembly');
+      const frontFans = [0, 1, 2].map((index) => fanAssembly?.getObjectByName(`frontFan-${index}`));
+      if (frontFans.some((fan) => !fan)) throw new Error('The front fan stack is incomplete.');
+      frontFans.forEach((fan, index) => {
+        const expectedY = PANEL_CENTER_Y + (index - 1) * FRONT_FAN_PITCH;
+        if (Math.abs(fan.position.x) > 1e-6 || Math.abs(fan.position.y - expectedY) > 1e-6 || Math.abs(fan.position.z - FRONT_FAN_Z) > 1e-6) {
+          throw new Error('A front fan is outside the shared mounting grid.');
+        }
+      });
+
+      const gpuAssembly = state.pc.getObjectByName('gpuAssembly');
+      const gpuFans = [0, 1, 2].map((index) => gpuAssembly?.getObjectByName(`gpuFan-${index}`));
+      if (gpuFans.some((fan) => !fan || Math.abs(fan.scale.x - 1) > 1e-6 || Math.abs(fan.scale.y - 1) > 1e-6 || Math.abs(fan.scale.z - 1) > 1e-6)) {
+        throw new Error('A GPU fan has an inconsistent scale.');
+      }
+      state.scene.updateMatrixWorld(true);
+    }
+
+    async function init() {
+      if (!supportsWebGL()) {
+        showError('WebGL is not available in this browser. Enable hardware acceleration or open the page in a current browser with WebGL support.');
+        return;
+      }
+
+      try {
+        initRenderer();
+        initScene();
+        initCamera();
+        createMaterials();
+        prepareSharedGeometry();
+        createEnvironment();
+        buildPC();
+        createLighting();
+        initInteraction();
+        validateScene();
+        renderFrame();
+      } catch (error) {
+        console.error(error);
+        showError(`The 3D scene could not be initialized: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

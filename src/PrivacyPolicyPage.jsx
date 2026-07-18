@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   UserCheck
 } from 'lucide-react';
+import HeroTypewriterTitle from './components/HeroTypewriterTitle';
 
 const APP_LOGO_SRC = new URL('./assets/logo.ico', import.meta.url).href;
 
@@ -595,22 +596,22 @@ function PrivacyPolicyPage() {
   return (
     <main className="privacy-page">
       <section className="privacy-hero">
-        <div className="section-inner privacy-hero-inner">
+        <div className="section-inner privacy-hero-inner" data-typewriter-scope>
           <div className="privacy-hero-copy">
-            <span className="eyebrow"><ShieldCheck size={14} />Privacy</span>
-            <h1>Privacy Policy</h1>
-            <p>
+            <span className="eyebrow hero-intro-secondary"><ShieldCheck size={14} />Privacy</span>
+            <HeroTypewriterTitle text="Privacy Policy" />
+            <p className="hero-intro-secondary hero-intro-delay-1">
               Transparent, complete, and readable: this page explains which data Nova Tweaks processes,
               what it is used for, and which rights you have.
             </p>
-            <div className="privacy-hero-meta">
+            <div className="privacy-hero-meta hero-intro-secondary hero-intro-delay-2">
               <span><BadgeCheck size={15} />GDPR</span>
               <span><Clock3 size={15} />Last updated: June 2, 2026</span>
               <span><Mail size={15} />info@nova-tweaks.com</span>
             </div>
           </div>
 
-          <div className="privacy-hero-card" aria-label="Nova Tweaks privacy status">
+          <div className="privacy-hero-card hero-intro-secondary hero-intro-delay-2" aria-label="Nova Tweaks privacy status">
             <img src={APP_LOGO_SRC} alt="" />
             <div>
               <span>Nova Tweaks</span>

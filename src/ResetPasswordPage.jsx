@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Lock } from 'lucide-react';
 import { resetPassword } from './lib/api';
+import HeroTypewriterTitle from './components/HeroTypewriterTitle';
 
 function isStrongPassword(password) {
   return (
@@ -66,12 +67,12 @@ export default function ResetPasswordPage() {
     <main className="site-shell reset-shell">
       <section className="section">
         <div className="section-inner">
-          <div className="auth-modal reset-card">
-            <div className="badge">Nova Account</div>
-            <h1>Reset your password</h1>
-            <p>Set a new password for your Nova account.</p>
-            {notice.message ? <div className={`form-status ${notice.tone === 'success' ? 'success' : ''}`}>{notice.message}</div> : null}
-            <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="auth-modal reset-card" data-typewriter-scope>
+            <div className="badge hero-intro-secondary">Nova Account</div>
+            <HeroTypewriterTitle text="Reset your password" />
+            <p className="hero-intro-secondary hero-intro-delay-1">Set a new password for your Nova account.</p>
+            {notice.message ? <div className={`form-status hero-intro-secondary hero-intro-delay-2 ${notice.tone === 'success' ? 'success' : ''}`}>{notice.message}</div> : null}
+            <form className="auth-form hero-intro-secondary hero-intro-delay-2" onSubmit={handleSubmit}>
               <label className="auth-field">
                 <Lock size={17} />
                 <input required type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="New password" />

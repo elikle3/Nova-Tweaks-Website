@@ -64,8 +64,10 @@ import {
 } from 'lucide-react';
 import { useInView } from './hooks/useInView';
 import HomePage from './landing/HomePage';
+import HeroTypewriterTitle from './components/HeroTypewriterTitle';
 import PrivacyPolicyPage from './PrivacyPolicyPage';
 import ResetPasswordPage from './ResetPasswordPage';
+import StarfieldBackground from './StarfieldBackground';
 import {
   clearToken,
   createPremiumCheckout,
@@ -103,7 +105,6 @@ const CONTACT_EMAIL = 'contact@nova-tweaks.com';
 const PREMIUM_PRICE_LABEL = '19.99 EUR';
 
 const navItems = [
-  ['Dashboard', '#dashboard-showcase', MonitorCheck],
   ['Performance', '#performance', Activity],
   ['Free', '#nova-free', Sparkles],
   ['Premium', '#nova-premium', Gem],
@@ -1783,9 +1784,12 @@ function LandingFeatureGrid({ id, eyebrow, title, copy, features: cards, premium
 function Pricing({ account, onRequireAuth, onUpgrade }) {
   return (
     <section className="section" id="pricing">
-      <div className="section-inner">
-        <div className="section-heading reveal"><span className="eyebrow"><Tags size={14} />Pricing</span><h2>Simple pricing, no forced subscription.</h2></div>
-        <div className="pricing-grid">
+      <div className="section-inner" data-typewriter-scope>
+        <div className="section-heading reveal">
+          <span className="eyebrow hero-intro-secondary"><Tags size={14} />Pricing</span>
+          <HeroTypewriterTitle as="h2" text="Simple pricing, no forced subscription." startOnView hideNavigation={false} />
+        </div>
+        <div className="pricing-grid hero-intro-secondary hero-intro-delay-2">
           <article className="price-card reveal">
             <h3>Free</h3>
             <div className="price">0 EUR <span>/ forever</span></div>
@@ -1809,9 +1813,12 @@ function Pricing({ account, onRequireAuth, onUpgrade }) {
 function Testimonials() {
   return (
     <section className="section">
-      <div className="section-inner">
-        <div className="section-heading reveal"><span className="eyebrow"><Star size={14} />User voices</span><h2>Built for gamers and careful PC users.</h2></div>
-        <div className="testimonial-grid">
+      <div className="section-inner" data-typewriter-scope>
+        <div className="section-heading reveal">
+          <span className="eyebrow hero-intro-secondary"><Star size={14} />User voices</span>
+          <HeroTypewriterTitle as="h2" text="Built for gamers and careful PC users." startOnView hideNavigation={false} />
+        </div>
+        <div className="testimonial-grid hero-intro-secondary hero-intro-delay-2">
           {testimonials.map(([name, quote, avatar]) => (
             <article className="testimonial-card reveal" key={name}>
               <div className="testimonial-author">
@@ -1832,9 +1839,12 @@ function FAQ() {
   const [open, setOpen] = useState(0);
   return (
     <section className="section" id="faq">
-      <div className="section-inner faq-wrap">
-        <div className="section-heading reveal"><span className="eyebrow"><Info size={14} />Answers</span><h2>Questions people ask before they trust a tuning app.</h2></div>
-        <div className="faq-list">
+      <div className="section-inner faq-wrap" data-typewriter-scope>
+        <div className="section-heading reveal">
+          <span className="eyebrow hero-intro-secondary"><Info size={14} />Answers</span>
+          <HeroTypewriterTitle as="h2" text="Questions people ask before they trust a tuning app." startOnView hideNavigation={false} />
+        </div>
+        <div className="faq-list hero-intro-secondary hero-intro-delay-2">
           {faqs.map(([question, answer], index) => (
             <article className={`faq-item ${open === index ? 'faq-open' : ''}`} key={question}>
               <button type="button" onClick={() => setOpen(open === index ? -1 : index)}><span>{question}</span><ChevronDown size={18} /></button>
@@ -1998,14 +2008,14 @@ function ProfileModal({ open, account, onClose, onUpgrade, onLogout }) {
 function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade }) {
   return (
     <section className="section account-section" id="account">
-      <div className="section-inner account-panel reveal">
+      <div className="section-inner account-panel reveal" data-typewriter-scope>
         <div>
-          <span className="eyebrow"><Lock size={14} />Account</span>
-          <h2>Your license and downloads in one place.</h2>
-          <p>Sign in to see your plan, product access, and account details from the Nova API.</p>
+          <span className="eyebrow hero-intro-secondary"><Lock size={14} />Account</span>
+          <HeroTypewriterTitle as="h2" text="Your license and downloads in one place." startOnView hideNavigation={false} />
+          <p className="hero-intro-secondary hero-intro-delay-1">Sign in to see your plan, product access, and account details from the Nova API.</p>
         </div>
         {account ? (
-          <div className="account-card">
+          <div className="account-card hero-intro-secondary hero-intro-delay-2">
             <div className="account-head"><AccountAvatar account={account} size="account" /><div><b>{account.username || 'Nova user'}</b><span>{account.email || 'Email unavailable'}</span></div></div>
             <div className="account-data">
               <span>Plan status <b>{account.premium ? 'Premium' : 'Free'}</b></span>
@@ -2018,7 +2028,7 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
             </div>
           </div>
         ) : (
-          <div className="account-card empty">
+          <div className="account-card empty hero-intro-secondary hero-intro-delay-2">
             <Lock size={28} />
             <h3>{accountLoading ? 'Checking session...' : 'Sign in to load your account'}</h3>
             <p>Your account data stays hidden until your session is authenticated.</p>
@@ -2033,13 +2043,13 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
 function LegalNotice() {
     return (
       <section className="section legal-section" id="legal">
-        <div className="section-inner legal-panel reveal">
+        <div className="section-inner legal-panel reveal" data-typewriter-scope>
           <div>
-            <span className="eyebrow"><ShieldCheck size={14} />Transparency</span>
-            <h2>Legal, privacy, and safety.</h2>
-            <p>Nova Tweaks uses account, license, device, diagnostic, and local backup data for access, safety checks, support, troubleshooting, and payment handling through trusted providers.</p>
+            <span className="eyebrow hero-intro-secondary"><ShieldCheck size={14} />Transparency</span>
+            <HeroTypewriterTitle as="h2" text="Legal, privacy, and safety." startOnView hideNavigation={false} />
+            <p className="hero-intro-secondary hero-intro-delay-1">Nova Tweaks uses account, license, device, diagnostic, and local backup data for access, safety checks, support, troubleshooting, and payment handling through trusted providers.</p>
           </div>
-          <div className="legal-grid">
+          <div className="legal-grid hero-intro-secondary hero-intro-delay-2">
             <article id="privacy">
               <ShieldCheck size={20} />
               <h3>Privacy policy</h3>
@@ -2056,7 +2066,7 @@ function LegalNotice() {
               <p>Provider details must be completed before public sale. Support: <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a><br />Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
             </article>
           </div>
-          <p className="legal-disclaimer">Payment processing is handled by Stripe. Email delivery, hosting/database, Discord, and any analytics or AI providers must be listed in the final privacy policy and data processing documentation.</p>
+          <p className="legal-disclaimer hero-intro-secondary hero-intro-delay-2">Payment processing is handled by Stripe. Email delivery, hosting/database, Discord, and any analytics or AI providers must be listed in the final privacy policy and data processing documentation.</p>
         </div>
       </section>
     );
@@ -2091,18 +2101,18 @@ function FinalCTA({ onSignIn, onUpgrade }) {
 
   return (
     <section className="section final-cta" id="download">
-      <div className="section-inner cta-panel reveal">
-        <BadgeCheck size={34} />
-        <h2>Download Nova Tweaks for Windows.</h2>
-        <p>Install the Windows beta and tune with visible checks, restore options, risk confirmations, compatibility notes, and readable release information.</p>
-        <div className="download-meta" aria-label="Desktop beta download details">
+      <div className="section-inner cta-panel reveal" data-typewriter-scope>
+        <BadgeCheck className="hero-intro-secondary" size={34} />
+        <HeroTypewriterTitle as="h2" text="Download Nova Tweaks for Windows." startOnView hideNavigation={false} />
+        <p className="hero-intro-secondary hero-intro-delay-1">Install the Windows beta and tune with visible checks, restore options, risk confirmations, compatibility notes, and readable release information.</p>
+        <div className="download-meta hero-intro-secondary hero-intro-delay-2" aria-label="Desktop beta download details">
           <span><MonitorCheck size={15} />Windows 10 / 11 x64</span>
           <span><FileText size={15} />Version {updateInfo.version || '1.0.0'}</span>
           <span><ShieldCheck size={15} />Manual beta updates</span>
         </div>
-        {updateInfo.releaseNotes ? <p className="download-release-note">{updateInfo.releaseNotes}</p> : null}
+        {updateInfo.releaseNotes ? <p className="download-release-note hero-intro-secondary hero-intro-delay-2">{updateInfo.releaseNotes}</p> : null}
         {updateInfo.sha256 ? (
-          <div className="checksum-box">
+          <div className="checksum-box hero-intro-secondary hero-intro-delay-2">
             <div className="checksum-label">
               <Hash size={16} />
               <span>SHA256 checksum</span>
@@ -2110,13 +2120,13 @@ function FinalCTA({ onSignIn, onUpgrade }) {
             <code title={updateInfo.sha256}>{updateInfo.sha256}</code>
           </div>
         ) : null}
-        <div className="download-actions">
+        <div className="download-actions hero-intro-secondary hero-intro-delay-2">
           <a className="btn btn-primary download-button" href={downloadHref}><Download size={17} />Download Beta</a>
           <button className="btn btn-secondary" type="button" onClick={onUpgrade}><Gem size={17} />Upgrade to Premium</button>
           <a className="btn btn-secondary" href={DISCORD_URL} target="_blank" rel="noreferrer"><img className="btn-image-icon" src={DISCORD_ICON_SRC} alt="" />Join Discord</a>
           <button className="btn btn-secondary" type="button" onClick={onSignIn}><ExternalLink size={17} />Open Account</button>
         </div>
-        <p className="download-fineprint">Early beta builds may be unsigned and can trigger a Windows SmartScreen warning. Review the release notes and SHA256 checksum before installing; automatic public updates stay disabled until signed releases are ready.</p>
+        <p className="download-fineprint hero-intro-secondary hero-intro-delay-2">Early beta builds may be unsigned and can trigger a Windows SmartScreen warning. Review the release notes and SHA256 checksum before installing; automatic public updates stay disabled until signed releases are ready.</p>
       </div>
     </section>
   );
@@ -2152,7 +2162,10 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="section-inner footer-grid">
-        <div><Logo /><p>Clear Windows tuning for gamers, creators, and anyone who wants more control without guesswork.</p></div>
+        <div className="footer-brand">
+          <Logo />
+          <p>Clear Windows tuning for gamers, creators, and anyone who wants more control without guesswork.</p>
+        </div>
         {columns.map(([title, links]) => (
           <div key={title}>
             <h3>{title}</h3>
@@ -2183,12 +2196,18 @@ function formatAuthError(code = '') {
 
 function App() {
   if (window.location.pathname === '/reset-password') {
-    return <ResetPasswordPage />;
+    return (
+      <>
+        <StarfieldBackground />
+        <ResetPasswordPage />
+      </>
+    );
   }
 
   if (window.location.pathname === '/privacy' || window.location.pathname === '/datenschutz') {
     return (
       <>
+        <StarfieldBackground />
         <Nav showAccount={false} />
         <PrivacyPolicyPage />
         <Footer />
@@ -2263,6 +2282,7 @@ function App() {
 
   return (
     <>
+      <StarfieldBackground />
       <Nav
         onSignIn={() => setAuthOpen(true)}
         onOpenProfile={() => setProfileOpen(true)}

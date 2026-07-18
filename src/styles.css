@@ -57,10 +57,66 @@ body,
   min-height: 100%;
 }
 
+html {
+  overflow-x: hidden;
+  scrollbar-color:
+    color-mix(in srgb, var(--accent) 58%, #4b5264)
+    #080b13;
+  scrollbar-width: thin;
+}
+
+html::-webkit-scrollbar {
+  width: 10px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #080b13;
+}
+
+html::-webkit-scrollbar-button,
+html::-webkit-scrollbar-button:single-button,
+html::-webkit-scrollbar-button:vertical,
+html::-webkit-scrollbar-button:horizontal,
+html::-webkit-scrollbar-button:increment,
+html::-webkit-scrollbar-button:decrement {
+  display: block;
+  width: 0;
+  height: 0;
+  border: 0;
+  background: transparent;
+  -webkit-appearance: none;
+}
+
+html::-webkit-scrollbar-thumb {
+  min-height: 52px;
+  border: 2px solid #080b13;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--accent) 72%, #8b64d8),
+      color-mix(in srgb, var(--accent) 42%, #343b4c)
+    );
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--accent) 86%, white),
+      color-mix(in srgb, var(--accent) 58%, #465067)
+    );
+}
+
+html::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 body {
   position: relative;
+  overflow-x: clip;
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   background:
     radial-gradient(circle at 18% 8%, color-mix(in srgb, var(--accent) 9%, transparent) 0, transparent 24rem),
     radial-gradient(circle at 82% 16%, color-mix(in srgb, var(--accent-2) 7%, transparent) 0, transparent 26rem),
@@ -74,8 +130,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body::before,
-body::after {
+body::before {
   content: "";
   position: fixed;
   inset: 68px 0 0;
@@ -94,28 +149,26 @@ body::before {
   opacity: 0.38;
 }
 
-body::after {
-  z-index: 2;
-  background-image:
-    radial-gradient(circle, rgba(238, 244, 255, 0.82) 0 1.2px, transparent 2px),
-    radial-gradient(circle, color-mix(in srgb, var(--accent-2) 72%, transparent) 0 1.25px, transparent 2.1px),
-    radial-gradient(circle, color-mix(in srgb, var(--accent) 68%, transparent) 0 1.3px, transparent 2.2px);
-  background-position: 18px 22px, 74px 44px, 126px 88px;
-  background-size: 118px 118px, 181px 181px, 247px 247px;
-  mask-image:
-    radial-gradient(circle at 50% 34%, black 0, rgba(0, 0, 0, 0.9) 42%, transparent 88%);
-  opacity: 0.58;
-}
-
-body.modal-open::before,
-body.modal-open::after,
-body.modal-open .nova-stars {
+body.modal-open::before {
   opacity: 0;
 }
 
 #root {
   position: relative;
   z-index: 1;
+  isolation: isolate;
+}
+
+.starfield-background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #0a0a24;
+  pointer-events: none;
+  overflow: hidden;
 }
 
 a {
@@ -151,6 +204,15 @@ button {
   background: var(--bg-overlay);
   backdrop-filter: blur(18px);
   box-shadow: none;
+  transition:
+    opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-typewriter-pending .nav-shell {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
 }
 
 .nav {
@@ -4742,6 +4804,25 @@ button {
   gap: 32px;
 }
 
+.footer-brand {
+  min-width: 0;
+}
+
+.footer-brand .logo {
+  gap: 10px;
+  font-size: 1rem;
+}
+
+.footer-brand .logo-mark {
+  width: 34px;
+  height: 34px;
+}
+
+.footer-brand p {
+  max-width: 330px;
+  margin: 14px 0 0;
+}
+
 .footer h3 {
   margin: 0 0 12px;
   font-size: 0.9rem;
@@ -4763,6 +4844,16 @@ button {
   margin: 34px auto 0;
   color: var(--faint);
   font-size: 0.82rem;
+}
+
+@media (max-width: 640px) {
+  .footer-grid {
+    gap: 28px;
+  }
+
+  .footer-brand p {
+    max-width: 100%;
+  }
 }
 
 .modal-backdrop {
@@ -6590,9 +6681,9 @@ button {
 }
 
 .nova-hero {
-  min-height: auto;
-  padding-top: clamp(112px, 14vw, 170px);
-  padding-bottom: clamp(70px, 8vw, 120px);
+  min-height: 100svh;
+  padding-top: clamp(96px, 10vh, 124px);
+  padding-bottom: clamp(36px, 6vh, 64px);
   overflow: hidden;
   background: transparent;
   isolation: isolate;
@@ -6648,22 +6739,6 @@ button {
   -webkit-mask-composite: source-in;
 }
 
-.nova-stars {
-  position: absolute;
-  inset: 70px 0 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle, rgba(238, 244, 255, 0.86) 0 1px, transparent 1.8px),
-    radial-gradient(circle, rgba(45, 212, 191, 0.62) 0 1px, transparent 1.8px),
-    radial-gradient(circle, rgba(255, 92, 122, 0.58) 0 1px, transparent 1.8px);
-  background-position: 22px 18px, 86px 54px, 132px 116px;
-  background-size: 126px 126px, 214px 214px, 288px 288px;
-  mask-image: radial-gradient(circle at 50% 34%, black 0, rgba(0, 0, 0, 0.82) 42%, transparent 82%);
-  opacity: 0.56;
-  animation: novaStarDrift 18s linear infinite alternate;
-}
-
 .nova-hero .section-inner::after {
   content: "";
   position: absolute;
@@ -6685,7 +6760,9 @@ button {
   position: relative;
   z-index: 1;
   display: grid;
-  justify-items: center;
+  grid-template-columns: minmax(360px, 0.84fr) minmax(540px, 1.16fr);
+  gap: clamp(20px, 3.5vw, 58px);
+  width: min(1320px, calc(100% - 40px));
   align-items: center;
 }
 
@@ -6693,10 +6770,10 @@ button {
   position: relative;
   z-index: 1;
   display: grid;
-  justify-items: center;
+  justify-items: start;
   gap: 22px;
-  max-width: 860px;
-  text-align: center;
+  max-width: 560px;
+  text-align: left;
 }
 
 .nova-hero .reveal {
@@ -6705,14 +6782,111 @@ button {
 }
 
 .nova-hero-copy h1 {
-  max-width: 680px;
+  max-width: 560px;
   margin: 0;
   color: var(--text);
   font-family: var(--font-heading);
   font-size: clamp(2.8rem, 5.4vw, 5.8rem);
   font-weight: 800;
-  line-height: 0.96;
+  line-height: 1.06;
   text-wrap: balance;
+}
+
+.hero-typewriter-title {
+  position: relative;
+  width: 100%;
+}
+
+.hero-typewriter-reserve {
+  display: block;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hero-typewriter-text {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.hero-typewriter-cursor {
+  display: inline-block;
+  width: 0;
+  margin-left: 0.055em;
+  color: color-mix(in srgb, var(--accent) 76%, white);
+  font-weight: 500;
+  text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 52%, transparent);
+  transform: translateY(-0.025em);
+  animation: heroTypewriterCursorBlink 680ms steps(1, end) infinite;
+}
+
+.hero-typewriter-cursor.is-fading {
+  animation: heroTypewriterCursorFade 480ms ease forwards;
+}
+
+.hero-typewriter-cursor.is-hidden {
+  opacity: 0;
+  animation: none;
+}
+
+.hero-typewriter-title:not(.is-started) .hero-typewriter-cursor {
+  opacity: 0;
+  animation: none;
+}
+
+.hero-intro-secondary {
+  --hero-intro-delay: 0ms;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+[data-typewriter-scope]:has(.hero-typewriter-title.is-started) .hero-intro-secondary {
+  pointer-events: auto;
+  animation: heroIntroReveal 560ms cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--active-hero-typewriter-duration, 1215ms) + var(--hero-intro-delay)) both;
+}
+
+.hero-intro-delay-1 {
+  --hero-intro-delay: 80ms;
+}
+
+.hero-intro-delay-2 {
+  --hero-intro-delay: 160ms;
+}
+
+@keyframes heroTypewriterCursorBlink {
+  0%,
+  48% {
+    opacity: 1;
+  }
+
+  49%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes heroTypewriterCursorFade {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes heroIntroReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .nova-hero-copy p {
@@ -6739,7 +6913,7 @@ button {
 .nova-hero-pills {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 10px;
 }
 
@@ -6758,6 +6932,41 @@ button {
 
 .nova-hero-pills svg {
   color: var(--accent-secondary);
+}
+
+.nova-gaming-pc {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 0;
+  height: clamp(540px, 72vh, 760px);
+  margin-block: -18px -28px;
+  filter: drop-shadow(0 34px 60px rgba(0, 0, 0, 0.46));
+  touch-action: pan-y;
+}
+
+.nova-gaming-pc::before {
+  content: "";
+  position: absolute;
+  inset: 17% 4% 8%;
+  z-index: -1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 58% 42%, rgba(124, 44, 255, 0.18), transparent 52%),
+    radial-gradient(circle at 42% 64%, rgba(255, 92, 122, 0.1), transparent 58%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.nova-gaming-pc-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+  overflow: hidden;
+  touch-action: pan-y;
 }
 
 .nova-hero-visual {
@@ -6821,13 +7030,13 @@ button {
 .nova-feature-image-frame::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
+  left: -1px;
+  right: -1px;
   z-index: 2;
-  height: min(42%, 215px);
+  height: clamp(110px, 30%, 170px);
   pointer-events: none;
-  backdrop-filter: blur(22px) saturate(0.96);
-  -webkit-backdrop-filter: blur(22px) saturate(0.96);
+  backdrop-filter: blur(14px) saturate(0.98);
+  -webkit-backdrop-filter: blur(14px) saturate(0.98);
 }
 
 .nova-hero-image-frame::before,
@@ -6835,12 +7044,23 @@ button {
   top: 0;
   background:
     linear-gradient(to bottom,
-      rgba(5, 6, 14, 0.38) 0%,
-      rgba(20, 10, 32, 0.26) 38%,
-      rgba(255, 92, 122, 0.045) 70%,
-      rgba(5, 6, 14, 0) 100%);
-  mask-image: linear-gradient(to bottom, black 0%, black 42%, rgba(0, 0, 0, 0.7) 68%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 42%, rgba(0, 0, 0, 0.7) 68%, transparent 100%);
+      rgba(5, 6, 14, 0.46) 0%,
+      rgba(12, 8, 24, 0.28) 24%,
+      rgba(18, 10, 30, 0.13) 52%,
+      rgba(255, 92, 122, 0.035) 76%,
+      transparent 100%);
+  mask-image: linear-gradient(to bottom,
+    black 0%,
+    rgba(0, 0, 0, 0.9) 24%,
+    rgba(0, 0, 0, 0.58) 52%,
+    rgba(0, 0, 0, 0.2) 80%,
+    transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom,
+    black 0%,
+    rgba(0, 0, 0, 0.9) 24%,
+    rgba(0, 0, 0, 0.58) 52%,
+    rgba(0, 0, 0, 0.2) 80%,
+    transparent 100%);
 }
 
 .nova-hero-image-frame::after,
@@ -6848,17 +7068,28 @@ button {
   bottom: 0;
   background:
     linear-gradient(to top,
-      rgba(5, 6, 14, 0.38) 0%,
-      rgba(20, 10, 32, 0.26) 38%,
-      rgba(139, 92, 246, 0.045) 70%,
-      rgba(5, 6, 14, 0) 100%);
-  mask-image: linear-gradient(to top, black 0%, black 42%, rgba(0, 0, 0, 0.7) 68%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to top, black 0%, black 42%, rgba(0, 0, 0, 0.7) 68%, transparent 100%);
+      rgba(5, 6, 14, 0.5) 0%,
+      rgba(12, 8, 24, 0.3) 24%,
+      rgba(18, 10, 30, 0.14) 52%,
+      rgba(139, 92, 246, 0.035) 76%,
+      transparent 100%);
+  mask-image: linear-gradient(to top,
+    black 0%,
+    rgba(0, 0, 0, 0.9) 24%,
+    rgba(0, 0, 0, 0.58) 52%,
+    rgba(0, 0, 0, 0.2) 80%,
+    transparent 100%);
+  -webkit-mask-image: linear-gradient(to top,
+    black 0%,
+    rgba(0, 0, 0, 0.9) 24%,
+    rgba(0, 0, 0, 0.58) 52%,
+    rgba(0, 0, 0, 0.2) 80%,
+    transparent 100%);
 }
 
 .nova-hero-image-frame::before,
 .nova-hero-image-frame::after {
-  height: min(36%, 230px);
+  height: clamp(120px, 27%, 190px);
 }
 
 .nova-hero-image-frame img {
@@ -7464,12 +7695,6 @@ button {
   }
 }
 
-@keyframes novaStarDrift {
-  to {
-    background-position: 96px 120px, 214px 188px, 302px 236px;
-  }
-}
-
 @keyframes novaFrameFloat {
   0% {
     transform: perspective(1200px) rotateY(-8deg) rotateX(4deg) translateY(8px);
@@ -7528,23 +7753,8 @@ button {
 }
 
 @media (max-width: 1180px) {
-  .nova-hero-inner,
   .nova-proof-grid {
     grid-template-columns: 1fr;
-  }
-
-  .nova-hero-copy {
-    justify-items: center;
-    text-align: center;
-  }
-
-  .nova-hero-copy p {
-    margin: 0 auto;
-  }
-
-  .nova-hero-actions,
-  .nova-hero-pills {
-    justify-content: center;
   }
 
   .nova-placeholder-tall {
@@ -7563,6 +7773,33 @@ button {
 }
 
 @media (max-width: 980px) {
+  .nova-hero-inner {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 4px;
+  }
+
+  .nova-hero-copy {
+    justify-items: center;
+    max-width: 720px;
+    text-align: center;
+  }
+
+  .nova-hero-copy p {
+    margin: 0 auto;
+  }
+
+  .nova-hero-actions,
+  .nova-hero-pills {
+    justify-content: center;
+  }
+
+  .nova-gaming-pc {
+    width: min(100%, 720px);
+    height: clamp(520px, 72vw, 680px);
+    margin: -10px auto -32px;
+  }
+
   .dashboard-cinema-frame .dashboard-main-row,
   .dashboard-cinema-frame .dashboard-top-row {
     grid-template-columns: 1fr;
@@ -7597,7 +7834,7 @@ button {
 @media (max-width: 640px) {
   .nova-hero {
     padding-top: 104px;
-    padding-bottom: 66px;
+    padding-bottom: 34px;
     min-height: auto;
   }
 
@@ -7628,6 +7865,16 @@ button {
   .nova-bridge-actions {
     flex-direction: column;
     width: 100%;
+  }
+
+  .nova-gaming-pc {
+    width: calc(100% + 20px);
+    height: clamp(430px, 116vw, 560px);
+    margin: -8px -10px -24px;
+  }
+
+  .nova-gaming-pc-frame {
+    transform: translateX(clamp(12px, 4.5vw, 18px));
   }
 
   .nova-hero-actions .btn,
@@ -7979,7 +8226,22 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nova-stars,
+  .starfield-background {
+    display: none;
+  }
+
+  .hero-typewriter-pending .nav-shell,
+  .hero-intro-secondary {
+    opacity: 1 !important;
+    pointer-events: auto;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .hero-typewriter-cursor {
+    display: none;
+  }
+
   .nova-hero::after,
   .nova-placeholder-tall,
   .nova-placeholder-scan,
