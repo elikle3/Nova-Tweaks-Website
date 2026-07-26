@@ -30,7 +30,8 @@ const privacySections = [
       <h3>General information</h3>
       <p>This Privacy Policy explains which personal data is processed when you visit our website, use a customer account, purchase Premium access, or use the related Nova Tweaks services.</p>
       <p>Personal data means any data that can identify you personally, for example your email address, username, account data, payment references, or technical usage data.</p>
-      <p>This Privacy Policy applies to the website <strong>nova-tweaks.com</strong> and to the related API at <strong>api.nova-tweaks.com</strong>.</p>
+      <p>This Privacy Policy applies to the website <strong>nova-tweaks.com</strong>, the Nova Tweaks desktop application, and the related API at <strong>api.nova-tweaks.com</strong>.</p>
+      <p>When you use system tweaks, selected settings and values, such as NVIDIA saturation, are applied locally on your device and are not transmitted to us. For this purpose, the API provides the signed tweak configuration and script required for execution. Normal technical access and server log data may be processed when these resources are retrieved, as described below.</p>
 
       <h3>Who is responsible?</h3>
       <p>The controller responsible for data processing is:</p>
@@ -606,7 +607,7 @@ function PrivacyPolicyPage() {
             </p>
             <div className="privacy-hero-meta hero-intro-secondary hero-intro-delay-2">
               <span><BadgeCheck size={15} />GDPR</span>
-              <span><Clock3 size={15} />Last updated: June 2, 2026</span>
+              <span><Clock3 size={15} />Last updated: July 25, 2026</span>
               <span><Mail size={15} />info@nova-tweaks.com</span>
             </div>
           </div>
