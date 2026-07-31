@@ -12,7 +12,6 @@ import {
   HardDrive,
   LayoutGrid,
   Lock,
-  MonitorCheck,
   MousePointer2,
   PlayCircle,
   Radar,
@@ -27,7 +26,8 @@ import {
   Wifi,
   Wrench
 } from 'lucide-react';
-import NovaDashboardShowcase from './NovaDashboardShowcase';
+import GamingPcModel from './GamingPcModel';
+import HeroTypewriterTitle from '../components/HeroTypewriterTitle';
 
 const overviewTabImage = new URL('../assets/Nova_Tweaks_Website_Pictures/Overview Tab.png', import.meta.url).href;
 const freeTweaksImage = new URL('../assets/Nova_Tweaks_Website_Pictures/111+ Free Tweaks.png', import.meta.url).href;
@@ -65,6 +65,8 @@ const proofStats = [
   ['Rollback safety', 'Backups first', ShieldCheck]
 ];
 
+const HERO_TITLE = 'Optimize your PC for gaming';
+
 function PlaceholderFrame({ label, tall = false }) {
   return (
     <div className={`nova-placeholder-frame ${tall ? 'nova-placeholder-tall' : ''}`} aria-label={`${label} preview`}>
@@ -92,21 +94,21 @@ function PlaceholderFrame({ label, tall = false }) {
 function HeroSection() {
   return (
     <section className="section nova-hero" id="top">
-      <div className="nova-stars" aria-hidden="true" />
       <div className="section-inner nova-hero-inner">
-        <div className="nova-hero-copy reveal">
-          <span className="nova-kicker"><ShieldCheck size={14} />Nova Tweaks for Windows</span>
-          <h1>Optimize your PC for gaming</h1>
-          <div className="nova-hero-actions">
+        <div className="nova-hero-copy reveal" data-typewriter-scope>
+          <span className="nova-kicker hero-intro-secondary nova-hero-kicker"><ShieldCheck size={14} />Nova Tweaks for Windows</span>
+          <HeroTypewriterTitle text={HERO_TITLE} characterDelay={45} />
+          <div className="nova-hero-actions hero-intro-secondary hero-intro-delay-1">
             <a className="btn btn-primary" href="#download"><Download size={17} />Download for free</a>
-            <a className="btn btn-secondary" href="#dashboard-showcase"><MonitorCheck size={17} />View dashboard</a>
+            <a className="btn btn-secondary" href="#nova-free"><Sparkles size={17} />Explore features</a>
           </div>
-          <div className="nova-hero-pills" aria-label="Nova Tweaks product signals">
+          <div className="nova-hero-pills hero-intro-secondary hero-intro-delay-2" aria-label="Nova Tweaks product signals">
             <span><BadgeCheck size={15} />Free tweak toolkit</span>
             <span><Gem size={15} />Premium Game Mode</span>
             <span><Lock size={15} />No adware</span>
           </div>
         </div>
+        <GamingPcModel />
       </div>
     </section>
   );
@@ -115,13 +117,13 @@ function HeroSection() {
 function ProofSection() {
   return (
     <section className="section nova-proof-section" id="performance">
-      <div className="section-inner nova-proof-grid">
+      <div className="section-inner nova-proof-grid" data-typewriter-scope>
         <div className="nova-section-head reveal">
-          <span className="nova-kicker"><Activity size={14} />Performance workflow</span>
-          <h2>Tune Windows with status, safety, and clear feedback.</h2>
-          <p>Nova Tweaks helps you reduce background load, apply proven tweak sets, and keep rollback options visible before you make changes.</p>
+          <span className="nova-kicker hero-intro-secondary"><Activity size={14} />Performance workflow</span>
+          <HeroTypewriterTitle as="h2" text="Tune Windows with status, safety, and clear feedback." startOnView hideNavigation={false} />
+          <p className="hero-intro-secondary hero-intro-delay-1">Nova Tweaks helps you reduce background load, apply proven tweak sets, and keep rollback options visible before you make changes.</p>
         </div>
-        <div className="nova-proof-visual reveal delay-1">
+        <div className="nova-proof-visual reveal delay-1 hero-intro-secondary hero-intro-delay-2">
           <div className="nova-trace-chart" aria-hidden="true">
             <svg viewBox="0 0 900 360" preserveAspectRatio="none">
               <path className="nova-trace-grid" d="M20 70H880M20 140H880M20 210H880M20 280H880" />
@@ -159,19 +161,19 @@ function FeatureGrid({ id, title, copy, items, premium = false, onUpgrade }) {
 
   return (
     <section className={`section nova-feature-section ${premium ? 'is-premium' : ''}`} id={id}>
-      <div className="section-inner">
+      <div className="section-inner" data-typewriter-scope>
         <div className="nova-feature-header">
           <div className="nova-section-head reveal">
-            <span className="nova-kicker">{premium ? <Gem size={14} /> : <Sparkles size={14} />}{premium ? 'Premium' : 'Free'}</span>
-            <h2>{title}</h2>
-            <p>{copy}</p>
+            <span className="nova-kicker hero-intro-secondary">{premium ? <Gem size={14} /> : <Sparkles size={14} />}{premium ? 'Premium' : 'Free'}</span>
+            <HeroTypewriterTitle as="h2" text={title} startOnView hideNavigation={false} />
+            <p className="hero-intro-secondary hero-intro-delay-1">{copy}</p>
             {premium ? (
-              <button className="btn btn-primary" type="button" onClick={onUpgrade}><Gem size={17} />Unlock Premium</button>
+              <button className="btn btn-primary hero-intro-secondary hero-intro-delay-2" type="button" onClick={onUpgrade}><Gem size={17} />Unlock Premium</button>
             ) : (
-              <a className="btn btn-secondary" href="#download"><Download size={17} />Start free</a>
+              <a className="btn btn-secondary hero-intro-secondary hero-intro-delay-2" href="#download"><Download size={17} />Start free</a>
             )}
           </div>
-          <div className="nova-feature-carousel-actions reveal delay-1" aria-label={`${premium ? 'Premium' : 'Free'} feature carousel controls`}>
+          <div className="nova-feature-carousel-actions reveal delay-1 hero-intro-secondary hero-intro-delay-2" aria-label={`${premium ? 'Premium' : 'Free'} feature carousel controls`}>
             <button type="button" onClick={() => scrollFeatures(-1)} aria-label="Scroll feature cards left">
               <ChevronLeft size={19} />
             </button>
@@ -180,7 +182,7 @@ function FeatureGrid({ id, title, copy, items, premium = false, onUpgrade }) {
             </button>
           </div>
         </div>
-        <div className="nova-feature-grid" ref={carouselRef} tabIndex={0} aria-label={`${premium ? 'Premium' : 'Free'} feature screenshots`}>
+        <div className="nova-feature-grid hero-intro-secondary hero-intro-delay-2" ref={carouselRef} tabIndex={0} aria-label={`${premium ? 'Premium' : 'Free'} feature screenshots`}>
           {items.map(({ icon: Icon, title: itemTitle, copy: itemCopy, image }, index) => (
             <article className="nova-feature-card reveal" style={{ transitionDelay: `${index * 60}ms` }} key={itemTitle}>
               <div className="nova-feature-icon"><Icon size={20} /></div>
@@ -212,13 +214,13 @@ function FeatureGrid({ id, title, copy, items, premium = false, onUpgrade }) {
 function ConversionBridge({ onUpgrade }) {
   return (
     <section className="section nova-bridge-section">
-      <div className="section-inner nova-bridge-panel reveal">
+      <div className="section-inner nova-bridge-panel reveal" data-typewriter-scope>
         <div>
-          <span className="nova-kicker"><RefreshCw size={14} />Start tuning</span>
-          <h2>Clean up Windows, reduce background load, and keep control.</h2>
-          <p>Download Nova Tweaks for the free toolkit, then upgrade when you want the Premium game-session layer.</p>
+          <span className="nova-kicker hero-intro-secondary"><RefreshCw size={14} />Start tuning</span>
+          <HeroTypewriterTitle as="h2" text="Clean up Windows, reduce background load, and keep control." startOnView hideNavigation={false} />
+          <p className="hero-intro-secondary hero-intro-delay-1">Download Nova Tweaks for the free toolkit, then upgrade when you want the Premium game-session layer.</p>
         </div>
-        <div className="nova-bridge-actions">
+        <div className="nova-bridge-actions hero-intro-secondary hero-intro-delay-2">
           <a className="btn btn-primary" href="#download"><Download size={17} />Download free</a>
           <button className="btn btn-secondary" type="button" onClick={onUpgrade}>Premium checkout<ArrowRight size={17} /></button>
         </div>
@@ -231,7 +233,6 @@ function HomePage({ onUpgrade }) {
   return (
     <>
       <HeroSection />
-      <NovaDashboardShowcase />
       <ProofSection />
       <FeatureGrid
         id="nova-free"

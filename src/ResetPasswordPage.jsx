@@ -1,11 +1,16 @@
 import { useMemo, useState } from 'react';
 import { Lock } from 'lucide-react';
 import { resetPassword } from './lib/api';
+import HeroTypewriterTitle from './components/HeroTypewriterTitle';
 
 function isStrongPassword(password) {
+  const byteLength = typeof password === 'string'
+    ? new TextEncoder().encode(password).byteLength
+    : 0;
   return (
     typeof password === 'string' &&
-    password.length >= 8 &&
+    password.length >= 12 &&
+    byteLength <= 72 &&
     /[a-z]/.test(password) &&
     /[A-Z]/.test(password) &&
     /\d/.test(password) &&
@@ -27,7 +32,25 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState({ tone: '', message: '' });
-  const token = useMemo(() => new URLSearchParams(window.location.search || '').get('token') || '', []);
+  const token = useMemo(() => {
+    const captured = typeof window.__NOVA_RESET_TOKEN__ === 'string'
+      ? window.__NOVA_RESET_TOKEN__
+      : new URLSearchParams(window.location.hash.replace(/^#/, '')).get('token')
+        || new URLSearchParams(window.location.search || '').get('token')
+        || '';
+    try {
+      delete window.__NOVA_RESET_TOKEN__;
+    } catch (_error) {
+      window.__NOVA_RESET_TOKEN__ = '';
+    }
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('token')) {
+      url.searchParams.delete('token');
+    }
+    url.hash = '';
+    window.history.replaceState({}, document.title, `${url.pathname}${url.search}`);
+    return /^[a-f0-9]{64}$/i.test(captured) ? captured : '';
+  }, []);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -44,7 +67,7 @@ export default function ResetPasswordPage() {
       return;
     }
     if (!isStrongPassword(password)) {
-      setNotice({ tone: 'error', message: 'Use at least 8 characters, uppercase, lowercase, number and special character.' });
+      setNotice({ tone: 'error', message: 'Use 12 to 72 UTF-8 bytes, uppercase, lowercase, number and special character.' });
       return;
     }
 
@@ -66,19 +89,19 @@ export default function ResetPasswordPage() {
     <main className="site-shell reset-shell">
       <section className="section">
         <div className="section-inner">
-          <div className="auth-modal reset-card">
-            <div className="badge">Nova Account</div>
-            <h1>Reset your password</h1>
-            <p>Set a new password for your Nova account.</p>
-            {notice.message ? <div className={`form-status ${notice.tone === 'success' ? 'success' : ''}`}>{notice.message}</div> : null}
-            <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="auth-modal reset-card" data-typewriter-scope>
+            <div className="badge hero-intro-secondary">Nova Account</div>
+            <HeroTypewriterTitle text="Reset your password" />
+            <p className="hero-intro-secondary hero-intro-delay-1">Set a new password for your Nova account.</p>
+            {notice.message ? <div className={`form-status hero-intro-secondary hero-intro-delay-2 ${notice.tone === 'success' ? 'success' : ''}`}>{notice.message}</div> : null}
+            <form className="auth-form hero-intro-secondary hero-intro-delay-2" onSubmit={handleSubmit}>
               <label className="auth-field">
                 <Lock size={17} />
-                <input required type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="New password" />
+                <input required minLength={12} maxLength={72} type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="New password" />
               </label>
               <label className="auth-field">
                 <Lock size={17} />
-                <input required type="password" autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Confirm new password" />
+                <input required minLength={12} maxLength={72} type="password" autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Confirm new password" />
               </label>
               <button className="btn btn-primary full" type="submit" disabled={loading || !token}>{loading ? 'Saving...' : 'Save New Password'}</button>
             </form>

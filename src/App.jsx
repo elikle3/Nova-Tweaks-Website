@@ -64,11 +64,18 @@ import {
 } from 'lucide-react';
 import { useInView } from './hooks/useInView';
 import HomePage from './landing/HomePage';
-import PrivacyPolicyPage from './PrivacyPolicyPage';
+import HeroTypewriterTitle from './components/HeroTypewriterTitle';
+import LegalDocumentPage from './LegalDocumentPage';
 import ResetPasswordPage from './ResetPasswordPage';
+import VerifyEmailPage from './VerifyEmailPage';
+import WithdrawalRequestPage from './WithdrawalRequestPage';
+import StarfieldBackground from './StarfieldBackground';
+import { canCheckout, canRegister, legalConfig } from './legalConfig';
 import {
   clearToken,
   createPremiumCheckout,
+  deleteAccount,
+  exportAccountData,
   forgotPassword,
   getCurrentUser,
   getLatestUpdate,
@@ -103,7 +110,6 @@ const CONTACT_EMAIL = 'contact@nova-tweaks.com';
 const PREMIUM_PRICE_LABEL = '19.99 EUR';
 
 const navItems = [
-  ['Dashboard', '#dashboard-showcase', MonitorCheck],
   ['Performance', '#performance', Activity],
   ['Free', '#nova-free', Sparkles],
   ['Premium', '#nova-premium', Gem],
@@ -1783,9 +1789,12 @@ function LandingFeatureGrid({ id, eyebrow, title, copy, features: cards, premium
 function Pricing({ account, onRequireAuth, onUpgrade }) {
   return (
     <section className="section" id="pricing">
-      <div className="section-inner">
-        <div className="section-heading reveal"><span className="eyebrow"><Tags size={14} />Pricing</span><h2>Simple pricing, no forced subscription.</h2></div>
-        <div className="pricing-grid">
+      <div className="section-inner" data-typewriter-scope>
+        <div className="section-heading reveal">
+          <span className="eyebrow hero-intro-secondary"><Tags size={14} />Pricing</span>
+          <HeroTypewriterTitle as="h2" text="Simple pricing, no forced subscription." startOnView hideNavigation={false} />
+        </div>
+        <div className="pricing-grid hero-intro-secondary hero-intro-delay-2">
           <article className="price-card reveal">
             <h3>Free</h3>
             <div className="price">0 EUR <span>/ forever</span></div>
@@ -1809,9 +1818,12 @@ function Pricing({ account, onRequireAuth, onUpgrade }) {
 function Testimonials() {
   return (
     <section className="section">
-      <div className="section-inner">
-        <div className="section-heading reveal"><span className="eyebrow"><Star size={14} />User voices</span><h2>Built for gamers and careful PC users.</h2></div>
-        <div className="testimonial-grid">
+      <div className="section-inner" data-typewriter-scope>
+        <div className="section-heading reveal">
+          <span className="eyebrow hero-intro-secondary"><Star size={14} />User voices</span>
+          <HeroTypewriterTitle as="h2" text="Built for gamers and careful PC users." startOnView hideNavigation={false} />
+        </div>
+        <div className="testimonial-grid hero-intro-secondary hero-intro-delay-2">
           {testimonials.map(([name, quote, avatar]) => (
             <article className="testimonial-card reveal" key={name}>
               <div className="testimonial-author">
@@ -1832,9 +1844,12 @@ function FAQ() {
   const [open, setOpen] = useState(0);
   return (
     <section className="section" id="faq">
-      <div className="section-inner faq-wrap">
-        <div className="section-heading reveal"><span className="eyebrow"><Info size={14} />Answers</span><h2>Questions people ask before they trust a tuning app.</h2></div>
-        <div className="faq-list">
+      <div className="section-inner faq-wrap" data-typewriter-scope>
+        <div className="section-heading reveal">
+          <span className="eyebrow hero-intro-secondary"><Info size={14} />Answers</span>
+          <HeroTypewriterTitle as="h2" text="Questions people ask before they trust a tuning app." startOnView hideNavigation={false} />
+        </div>
+        <div className="faq-list hero-intro-secondary hero-intro-delay-2">
           {faqs.map(([question, answer], index) => (
             <article className={`faq-item ${open === index ? 'faq-open' : ''}`} key={question}>
               <button type="button" onClick={() => setOpen(open === index ? -1 : index)}><span>{question}</span><ChevronDown size={18} /></button>
@@ -1849,7 +1864,15 @@ function FAQ() {
 
 function AuthModal({ open, onClose, onAuth }) {
   const [view, setView] = useState('login');
-  const [form, setForm] = useState({ identifier: '', password: '', username: '', email: '', registerPassword: '', forgotEmail: '' });
+  const [form, setForm] = useState({
+    identifier: '',
+    password: '',
+    username: '',
+    email: '',
+    registerPassword: '',
+    forgotEmail: '',
+    termsAccepted: false
+  });
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -1872,7 +1895,18 @@ function AuthModal({ open, onClose, onAuth }) {
         await onAuth();
         onClose();
       } else if (view === 'register') {
-        await register({ username: form.username, email: form.email, password: form.registerPassword });
+        if (!canRegister()) {
+          setStatus('Registration is unavailable until the required legal documents are published.');
+          return;
+        }
+        await register({
+          username: form.username,
+          email: form.email,
+          password: form.registerPassword,
+          termsVersion: legalConfig.versions.terms,
+          privacyVersion: legalConfig.versions.privacy,
+          termsAccepted: form.termsAccepted
+        });
         setStatus('Registration started. Please verify your email before signing in.');
         setView('login');
       } else {
@@ -1920,8 +1954,26 @@ function AuthModal({ open, onClose, onAuth }) {
               </label>
               <label className="auth-field">
                 <Lock size={17} />
-                <input required type="password" value={form.registerPassword} onChange={(e) => setForm({ ...form, registerPassword: e.target.value })} placeholder="Strong password" />
+                <input required minLength={12} maxLength={72} type="password" value={form.registerPassword} onChange={(e) => setForm({ ...form, registerPassword: e.target.value })} placeholder="Strong password" />
               </label>
+              {canRegister() ? (
+                <label className="legal-consent-row">
+                  <input
+                    required
+                    type="checkbox"
+                    checked={form.termsAccepted}
+                    onChange={(event) => setForm({ ...form, termsAccepted: event.target.checked })}
+                  />
+                  <span>
+                    I accept the <a href="/terms" target="_blank" rel="noreferrer">terms and license conditions</a>.
+                    The <a href="/privacy" target="_blank" rel="noreferrer">privacy information</a> applies.
+                  </span>
+                </label>
+              ) : (
+                <div className="form-status">
+                  Registration remains disabled until the privacy information and terms are complete and released.
+                </div>
+              )}
             </>
           ) : null}
           {view === 'forgot' ? (
@@ -1930,9 +1982,15 @@ function AuthModal({ open, onClose, onAuth }) {
               <input required type="email" value={form.forgotEmail} onChange={(e) => setForm({ ...form, forgotEmail: e.target.value })} placeholder="Account email" />
             </label>
           ) : null}
-          <button className="btn btn-primary full" type="submit" disabled={loading}>{loading ? 'Working...' : view === 'login' ? 'Sign In' : view === 'register' ? 'Create Account' : 'Send Reset Link'}</button>
+          <button
+            className="btn btn-primary full"
+            type="submit"
+            disabled={loading || (view === 'register' && (!canRegister() || !form.termsAccepted))}
+          >
+            {loading ? 'Working...' : view === 'login' ? 'Sign In' : view === 'register' ? 'Create Account' : 'Send Reset Link'}
+          </button>
           {view === 'register' ? (
-            <p className="legal-disclaimer">By creating an account you acknowledge the privacy policy and terms linked below. Your email, username, password hash, license status, and device binding data are processed for account security and product access.</p>
+            <p className="legal-disclaimer">No optional marketing or tracking consent is bundled with account creation.</p>
           ) : null}
         </form>
         <div className="auth-switch">
@@ -1944,10 +2002,144 @@ function AuthModal({ open, onClose, onAuth }) {
   );
 }
 
-function ProfileModal({ open, account, onClose, onUpgrade, onLogout }) {
+function PurchaseLegalModal({ open, loading, onClose, onConfirm }) {
+  const [acceptance, setAcceptance] = useState({
+    termsAccepted: false,
+    immediatePerformanceConsent: false,
+    withdrawalAcknowledged: false
+  });
+
+  useEffect(() => {
+    if (open) {
+      setAcceptance({
+        termsAccepted: false,
+        immediatePerformanceConsent: false,
+        withdrawalAcknowledged: false
+      });
+    }
+  }, [open]);
+
+  if (!open) return null;
+  const complete = Object.values(acceptance).every(Boolean);
+
+  return (
+    <div className="modal-backdrop">
+      <div className="auth-modal" role="dialog" aria-modal="true" aria-label="Premium purchase confirmations">
+        <button className="modal-close" type="button" onClick={onClose} aria-label="Close"><X size={18} /></button>
+        <div className="badge"><FileText size={14} />Purchase information</div>
+        <h2>Review before continuing to Stripe</h2>
+        <p>These confirmations are not preselected and relate only to the Premium purchase.</p>
+        <div className="auth-form">
+          <label className="legal-consent-row">
+            <input
+              type="checkbox"
+              checked={acceptance.termsAccepted}
+              onChange={(event) => setAcceptance({ ...acceptance, termsAccepted: event.target.checked })}
+            />
+            <span>I accept the <a href="/terms" target="_blank" rel="noreferrer">terms and license conditions</a>.</span>
+          </label>
+          <label className="legal-consent-row">
+            <input
+              type="checkbox"
+              checked={acceptance.immediatePerformanceConsent}
+              onChange={(event) => setAcceptance({ ...acceptance, immediatePerformanceConsent: event.target.checked })}
+            />
+            <span>I expressly request that delivery of the digital Premium content begins before the withdrawal period ends.</span>
+          </label>
+          <label className="legal-consent-row">
+            <input
+              type="checkbox"
+              checked={acceptance.withdrawalAcknowledged}
+              onChange={(event) => setAcceptance({ ...acceptance, withdrawalAcknowledged: event.target.checked })}
+            />
+            <span>I acknowledge the information about when the right of withdrawal may expire. <a href="/withdrawal" target="_blank" rel="noreferrer">Read it here</a>.</span>
+          </label>
+          <button
+            className="btn btn-primary full"
+            type="button"
+            disabled={loading || !complete}
+            onClick={() => onConfirm(acceptance)}
+          >
+            {loading ? 'Working...' : 'Continue to Stripe'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProfileModal({
+  open,
+  account,
+  onClose,
+  onUpgrade,
+  onLogout,
+  onAccountDeleted,
+  onNotice
+}) {
+  const [accountPassword, setAccountPassword] = useState('');
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [accountAction, setAccountAction] = useState('');
+  const [accountActionStatus, setAccountActionStatus] = useState('');
+
+  useEffect(() => {
+    if (!open) {
+      setAccountPassword('');
+      setDeleteConfirmation('');
+      setAccountAction('');
+      setAccountActionStatus('');
+    }
+  }, [open]);
+
   if (!open || !account) return null;
 
   const accountName = getAccountName(account);
+  const actionPending = Boolean(accountAction);
+
+  async function handleAccountExport() {
+    setAccountAction('export');
+    setAccountActionStatus('');
+    try {
+      const exportPayload = await exportAccountData({ password: accountPassword });
+      const blob = new Blob(
+        [JSON.stringify(exportPayload, null, 2)],
+        { type: 'application/json;charset=utf-8' }
+      );
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `nova-account-export-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(downloadUrl);
+      setAccountPassword('');
+      setAccountActionStatus('Your account export was downloaded to this device.');
+    } catch (error) {
+      setAccountActionStatus(formatAuthError(error));
+    } finally {
+      setAccountAction('');
+    }
+  }
+
+  async function handleAccountDeletion() {
+    setAccountAction('delete');
+    setAccountActionStatus('');
+    try {
+      await deleteAccount({
+        password: accountPassword,
+        confirmation: deleteConfirmation
+      });
+      setAccountPassword('');
+      setDeleteConfirmation('');
+      onAccountDeleted();
+      onNotice('Your Nova account was deleted. Legally required records remain pseudonymized until their retention period expires.');
+    } catch (error) {
+      setAccountActionStatus(formatAuthError(error));
+    } finally {
+      setAccountAction('');
+    }
+  }
 
   return (
     <div className="modal-backdrop">
@@ -1985,6 +2177,59 @@ function ProfileModal({ open, account, onClose, onUpgrade, onLogout }) {
           </div>
         </div>
 
+        <section className="profile-data-controls" aria-labelledby="profile-data-controls-title">
+          <h3 id="profile-data-controls-title">Your data</h3>
+          <p>Re-enter your password to export your account data or permanently delete your account.</p>
+          <label className="profile-data-field">
+            <span>Current password</span>
+            <input
+              type="password"
+              value={accountPassword}
+              onChange={(event) => setAccountPassword(event.target.value)}
+              autoComplete="current-password"
+              maxLength={72}
+              disabled={actionPending}
+            />
+          </label>
+          <button
+            className="btn btn-secondary"
+            type="button"
+            disabled={actionPending || !accountPassword}
+            onClick={handleAccountExport}
+          >
+            <Download size={16} />
+            {accountAction === 'export' ? 'Preparing export...' : 'Download account export'}
+          </button>
+
+          <div className="profile-delete-zone">
+            <p>Deletion is permanent. Type <b>DELETE</b> to confirm.</p>
+            <label className="profile-data-field">
+              <span>Confirmation</span>
+              <input
+                type="text"
+                value={deleteConfirmation}
+                onChange={(event) => setDeleteConfirmation(event.target.value)}
+                autoComplete="off"
+                maxLength={6}
+                spellCheck={false}
+                disabled={actionPending}
+              />
+            </label>
+            <button
+              className="btn btn-danger"
+              type="button"
+              disabled={actionPending || !accountPassword || deleteConfirmation !== 'DELETE'}
+              onClick={handleAccountDeletion}
+            >
+              <Trash2 size={16} />
+              {accountAction === 'delete' ? 'Deleting account...' : 'Delete account permanently'}
+            </button>
+          </div>
+          {accountActionStatus ? (
+            <p className="form-status" role="status" aria-live="polite">{accountActionStatus}</p>
+          ) : null}
+        </section>
+
         <div className="profile-modal-actions">
           {!account.premium ? <button className="btn btn-primary" type="button" onClick={onUpgrade}><Gem size={16} />Upgrade to Premium</button> : null}
           <button className="btn btn-secondary" type="button" onClick={onLogout}><LogOut size={16} />Logout</button>
@@ -1998,14 +2243,14 @@ function ProfileModal({ open, account, onClose, onUpgrade, onLogout }) {
 function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade }) {
   return (
     <section className="section account-section" id="account">
-      <div className="section-inner account-panel reveal">
+      <div className="section-inner account-panel reveal" data-typewriter-scope>
         <div>
-          <span className="eyebrow"><Lock size={14} />Account</span>
-          <h2>Your license and downloads in one place.</h2>
-          <p>Sign in to see your plan, product access, and account details from the Nova API.</p>
+          <span className="eyebrow hero-intro-secondary"><Lock size={14} />Account</span>
+          <HeroTypewriterTitle as="h2" text="Your license and downloads in one place." startOnView hideNavigation={false} />
+          <p className="hero-intro-secondary hero-intro-delay-1">Sign in to see your plan, product access, and account details from the Nova API.</p>
         </div>
         {account ? (
-          <div className="account-card">
+          <div className="account-card hero-intro-secondary hero-intro-delay-2">
             <div className="account-head"><AccountAvatar account={account} size="account" /><div><b>{account.username || 'Nova user'}</b><span>{account.email || 'Email unavailable'}</span></div></div>
             <div className="account-data">
               <span>Plan status <b>{account.premium ? 'Premium' : 'Free'}</b></span>
@@ -2018,7 +2263,7 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
             </div>
           </div>
         ) : (
-          <div className="account-card empty">
+          <div className="account-card empty hero-intro-secondary hero-intro-delay-2">
             <Lock size={28} />
             <h3>{accountLoading ? 'Checking session...' : 'Sign in to load your account'}</h3>
             <p>Your account data stays hidden until your session is authenticated.</p>
@@ -2033,13 +2278,13 @@ function AccountSection({ account, accountLoading, onSignIn, onLogout, onUpgrade
 function LegalNotice() {
     return (
       <section className="section legal-section" id="legal">
-        <div className="section-inner legal-panel reveal">
+        <div className="section-inner legal-panel reveal" data-typewriter-scope>
           <div>
-            <span className="eyebrow"><ShieldCheck size={14} />Transparency</span>
-            <h2>Legal, privacy, and safety.</h2>
-            <p>Nova Tweaks uses account, license, device, diagnostic, and local backup data for access, safety checks, support, troubleshooting, and payment handling through trusted providers.</p>
+            <span className="eyebrow hero-intro-secondary"><ShieldCheck size={14} />Transparency</span>
+            <HeroTypewriterTitle as="h2" text="Legal, privacy, and safety." startOnView hideNavigation={false} />
+            <p className="hero-intro-secondary hero-intro-delay-1">Nova Tweaks processes account, license, account-scoped device, session, security, and payment data only for access, protection, fulfillment, and legally required evidence. Desktop diagnostics and backups remain local unless you deliberately export them.</p>
           </div>
-          <div className="legal-grid">
+          <div className="legal-grid hero-intro-secondary hero-intro-delay-2">
             <article id="privacy">
               <ShieldCheck size={20} />
               <h3>Privacy policy</h3>
@@ -2048,15 +2293,15 @@ function LegalNotice() {
             <article id="terms">
               <FileText size={20} />
               <h3>Terms, EULA, and withdrawal</h3>
-              <p>Digital Premium access, licensing terms, refund/withdrawal information, and EULA limits for system-level Windows changes must be reviewed before purchase and finalized by legal counsel.</p>
+              <p>Registration and sales remain disabled until the final documents are published. <a href="/terms">Terms</a> · <a href="/withdrawal">Withdrawal information</a></p>
             </article>
             <article id="imprint">
               <Mail size={20} />
               <h3>Imprint and contact</h3>
-              <p>Provider details must be completed before public sale. Support: <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a><br />Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+              <p>Provider details must be completed before public release. <a href="/imprint">Open imprint status</a>.</p>
             </article>
           </div>
-          <p className="legal-disclaimer">Payment processing is handled by Stripe. Email delivery, hosting/database, Discord, and any analytics or AI providers must be listed in the final privacy policy and data processing documentation.</p>
+          <p className="legal-disclaimer hero-intro-secondary hero-intro-delay-2">Stripe handles payment checkout; the final notice must identify the actual email and hosting/database providers. No analytics, advertising pixels, crash reporter, or behavioral telemetry is enabled. Discord, GitHub release hosting, and hardware reference sites are contacted only when you deliberately open the relevant external link; Cloudflare is contacted only when you explicitly start the desktop network test.</p>
         </div>
       </section>
     );
@@ -2064,11 +2309,12 @@ function LegalNotice() {
 
 function FinalCTA({ onSignIn, onUpgrade }) {
   const [updateInfo, setUpdateInfo] = useState({
-    version: '1.0.0',
-    downloadUrl: '/downloads/NovaTweaks-Setup.exe',
+    status: 'loading',
+    version: '',
+    downloadUrl: '',
     sha256: '',
-    releaseNotes: 'Unsigned desktop beta for Windows 10 and Windows 11.',
-    minimumSupportedVersion: '1.0.0'
+    releaseNotes: '',
+    minimumSupportedVersion: ''
   });
 
   useEffect(() => {
@@ -2076,33 +2322,43 @@ function FinalCTA({ onSignIn, onUpgrade }) {
     getLatestUpdate()
       .then((nextInfo) => {
         if (!cancelled) {
-          setUpdateInfo((current) => ({ ...current, ...nextInfo }));
+          setUpdateInfo((current) => ({ ...current, ...nextInfo, status: 'ready' }));
         }
       })
       .catch(() => {
-        // Keep static download metadata if the API is unreachable.
+        if (!cancelled) {
+          setUpdateInfo((current) => ({
+            ...current,
+            status: 'unavailable',
+            downloadUrl: '',
+            sha256: ''
+          }));
+        }
       });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const downloadHref = updateInfo.downloadUrl || '/downloads/NovaTweaks-Setup.exe';
+  const downloadReady = updateInfo.status === 'ready'
+    && updateInfo.signatureVerified === true
+    && Boolean(updateInfo.downloadUrl)
+    && /^[a-f0-9]{64}$/.test(updateInfo.sha256);
 
   return (
     <section className="section final-cta" id="download">
-      <div className="section-inner cta-panel reveal">
-        <BadgeCheck size={34} />
-        <h2>Download Nova Tweaks for Windows.</h2>
-        <p>Install the Windows beta and tune with visible checks, restore options, risk confirmations, compatibility notes, and readable release information.</p>
-        <div className="download-meta" aria-label="Desktop beta download details">
+      <div className="section-inner cta-panel reveal" data-typewriter-scope>
+        <BadgeCheck className="hero-intro-secondary" size={34} />
+        <HeroTypewriterTitle as="h2" text="Download Nova Tweaks for Windows." startOnView hideNavigation={false} />
+        <p className="hero-intro-secondary hero-intro-delay-1">Install the Windows beta and tune with visible checks, restore options, risk confirmations, compatibility notes, and readable release information.</p>
+        <div className="download-meta hero-intro-secondary hero-intro-delay-2" aria-label="Desktop beta download details">
           <span><MonitorCheck size={15} />Windows 10 / 11 x64</span>
-          <span><FileText size={15} />Version {updateInfo.version || '1.0.0'}</span>
-          <span><ShieldCheck size={15} />Manual beta updates</span>
+          <span><FileText size={15} />Version {updateInfo.version || 'not published'}</span>
+          <span><ShieldCheck size={15} />Signed release metadata</span>
         </div>
-        {updateInfo.releaseNotes ? <p className="download-release-note">{updateInfo.releaseNotes}</p> : null}
+        {updateInfo.releaseNotes ? <p className="download-release-note hero-intro-secondary hero-intro-delay-2">{updateInfo.releaseNotes}</p> : null}
         {updateInfo.sha256 ? (
-          <div className="checksum-box">
+          <div className="checksum-box hero-intro-secondary hero-intro-delay-2">
             <div className="checksum-label">
               <Hash size={16} />
               <span>SHA256 checksum</span>
@@ -2110,13 +2366,17 @@ function FinalCTA({ onSignIn, onUpgrade }) {
             <code title={updateInfo.sha256}>{updateInfo.sha256}</code>
           </div>
         ) : null}
-        <div className="download-actions">
-          <a className="btn btn-primary download-button" href={downloadHref}><Download size={17} />Download Beta</a>
+        <div className="download-actions hero-intro-secondary hero-intro-delay-2">
+          {downloadReady ? (
+            <a className="btn btn-primary download-button" href={updateInfo.downloadUrl}><Download size={17} />Download signed release</a>
+          ) : (
+            <button className="btn btn-primary download-button" type="button" disabled><Download size={17} />Signed release unavailable</button>
+          )}
           <button className="btn btn-secondary" type="button" onClick={onUpgrade}><Gem size={17} />Upgrade to Premium</button>
           <a className="btn btn-secondary" href={DISCORD_URL} target="_blank" rel="noreferrer"><img className="btn-image-icon" src={DISCORD_ICON_SRC} alt="" />Join Discord</a>
           <button className="btn btn-secondary" type="button" onClick={onSignIn}><ExternalLink size={17} />Open Account</button>
         </div>
-        <p className="download-fineprint">Early beta builds may be unsigned and can trigger a Windows SmartScreen warning. Review the release notes and SHA256 checksum before installing; automatic public updates stay disabled until signed releases are ready.</p>
+        <p className="download-fineprint hero-intro-secondary hero-intro-delay-2">Downloads are enabled only when the website can verify pinned Ed25519 release metadata and a SHA256 checksum. Published Windows installers must additionally carry a valid Authenticode signature.</p>
       </div>
     </section>
   );
@@ -2137,10 +2397,12 @@ function Footer() {
       ['Status', '/#top']
     ]],
       ['Company', [
-        ['Imprint', '/#imprint'],
+        ['Imprint', '/imprint'],
         ['Contact', `mailto:${CONTACT_EMAIL}`],
         ['Privacy', '/privacy'],
-        ['Terms', '/#terms']
+        ['Terms', '/terms'],
+        ['Withdrawal information', '/withdrawal'],
+        ['Withdraw contract', '/vertrag-widerrufen']
       ]],
     ['Community', [
       ['Discord', DISCORD_URL],
@@ -2152,7 +2414,10 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="section-inner footer-grid">
-        <div><Logo /><p>Clear Windows tuning for gamers, creators, and anyone who wants more control without guesswork.</p></div>
+        <div className="footer-brand">
+          <Logo />
+          <p>Clear Windows tuning for gamers, creators, and anyone who wants more control without guesswork.</p>
+        </div>
         {columns.map(([title, links]) => (
           <div key={title}>
             <h3>{title}</h3>
@@ -2167,6 +2432,14 @@ function Footer() {
   );
 }
 
+function WithdrawalAccessLink() {
+  return (
+    <a className="withdrawal-access-link" href="/vertrag-widerrufen">
+      Vertrag widerrufen
+    </a>
+  );
+}
+
 function formatAuthError(code = '') {
   const source = typeof code === 'object' && code
     ? `${code.code || ''} ${code.message || ''}`
@@ -2177,27 +2450,89 @@ function formatAuthError(code = '') {
   if (normalized.includes('token_missing')) return 'Login succeeded, but the backend did not return a usable session token.';
   if (normalized.includes('api_network_error')) return 'Nova API is not reachable. Please make sure the local API server is running.';
   if (normalized.includes('weak_password')) return 'Password must include uppercase, lowercase, number, and special character.';
+  if (normalized.includes('legal_documents_unavailable') || normalized.includes('legal_document_version_mismatch')) {
+    return 'This action remains unavailable until the required legal documents are published.';
+  }
+  if (normalized.includes('legal_acceptance_required') || normalized.includes('purchase_legal_acceptance_required')) {
+    return 'Please review and confirm the required legal information.';
+  }
     if (normalized.includes('user_already_exists') || normalized.includes('already_registered')) return 'If the account can be created, we will send a verification email.';
   return source.trim() || 'Something went wrong. Please try again.';
 }
 
 function App() {
+  if (window.location.pathname === '/verify-email') {
+    return (
+      <>
+        <StarfieldBackground />
+        <VerifyEmailPage />
+        <WithdrawalAccessLink />
+      </>
+    );
+  }
+
   if (window.location.pathname === '/reset-password') {
-    return <ResetPasswordPage />;
+    return (
+      <>
+        <StarfieldBackground />
+        <ResetPasswordPage />
+        <WithdrawalAccessLink />
+      </>
+    );
+  }
+
+  if (
+    window.location.pathname === '/vertrag-widerrufen'
+    || window.location.pathname === '/withdraw-contract'
+  ) {
+    return (
+      <>
+        <StarfieldBackground />
+        <Nav showAccount={false} />
+        <WithdrawalRequestPage />
+        <Footer />
+        <WithdrawalAccessLink />
+      </>
+    );
   }
 
   if (window.location.pathname === '/privacy' || window.location.pathname === '/datenschutz') {
     return (
       <>
+        <StarfieldBackground />
         <Nav showAccount={false} />
-        <PrivacyPolicyPage />
+        <LegalDocumentPage type="privacy" />
         <Footer />
+        <WithdrawalAccessLink />
+      </>
+    );
+  }
+
+  const legalPathTypes = {
+    '/terms': 'terms',
+    '/agb': 'terms',
+    '/withdrawal': 'withdrawal',
+    '/widerruf': 'withdrawal',
+    '/imprint': 'imprint',
+    '/impressum': 'imprint'
+  };
+  const legalDocumentType = legalPathTypes[window.location.pathname];
+  if (legalDocumentType) {
+    return (
+      <>
+        <StarfieldBackground />
+        <Nav showAccount={false} />
+        <LegalDocumentPage type={legalDocumentType} />
+        <Footer />
+        <WithdrawalAccessLink />
       </>
     );
   }
 
   const [authOpen, setAuthOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [purchaseLegalOpen, setPurchaseLegalOpen] = useState(false);
+  const [purchaseLoading, setPurchaseLoading] = useState(false);
   const [account, setAccount] = useState(null);
   const [accountLoading, setAccountLoading] = useState(true);
   const [notice, setNotice] = useState('');
@@ -2242,16 +2577,32 @@ function App() {
       setAuthOpen(true);
       return;
     }
+    if (!canCheckout()) {
+      setNotice('Premium checkout remains unavailable until the required legal documents are published.');
+      return;
+    }
+    setPurchaseLegalOpen(true);
+  }
+
+  async function submitPremiumUpgrade(acceptance) {
+    setPurchaseLoading(true);
     try {
-      const checkout = await createPremiumCheckout();
+      const checkout = await createPremiumCheckout({
+        ...acceptance,
+        termsVersion: legalConfig.versions.terms,
+        withdrawalVersion: legalConfig.versions.withdrawal
+      });
       if (checkout.checkoutUrl) {
         window.location.href = checkout.checkoutUrl;
       } else if (checkout.status === 'already_premium') {
         setNotice('Your account already has Premium access.');
+        setPurchaseLegalOpen(false);
         await loadAccount();
       }
     } catch (error) {
       setNotice(formatAuthError(error));
+    } finally {
+      setPurchaseLoading(false);
     }
   }
 
@@ -2261,8 +2612,15 @@ function App() {
     setProfileOpen(false);
   }
 
+  function handleAccountDeleted() {
+    clearToken();
+    setAccount(null);
+    setProfileOpen(false);
+  }
+
   return (
     <>
+      <StarfieldBackground />
       <Nav
         onSignIn={() => setAuthOpen(true)}
         onOpenProfile={() => setProfileOpen(true)}
@@ -2283,7 +2641,22 @@ function App() {
       </main>
       <Footer />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} onAuth={loadAccount} />
-      <ProfileModal open={profileOpen} account={account} onClose={() => setProfileOpen(false)} onUpgrade={handleUpgrade} onLogout={handleLogout} />
+      <PurchaseLegalModal
+        open={purchaseLegalOpen}
+        loading={purchaseLoading}
+        onClose={() => setPurchaseLegalOpen(false)}
+        onConfirm={submitPremiumUpgrade}
+      />
+      <ProfileModal
+        open={profileOpen}
+        account={account}
+        onClose={() => setProfileOpen(false)}
+        onUpgrade={handleUpgrade}
+        onLogout={handleLogout}
+        onAccountDeleted={handleAccountDeleted}
+        onNotice={setNotice}
+      />
+      <WithdrawalAccessLink />
     </>
   );
 }
