@@ -3,6 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'none'; connect-src 'self' https://api.nova-tweaks.com; font-src 'self'; form-action 'self'; frame-src 'none'; img-src 'self' data: blob:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; upgrade-insecure-requests"
+    />
     <meta
       name="description"
       content="NovaTweaks is a premium Windows optimization app for gamers and power users, focused on performance, control, backups, and system stability."
@@ -10,6 +15,7 @@
     <link rel="icon" type="image/x-icon" href="/nova-tweaks.ico" />
     <link rel="shortcut icon" type="image/x-icon" href="/nova-tweaks.ico" />
     <title>Nova Tweaks</title>
+    <script src="/early-url-scrub.js"></script>
   </head>
   <body>
     <div id="root"></div>

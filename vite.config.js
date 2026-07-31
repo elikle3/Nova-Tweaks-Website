@@ -1,12 +1,30 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-const API_TARGET = process.env.VITE_PROXY_API_TARGET || 'https://api.nova-tweaks.com';
+function resolveProxyTarget(value) {
+  const parsed = new URL(value || 'https://api.nova-tweaks.com');
+  const loopback = parsed.protocol === 'http:'
+    && ['127.0.0.1', 'localhost'].includes(parsed.hostname)
+    && parsed.port === '3000';
+  if (
+    (parsed.origin !== 'https://api.nova-tweaks.com' && !loopback)
+    || parsed.username
+    || parsed.password
+    || parsed.pathname !== '/'
+    || parsed.search
+    || parsed.hash
+  ) {
+    throw new Error('VITE_PROXY_API_TARGET must be the production API or loopback port 3000.');
+  }
+  return parsed.origin;
+}
+
+const API_TARGET = resolveProxyTarget(process.env.VITE_PROXY_API_TARGET);
 
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0',
+    host: '127.0.0.1',
     port: 5175,
     strictPort: true,
     proxy: {
@@ -19,7 +37,7 @@ export default defineConfig({
     }
   },
   preview: {
-    host: '0.0.0.0',
+    host: '127.0.0.1',
     port: 4175
   }
 });

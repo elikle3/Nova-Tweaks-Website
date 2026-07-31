@@ -4889,6 +4889,8 @@ button {
 .profile-modal {
   position: relative;
   width: min(640px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -4992,6 +4994,66 @@ button {
   margin-top: 22px;
 }
 
+.profile-data-controls {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 22px;
+}
+
+.profile-data-controls h3 {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: 1.08rem;
+}
+
+.profile-data-field {
+  display: grid;
+  gap: 7px;
+}
+
+.profile-data-field span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.profile-data-field input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+  color: var(--text);
+  outline: none;
+  padding: 12px 13px;
+}
+
+.profile-data-field input:focus-visible {
+  border-color: var(--accent);
+}
+
+.profile-delete-zone {
+  display: grid;
+  gap: 10px;
+  margin-top: 4px;
+  border: 1px solid color-mix(in srgb, var(--danger) 38%, var(--border));
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.btn-danger {
+  border-color: color-mix(in srgb, var(--danger) 55%, var(--border));
+  background: color-mix(in srgb, var(--danger) 14%, var(--surface-elevated));
+  color: var(--danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 22%, var(--surface-elevated));
+}
+
 .form-status {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -5061,6 +5123,34 @@ button {
 
 .auth-field input:focus {
   box-shadow: none;
+}
+
+.legal-consent-row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
+  padding: 12px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.auth-form .legal-consent-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  padding: 0;
+  accent-color: var(--accent);
+}
+
+.legal-consent-row a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .auth-switch {
@@ -8254,5 +8344,239 @@ button {
 
   .nova-feature-card:hover {
     transform: none;
+  }
+}
+/* Statutory electronic withdrawal function */
+.withdrawal-access-link {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1100;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 15px;
+  border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-elevated) 94%, transparent);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+  backdrop-filter: blur(14px);
+}
+
+.withdrawal-access-link:hover,
+.withdrawal-access-link:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: none;
+}
+
+.withdrawal-request-page {
+  position: relative;
+  z-index: 1;
+  min-height: 72vh;
+  padding: 148px 20px 96px;
+}
+
+.withdrawal-request-shell {
+  width: min(760px, 100%);
+  margin: 0 auto;
+}
+
+.withdrawal-request-heading {
+  margin-bottom: 28px;
+}
+
+.withdrawal-request-heading h1 {
+  margin: 12px 0 16px;
+  font-size: clamp(2.15rem, 7vw, 4.1rem);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+}
+
+.withdrawal-request-heading > p {
+  max-width: 720px;
+  margin: 0 0 10px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.withdrawal-request-translation {
+  color: var(--text-muted) !important;
+}
+
+.withdrawal-request-card {
+  display: grid;
+  gap: 20px;
+  padding: clamp(22px, 5vw, 34px);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--surface-elevated) 94%, transparent);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.2);
+}
+
+.withdrawal-request-card h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.withdrawal-request-card > label:not(.withdrawal-confirmation-check) {
+  display: grid;
+  gap: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.withdrawal-request-card input[type='text'],
+.withdrawal-request-card input[type='email'] {
+  width: 100%;
+  min-height: 48px;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.withdrawal-request-card input:focus-visible {
+  border-color: var(--accent);
+  outline: 2px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  outline-offset: 1px;
+}
+
+.withdrawal-request-card small,
+.withdrawal-request-privacy {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.withdrawal-request-privacy a {
+  color: var(--accent);
+}
+
+.withdrawal-request-review {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.withdrawal-request-review > div {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.38fr) 1fr;
+  gap: 16px;
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+.withdrawal-request-review > div:last-child {
+  border-bottom: 0;
+}
+
+.withdrawal-request-review dt {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.withdrawal-request-review dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.withdrawal-declaration {
+  padding: 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 4px 12px 12px 4px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+.withdrawal-declaration p {
+  margin: 10px 0 0;
+  white-space: pre-line;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.withdrawal-confirmation-check {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 11px;
+  align-items: start;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.withdrawal-confirmation-check input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+
+.withdrawal-request-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.withdrawal-request-error {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, #ef4444 42%, var(--border));
+  border-radius: 10px;
+  background: color-mix(in srgb, #ef4444 8%, transparent);
+  color: #fca5a5;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.withdrawal-request-complete > svg {
+  color: var(--accent-secondary);
+}
+
+.withdrawal-request-complete > p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+@media (max-width: 620px) {
+  .withdrawal-access-link {
+    right: 10px;
+    bottom: 10px;
+    min-height: 38px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .withdrawal-request-page {
+    padding: 118px 14px 82px;
+  }
+
+  .withdrawal-request-review > div {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .withdrawal-request-actions {
+    display: grid;
   }
 }

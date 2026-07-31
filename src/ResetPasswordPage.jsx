@@ -4,9 +4,13 @@ import { resetPassword } from './lib/api';
 import HeroTypewriterTitle from './components/HeroTypewriterTitle';
 
 function isStrongPassword(password) {
+  const byteLength = typeof password === 'string'
+    ? new TextEncoder().encode(password).byteLength
+    : 0;
   return (
     typeof password === 'string' &&
-    password.length >= 8 &&
+    password.length >= 12 &&
+    byteLength <= 72 &&
     /[a-z]/.test(password) &&
     /[A-Z]/.test(password) &&
     /\d/.test(password) &&
@@ -28,7 +32,25 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState({ tone: '', message: '' });
-  const token = useMemo(() => new URLSearchParams(window.location.search || '').get('token') || '', []);
+  const token = useMemo(() => {
+    const captured = typeof window.__NOVA_RESET_TOKEN__ === 'string'
+      ? window.__NOVA_RESET_TOKEN__
+      : new URLSearchParams(window.location.hash.replace(/^#/, '')).get('token')
+        || new URLSearchParams(window.location.search || '').get('token')
+        || '';
+    try {
+      delete window.__NOVA_RESET_TOKEN__;
+    } catch (_error) {
+      window.__NOVA_RESET_TOKEN__ = '';
+    }
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('token')) {
+      url.searchParams.delete('token');
+    }
+    url.hash = '';
+    window.history.replaceState({}, document.title, `${url.pathname}${url.search}`);
+    return /^[a-f0-9]{64}$/i.test(captured) ? captured : '';
+  }, []);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -45,7 +67,7 @@ export default function ResetPasswordPage() {
       return;
     }
     if (!isStrongPassword(password)) {
-      setNotice({ tone: 'error', message: 'Use at least 8 characters, uppercase, lowercase, number and special character.' });
+      setNotice({ tone: 'error', message: 'Use 12 to 72 UTF-8 bytes, uppercase, lowercase, number and special character.' });
       return;
     }
 
@@ -75,11 +97,11 @@ export default function ResetPasswordPage() {
             <form className="auth-form hero-intro-secondary hero-intro-delay-2" onSubmit={handleSubmit}>
               <label className="auth-field">
                 <Lock size={17} />
-                <input required type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="New password" />
+                <input required minLength={12} maxLength={72} type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="New password" />
               </label>
               <label className="auth-field">
                 <Lock size={17} />
-                <input required type="password" autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Confirm new password" />
+                <input required minLength={12} maxLength={72} type="password" autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Confirm new password" />
               </label>
               <button className="btn btn-primary full" type="submit" disabled={loading || !token}>{loading ? 'Saving...' : 'Save New Password'}</button>
             </form>
