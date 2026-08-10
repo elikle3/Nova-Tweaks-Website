@@ -1,0 +1,509 @@
+/* =====================================================================
+   Nova Tweaks — Premium Refinement Layer
+   ---------------------------------------------------------------------
+   Loaded AFTER styles.css. Elevates the existing dark theme toward a
+   modern, premium, trustworthy B2B feel: calmer accents, more whitespace,
+   stronger typographic hierarchy, elegant cards, clearer CTAs, and better
+   accessibility — without rebuilding the existing structure.
+   Scoped mostly to the marketing homepage so the in-app dashboard is
+   left untouched.
+   ===================================================================== */
+
+/* ------------------------------------------------------------------ */
+/* 1. Token refinements (safe, global — softer premium surfaces)       */
+/* ------------------------------------------------------------------ */
+:root {
+  /* Cooler, more deliberate neutral hierarchy for depth without noise */
+  --border: rgba(184, 194, 214, 0.16);
+  --border-subtle: rgba(184, 194, 214, 0.09);
+  --border-strong: rgba(184, 194, 214, 0.24);
+
+  /* Layered, diffuse shadows read as "premium" rather than "neon" */
+  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.03) inset,
+    0 18px 40px -32px rgba(2, 4, 10, 0.9);
+  --shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 28px 60px -34px rgba(2, 4, 10, 0.92);
+
+  /* Consistent, slightly tighter corner scale */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+
+  /* Refinement-layer helpers */
+  --r-card-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 42%);
+  --r-hairline: rgba(255, 255, 255, 0.06);
+  --r-section-pad: clamp(76px, 9vw, 132px);
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Global rhythm & typography                                       */
+/* ------------------------------------------------------------------ */
+
+/* Calmer background grid so content leads, not the texture */
+body::before {
+  opacity: 0.2;
+}
+
+/* More generous, consistent vertical rhythm between sections */
+.section {
+  padding: var(--r-section-pad) 0;
+}
+
+/* Tighter, more confident headings */
+.nova-section-head h2,
+.nova-hero-copy h1,
+.nova-bridge-panel h2,
+.section-heading h2 {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.nova-hero-copy h1 {
+  font-weight: 750;
+  line-height: 1.04;
+}
+
+.nova-section-head {
+  gap: 16px;
+}
+
+/* Comfortable measure + calmer body color for supporting copy */
+.nova-section-head p,
+.nova-hero-copy p,
+.nova-bridge-panel p {
+  color: color-mix(in srgb, var(--muted) 94%, white);
+  max-width: 60ch;
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Kicker / eyebrow — restrained, editorial                         */
+/* ------------------------------------------------------------------ */
+.nova-kicker {
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-elevated) 70%, transparent);
+  color: color-mix(in srgb, var(--muted) 80%, white);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 7px 13px;
+  backdrop-filter: blur(12px);
+}
+
+.nova-kicker svg {
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Buttons — clearer, more premium CTAs                             */
+/* ------------------------------------------------------------------ */
+.btn {
+  min-height: 46px;
+  padding: 0 20px;
+  font-weight: 650;
+  letter-spacing: 0.005em;
+  transition: transform 150ms ease, border-color 160ms ease,
+    background 160ms ease, color 160ms ease, box-shadow 200ms ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  border-color: transparent;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 92%, white) 0%,
+    var(--accent) 100%
+  );
+  color: #fff;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.28) inset,
+    0 16px 30px -18px color-mix(in srgb, var(--accent) 62%, transparent);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 84%, white) 0%,
+    color-mix(in srgb, var(--accent) 96%, white) 100%
+  );
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.32) inset,
+    0 22px 40px -18px color-mix(in srgb, var(--accent) 66%, transparent);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  border-color: var(--border-strong);
+  background: color-mix(in srgb, var(--surface-elevated) 82%, transparent);
+  color: var(--text);
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: var(--surface-hover);
+  transform: translateY(-1px);
+}
+
+/* Consistent, visible focus for keyboard users (accessibility) */
+.btn:focus-visible,
+.nav-links a:focus-visible,
+.faq-item button:focus-visible,
+.footer a:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, white);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Navigation — quieter, more corporate                            */
+/* ------------------------------------------------------------------ */
+.nav-shell {
+  border-bottom: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: saturate(140%) blur(20px);
+}
+
+.nav-links a {
+  font-weight: 550;
+  color: color-mix(in srgb, var(--muted) 88%, white);
+}
+
+.nav-links a svg {
+  color: color-mix(in srgb, var(--accent) 46%, var(--muted));
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Hero — keep impact, reduce glare                                 */
+/* ------------------------------------------------------------------ */
+.nova-hero-pills span {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-elevated) 64%, transparent);
+  color: color-mix(in srgb, var(--muted) 92%, white);
+  font-weight: 550;
+}
+
+.nova-hero-pills svg {
+  color: var(--accent);
+}
+
+/* Softer accent wash behind the hero */
+.nova-hero::before,
+.nova-hero::after {
+  opacity: 0.55;
+}
+
+/* ------------------------------------------------------------------ */
+/* 7. Proof section — calm the infinite chart                          */
+/* ------------------------------------------------------------------ */
+.nova-trace-chart {
+  border-radius: var(--radius-xl);
+  border-color: var(--border);
+  background: radial-gradient(
+      circle at 60% 20%,
+      color-mix(in srgb, var(--accent) 8%, transparent),
+      transparent 26rem
+    ),
+    color-mix(in srgb, var(--surface) 92%, transparent);
+}
+
+.nova-trace-before {
+  stroke: color-mix(in srgb, var(--accent) 76%, transparent);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 30%, transparent));
+}
+
+.nova-trace-after {
+  stroke: var(--accent-2);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent-2) 34%, transparent));
+}
+
+.nova-proof-stats article {
+  border-radius: var(--radius-md);
+  border-color: var(--border);
+  background: color-mix(in srgb, var(--surface-elevated) 70%, transparent);
+  padding: 16px;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.nova-proof-stats article:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  transform: translateY(-2px);
+}
+
+/* ------------------------------------------------------------------ */
+/* 8. Feature sections & cards — elegant, restrained                   */
+/* ------------------------------------------------------------------ */
+
+/* Dial back the full-section radial glow washes */
+.nova-feature-section::before {
+  background: radial-gradient(
+    circle at 20% 12%,
+    color-mix(in srgb, var(--accent) 5%, transparent),
+    transparent 34rem
+  );
+  opacity: 0.7;
+}
+
+.nova-feature-section.is-premium::before {
+  background: radial-gradient(
+      circle at 78% 12%,
+      color-mix(in srgb, var(--accent) 6%, transparent),
+      transparent 34rem
+    ),
+    radial-gradient(
+      circle at 20% 88%,
+      color-mix(in srgb, var(--accent-2) 5%, transparent),
+      transparent 30rem
+    );
+}
+
+.nova-feature-card {
+  border-radius: var(--radius-xl);
+  border-color: var(--border);
+  background: var(--r-card-sheen),
+    color-mix(in srgb, var(--surface) 94%, transparent);
+  box-shadow: var(--shadow-panel);
+}
+
+.nova-feature-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border-strong));
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+
+.nova-feature-icon {
+  border-radius: 12px;
+  border-color: var(--border);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface-elevated));
+  color: color-mix(in srgb, var(--accent) 50%, white);
+}
+
+.nova-feature-image-frame {
+  border-radius: var(--radius-lg);
+  border-color: var(--border);
+  background: radial-gradient(
+      circle at 50% 40%,
+      color-mix(in srgb, var(--accent) 5%, transparent),
+      transparent 22rem
+    ),
+    color-mix(in srgb, #04070e 92%, transparent);
+}
+
+.nova-feature-copy h3 {
+  letter-spacing: -0.01em;
+  font-weight: 650;
+}
+
+/* Refined carousel controls */
+.nova-feature-carousel-actions button {
+  border-radius: 12px;
+  border-color: var(--border-strong);
+  background: color-mix(in srgb, var(--surface-elevated) 82%, transparent);
+  color: color-mix(in srgb, var(--accent) 46%, white);
+  box-shadow: none;
+}
+
+.nova-feature-carousel-actions button:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: var(--surface-hover);
+}
+
+/* ------------------------------------------------------------------ */
+/* 9. Conversion bridge — refined, not shouty                          */
+/* ------------------------------------------------------------------ */
+.nova-bridge-panel {
+  border-radius: var(--radius-xl);
+  border-color: color-mix(in srgb, var(--accent) 16%, var(--border));
+  background: radial-gradient(
+      circle at 16% 20%,
+      color-mix(in srgb, var(--accent) 9%, transparent),
+      transparent 26rem
+    ),
+    radial-gradient(
+      circle at 88% 70%,
+      color-mix(in srgb, var(--accent-2) 6%, transparent),
+      transparent 24rem
+    ),
+    color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: var(--shadow-panel);
+}
+
+.nova-bridge-panel h2 {
+  letter-spacing: -0.02em;
+}
+
+/* ------------------------------------------------------------------ */
+/* 10. Generic cards shared with the homepage                          */
+/* ------------------------------------------------------------------ */
+.feature-card,
+.image-feature-card,
+.stat-card,
+.price-card,
+.testimonial-card,
+.faq-item {
+  border-radius: var(--radius-lg);
+  border-color: var(--border);
+  background: var(--r-card-sheen),
+    color-mix(in srgb, var(--surface) 94%, transparent);
+  box-shadow: var(--shadow-panel);
+}
+
+.feature-card:hover,
+.image-feature-card:hover,
+.stat-card:hover,
+.price-card:hover,
+.testimonial-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border-strong));
+  background: var(--r-card-sheen),
+    color-mix(in srgb, var(--surface-hover) 96%, transparent);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+
+/* Calmer feature-card icon glow */
+.feature-card-top svg {
+  filter: none;
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* 11. Pricing                                                         */
+/* ------------------------------------------------------------------ */
+.price-card {
+  padding: 30px;
+}
+
+.price-pro {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  box-shadow: var(--shadow-hover),
+    0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.price {
+  letter-spacing: -0.02em;
+}
+
+/* ------------------------------------------------------------------ */
+/* 12. Testimonials                                                    */
+/* ------------------------------------------------------------------ */
+.testimonial-card {
+  padding: 24px;
+}
+
+.stars {
+  color: color-mix(in srgb, var(--accent) 82%, white);
+}
+
+/* ------------------------------------------------------------------ */
+/* 13. FAQ — clearer affordances                                       */
+/* ------------------------------------------------------------------ */
+.faq-item button {
+  padding: 22px 24px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.faq-item svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.faq-item:hover {
+  border-color: color-mix(in srgb, var(--accent) 24%, var(--border));
+}
+
+/* ------------------------------------------------------------------ */
+/* 14. Footer — structured, professional                              */
+/* ------------------------------------------------------------------ */
+.footer {
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  padding: clamp(48px, 6vw, 72px) 0 28px;
+}
+
+.footer h3 {
+  color: color-mix(in srgb, var(--muted) 70%, white);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.footer a {
+  color: color-mix(in srgb, var(--muted) 86%, white);
+  transition: color 150ms ease;
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 20px;
+}
+
+/* ------------------------------------------------------------------ */
+/* 15. Motion — respect reduced-motion, ease infinite loops            */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .nova-trace-before,
+  .nova-trace-after,
+  .live-pill i,
+  .energy-lines {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* 16. Responsive polish                                               */
+/* ------------------------------------------------------------------ */
+@media (max-width: 960px) {
+  .nova-hero-inner {
+    grid-template-columns: 1fr;
+    gap: clamp(24px, 6vw, 40px);
+  }
+
+  .nova-hero-copy {
+    max-width: 100%;
+  }
+
+  .nova-proof-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .nova-hero-actions .btn,
+  .nova-bridge-actions .btn {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .nova-feature-header {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .nova-proof-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .btn {
+    width: 100%;
+  }
+
+  .nova-hero-pills {
+    gap: 8px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
